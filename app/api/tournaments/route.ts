@@ -37,7 +37,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'name, game, format, maxPlayers, startsAt are required' }, { status: 400 })
   }
 
-  const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('tournaments')
     .insert({
