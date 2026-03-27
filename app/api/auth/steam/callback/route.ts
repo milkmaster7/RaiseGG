@@ -5,7 +5,7 @@ import { checkPlayerEligibility, getPlayerSummary, getPlayerBans, getHoursPlayed
 import { signSession } from '@/lib/session'
 
 const STEAM_OPENID_URL = 'https://steamcommunity.com/openid/login'
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://raisegg.gg'
+const SITE_URL = process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://raisegg.vercel.app'
 const SECRET = new TextEncoder().encode(
   process.env.SESSION_SECRET ?? 'dev-secret-change-in-production-min-32-chars'
 )
