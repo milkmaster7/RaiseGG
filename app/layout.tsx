@@ -3,6 +3,7 @@ import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { SolanaWalletProvider } from '@/components/providers/WalletProvider'
+import { MatchNotifications } from '@/components/matches/MatchNotifications'
 
 // ─── Viewport ────────────────────────────────────────────────────────────────
 export const viewport: Viewport = {
@@ -151,6 +152,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
+          <MatchNotifications />
         </SolanaWalletProvider>
       </body>
     </html>

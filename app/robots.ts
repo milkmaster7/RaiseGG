@@ -11,6 +11,7 @@ export default function robots(): MetadataRoute.Robots {
     ],
     sitemap: [
       'https://raisegg.gg/sitemap.xml',
+      'https://raisegg.gg/sitemap-blog.xml',
     ],
   }
 }

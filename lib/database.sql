@@ -181,6 +181,24 @@ CREATE TRIGGER players_updated_at
   BEFORE UPDATE ON players
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+-- ─── WALLET: Atomic deposit credit ───────────────────────────
+-- Increments usdc_balance and inserts a transaction record atomically.
+-- Called from /api/wallet/deposit after on-chain verification.
+CREATE OR REPLACE FUNCTION credit_deposit(
+  p_player_id    UUID,
+  p_amount       NUMERIC,
+  p_tx_signature TEXT
+) RETURNS VOID AS $$
+BEGIN
+  UPDATE players
+     SET usdc_balance = usdc_balance + p_amount
+   WHERE id = p_player_id;
+
+  INSERT INTO transactions (player_id, type, amount, tx_signature, note)
+  VALUES (p_player_id, 'deposit', p_amount, p_tx_signature, 'USDC deposit');
+END;
+$$ LANGUAGE plpgsql;
+
 -- ─── CRON: Auto-cancel expired matches ────────────────────────
 -- Run in Supabase Dashboard > Database > Extensions > pg_cron
 -- SELECT cron.schedule('cancel-expired-matches', '*/5 * * * *', $$

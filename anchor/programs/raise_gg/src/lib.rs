@@ -22,16 +22,19 @@ pub mod raise_gg {
         ctx: Context<CreateMatch>,
         match_id: [u8; 16],
         stake_amount: u64,
+        authority: Pubkey,
     ) -> Result<()> {
         require!(stake_amount > 0, RaiseError::ZeroStake);
 
-        let state       = &mut ctx.accounts.match_state;
-        state.match_id  = match_id;
-        state.player_a  = ctx.accounts.player_a.key();
-        state.player_b  = Pubkey::default();
-        state.stake     = stake_amount;
-        state.status    = MatchStatus::Open;
-        state.bump      = ctx.bumps.match_state;
+        let state        = &mut ctx.accounts.match_state;
+        state.match_id   = match_id;
+        state.player_a   = ctx.accounts.player_a.key();
+        state.player_b   = Pubkey::default();
+        state.authority  = authority;
+        state.usdc_mint  = ctx.accounts.usdc_mint.key();
+        state.stake      = stake_amount;
+        state.status     = MatchStatus::Open;
+        state.bump       = ctx.bumps.match_state;
         state.vault_bump = ctx.bumps.vault;
 
         // Transfer player A's stake → vault
@@ -386,6 +389,7 @@ pub struct MatchState {
     pub player_a:   Pubkey,
     pub player_b:   Pubkey,     // Pubkey::default() when Open
     pub authority:  Pubkey,     // Backend signer allowed to resolve/cancel
+    pub usdc_mint:  Pubkey,     // USDC mint stored at creation — used in JoinMatch constraint
     pub stake:      u64,        // Per-player stake in USDC lamports (6 decimals)
     pub status:     MatchStatus,
     pub bump:       u8,
@@ -393,14 +397,12 @@ pub struct MatchState {
 }
 
 impl MatchState {
-    // 8 discriminator + fields
-    pub const SIZE: usize = 8 + 16 + 32 + 32 + 32 + 8 + 1 + 1 + 1 + 8; // +8 padding
+    // 8 discriminator + 16 match_id + 32 player_a + 32 player_b + 32 authority
+    // + 32 usdc_mint + 8 stake + 1 status + 1 bump + 1 vault_bump + 8 padding
+    pub const SIZE: usize = 8 + 16 + 32 + 32 + 32 + 32 + 8 + 1 + 1 + 1 + 8;
 
-    // Convenience: get the mint from the vault (called inside JoinMatch constraint)
     pub fn usdc_mint(&self) -> Pubkey {
-        // Stored implicitly via the vault; we don't store it separately.
-        // In practice the JoinMatch constraint checks via vault.mint instead.
-        Pubkey::default()
+        self.usdc_mint
     }
 }
 

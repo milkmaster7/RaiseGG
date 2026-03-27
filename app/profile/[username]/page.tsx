@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = createServiceClient()
   const { data: player } = await supabase
     .from('players')
-    .select('username, cs2_elo, dota2_elo, cs2_wins, cs2_losses, country')
+    .select('username, cs2_elo, dota2_elo, cs2_wins, cs2_losses, dota2_wins, dota2_losses, deadlock_wins, deadlock_losses, country')
     .eq('username', username)
     .single()
 
@@ -22,11 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const total = player.cs2_wins + player.cs2_losses
   const wr = total > 0 ? Math.round((player.cs2_wins / total) * 100) : 0
+  const totalMatches = (player.cs2_wins + player.cs2_losses + player.dota2_wins + player.dota2_losses + player.deadlock_wins + player.deadlock_losses)
 
   return {
     title: `${player.username} — Player Profile`,
     description: `${player.username}'s RaiseGG.gg profile. ${player.cs2_wins} wins, ${wr}% win rate${player.country ? `, ${player.country}` : ''}. View match history and rankings.`,
     alternates: { canonical: `https://raisegg.gg/profile/${username}` },
+    robots: totalMatches === 0 ? { index: false, follow: true } : undefined,
     openGraph: {
       title: `${player.username} | RaiseGG.gg`,
       description: `View ${player.username}'s stake match history and rankings.`,
@@ -80,9 +82,6 @@ export default async function ProfilePage({ params }: Props) {
 
   return (
     <>
-      {totalMatches === 0 && (
-        <meta name="robots" content="noindex" />
-      )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pSchema).replace(/</g, '\\u003c') }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs).replace(/</g, '\\u003c') }} />
 

@@ -1,12 +1,11 @@
 ﻿// Blog sitemap — served at /sitemap-blog.xml
-// Mirrors esport.is's dual sitemap pattern (sitemap.xml + sitemap-news.xml)
 import { NextResponse } from 'next/server'
+import { BLOG_POSTS } from '@/lib/blog'
 
 const BASE = 'https://raisegg.gg'
 
 export async function GET() {
-  // TODO: replace with real blog posts from Supabase
-  const posts: { slug: string; updatedAt: string }[] = []
+  const posts = BLOG_POSTS.map((p) => ({ slug: p.slug, updatedAt: p.publishedAt }))
 
   const urls = posts
     .map(

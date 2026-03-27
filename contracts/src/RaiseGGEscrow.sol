@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title  RaiseGGEscrow
@@ -17,7 +18,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
  *   3. Authority calls resolve()    — pays winner 90%, treasury 10%
  *   4. If expired, anyone calls cancel() — full refunds
  */
-contract RaiseGGEscrow is Ownable, ReentrancyGuard {
+contract RaiseGGEscrow is Ownable, ReentrancyGuard, Pausable {
     using SafeERC20 for IERC20;
 
     // ─── Constants ───────────────────────────────────────────────────────────
@@ -31,6 +32,8 @@ contract RaiseGGEscrow is Ownable, ReentrancyGuard {
 
     address public authority;   // Backend wallet that calls resolve/cancel
     address public treasury;    // Fee recipient
+
+    mapping(address => bool) public allowedTokens;
 
     enum MatchStatus { Open, Locked, Resolved, Cancelled }
 
@@ -67,6 +70,7 @@ contract RaiseGGEscrow is Ownable, ReentrancyGuard {
     error ZeroStake();
     error OpenWindowExpired();
     error ResolveWindowActive();
+    error TokenNotAllowed();
 
     // ─── Modifiers ───────────────────────────────────────────────────────────
 
@@ -77,9 +81,12 @@ contract RaiseGGEscrow is Ownable, ReentrancyGuard {
 
     // ─── Constructor ─────────────────────────────────────────────────────────
 
-    constructor(address _authority, address _treasury) Ownable(msg.sender) {
+    constructor(address _authority, address _treasury, address[] memory _allowedTokens) Ownable(msg.sender) {
         authority = _authority;
         treasury  = _treasury;
+        for (uint256 i = 0; i < _allowedTokens.length; i++) {
+            allowedTokens[_allowedTokens[i]] = true;
+        }
     }
 
     // ─── Match lifecycle ─────────────────────────────────────────────────────
@@ -94,7 +101,8 @@ contract RaiseGGEscrow is Ownable, ReentrancyGuard {
         bytes16 matchId,
         address token,
         uint256 stakeAmount
-    ) external nonReentrant {
+    ) external nonReentrant whenNotPaused {
+        if (!allowedTokens[token]) revert TokenNotAllowed();
         if (stakeAmount == 0) revert ZeroStake();
         if (matches[matchId].playerA != address(0)) revert MatchAlreadyExists();
 
@@ -116,7 +124,7 @@ contract RaiseGGEscrow is Ownable, ReentrancyGuard {
     /**
      * @notice Player B joins an open match and locks their stake.
      */
-    function joinMatch(bytes16 matchId) external nonReentrant {
+    function joinMatch(bytes16 matchId) external nonReentrant whenNotPaused {
         Match storage m = matches[matchId];
         if (m.status != MatchStatus.Open) revert MatchNotOpen();
         if (m.playerB != address(0))      revert AlreadyJoined();
@@ -208,5 +216,17 @@ contract RaiseGGEscrow is Ownable, ReentrancyGuard {
 
     function setTreasury(address _treasury) external onlyOwner {
         treasury = _treasury;
+    }
+
+    function setAllowedToken(address token, bool allowed) external onlyOwner {
+        allowedTokens[token] = allowed;
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 }

@@ -1,10 +1,11 @@
 ﻿'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { lobbyListSchema, breadcrumbSchema } from '@/lib/schemas'
 import { MatchCard } from '@/components/matches/MatchCard'
 import { Button } from '@/components/ui/Button'
-import { Filter, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import type { Match, Game } from '@/types'
 
 const GAMES: { value: Game | 'all'; label: string }[] = [
@@ -22,9 +23,13 @@ const STAKE_FILTERS = [
 ]
 
 export default function PlayPage() {
-  const [matches, setMatches]       = useState<Match[]>([])
-  const [loading, setLoading]       = useState(true)
-  const [gameFilter, setGameFilter] = useState<Game | 'all'>('all')
+  const searchParams  = useSearchParams()
+  const joinMatchId   = searchParams.get('join')
+  const highlightRef  = useRef<HTMLDivElement>(null)
+
+  const [matches, setMatches]         = useState<Match[]>([])
+  const [loading, setLoading]         = useState(true)
+  const [gameFilter, setGameFilter]   = useState<Game | 'all'>('all')
   const [stakeFilter, setStakeFilter] = useState('all')
 
   const lobbySchema = lobbyListSchema(matches.length)
@@ -45,6 +50,13 @@ export default function PlayPage() {
     }
     fetchLobbies()
   }, [gameFilter])
+
+  // Scroll to and highlight the match linked via ?join=
+  useEffect(() => {
+    if (!loading && joinMatchId && highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [loading, joinMatchId])
 
   const filtered = matches.filter((m) => {
     if (stakeFilter === 'low')  return m.stake_amount >= 1  && m.stake_amount < 10
@@ -125,9 +137,18 @@ export default function PlayPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filtered.map((match) => (
-              <MatchCard key={match.id} match={match} showJoin />
-            ))}
+            {filtered.map((match) => {
+              const isTarget = match.id === joinMatchId
+              return (
+                <div
+                  key={match.id}
+                  ref={isTarget ? highlightRef : undefined}
+                  className={isTarget ? 'ring-2 ring-accent-purple rounded' : undefined}
+                >
+                  <MatchCard match={match} showJoin />
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

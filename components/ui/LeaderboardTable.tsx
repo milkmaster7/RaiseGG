@@ -18,6 +18,14 @@ export function LeaderboardTable({ players, game, limit }: LeaderboardTableProps
     .sort((a, b) => (b[eloKey] as number) - (a[eloKey] as number))
     .slice(0, limit)
 
+  if (sorted.length === 0) {
+    return (
+      <div className="card text-center py-12 text-muted text-sm">
+        No players on the leaderboard yet. Be the first to compete!
+      </div>
+    )
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">

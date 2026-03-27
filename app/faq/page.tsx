@@ -24,6 +24,13 @@ const FAQS = [
   { question: 'How do I deposit and withdraw USDC?', answer: 'Connect a Phantom or Solflare wallet to your account. Deposit by sending USDC from your wallet. Withdraw anytime — funds arrive in your wallet within seconds on Solana.' },
   { question: 'What wallets are supported?', answer: 'Phantom, Solflare, and Backpack. All major Solana wallets work via our wallet adapter integration.' },
   { question: 'Is there a minimum stake?', answer: 'Yes. Minimum stake amounts increase with rank to prevent high-ELO players from exploiting low-stakes games. Check your rank page for your current minimum.' },
+  { question: 'How do I get USDC in Turkey, Georgia or the Caucasus?', answer: 'Buy USDC on Binance or OKX — both widely available in the region. Withdraw to your Phantom wallet on the Solana network (not Ethereum). Then deposit to RaiseGG from your Wallet page.' },
+  { question: 'Do I need to complete KYC or verify my identity?', answer: 'No. RaiseGG uses Steam OpenID for authentication. We do not collect passport numbers, national IDs, or government documents. A Steam account in good standing is the only requirement.' },
+  { question: 'Is RaiseGG legal in my country?', answer: 'RaiseGG operates as a skill-based competition platform — players compete directly against each other, and outcomes depend entirely on player skill, not chance. It is your responsibility to check local laws. We do not provide legal advice.' },
+  { question: 'Can I play from my phone?', answer: 'The platform is fully responsive and works on mobile. However, depositing and withdrawing requires a Solana wallet browser extension (like Phantom), which works on desktop. The Phantom mobile app can also be used for wallet management.' },
+  { question: 'What if I don\'t have a Phantom wallet yet?', answer: 'Install Phantom from phantom.app. It\'s a free browser extension. Create a wallet, write down your seed phrase (keep it safe offline), then buy USDC on any major exchange and send it to your Phantom address on the Solana network.' },
+  { question: 'How are ELO ratings calculated?', answer: 'We use a modified Elo formula where K (points per match) scales by tier. Each game (CS2, Dota 2) has its own separate ELO. New players start at 1000 ELO (Silver tier). Beating higher-ranked opponents earns more ELO than beating equals.' },
+  { question: 'What happens to my funds if RaiseGG shuts down?', answer: 'Funds locked in active match vaults remain in the smart contract — they can be returned via the cancel instruction. Your RaiseGG platform balance (unlocked funds) would need to be withdrawn manually if we ever gave notice of closure. We commit to providing at least 30 days notice for any shutdown.' },
 ]
 
 export default function FAQPage() {

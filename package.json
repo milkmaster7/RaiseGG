@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "raisegg",
   "version": "0.1.0",
   "private": true,
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.1",
+    "@solana/spl-token": "^0.4.14",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-phantom": "^0.9.24",
     "@solana/wallet-adapter-react": "^0.15.35",
@@ -19,6 +20,7 @@
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.0",
     "clsx": "^2.1.1",
+    "ethers": "^6.16.0",
     "lucide-react": "^0.400.0",
     "passport": "^0.7.0",
     "passport-steam": "^1.0.17",

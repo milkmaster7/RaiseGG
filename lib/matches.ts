@@ -126,6 +126,80 @@ export async function resolveDota2Match(matchId: string, externalMatchId: string
   return { winnerId, payout, rake, eloResult }
 }
 
+// Resolve a CS2 match from a MatchZy webhook payload
+export async function resolveCS2Match(params: {
+  externalMatchId: string   // MatchZy's matchid (we set this == our match UUID)
+  winnerSteamId:  string   // Steam ID of the winning player
+  team1SteamIds:  string[]
+  team2SteamIds:  string[]
+  team1Score:     number
+  team2Score:     number
+}) {
+  const supabase = createServiceClient()
+
+  // Look up the match by external match ID (set when the game server was spun up)
+  const { data: match } = await supabase
+    .from('matches')
+    .select('*, player_a:players!player_a_id(*), player_b:players!player_b_id(*)')
+    .eq('match_id_external', params.externalMatchId)
+    .eq('status', 'locked')
+    .single()
+
+  if (!match) return { error: 'Match not found or not in locked state' }
+
+  const steamA = match.player_a.steam_id
+  const steamB = match.player_b.steam_id
+
+  // Ensure both players were present in the match
+  const allSteamIds = [...params.team1SteamIds, ...params.team2SteamIds]
+  if (!allSteamIds.includes(steamA) || !allSteamIds.includes(steamB)) {
+    return { error: 'One or both players not found in the reported match' }
+  }
+
+  // Determine winner
+  const winnerIsA = params.winnerSteamId === steamA
+  const winnerIsB = params.winnerSteamId === steamB
+  if (!winnerIsA && !winnerIsB) return { error: 'Winner steam ID does not match either player' }
+
+  const winnerId = winnerIsA ? match.player_a_id : match.player_b_id
+  const loserId  = winnerIsA ? match.player_b_id : match.player_a_id
+  const aWon     = winnerIsA
+
+  const eloKey = `${match.game}_elo` as const
+  const eloResult = calculateElo(match.player_a[eloKey], match.player_b[eloKey], aWon)
+
+  const rake    = match.stake_amount * 2 * 0.1
+  const payout  = match.stake_amount * 2 * 0.9
+
+  // Update match
+  await supabase.from('matches').update({
+    status:            'completed',
+    winner_id:         winnerId,
+    resolved_at:       new Date().toISOString(),
+  }).eq('id', match.id)
+
+  // Update ELOs and W/L
+  await supabase.from('players').update({
+    [eloKey]:                    eloResult.newEloA,
+    [`${match.game}_wins`]:      match.player_a[`${match.game}_wins`]   + (aWon ? 1 : 0),
+    [`${match.game}_losses`]:    match.player_a[`${match.game}_losses`] + (aWon ? 0 : 1),
+  }).eq('id', match.player_a_id)
+
+  await supabase.from('players').update({
+    [eloKey]:                    eloResult.newEloB,
+    [`${match.game}_wins`]:      match.player_b[`${match.game}_wins`]   + (!aWon ? 1 : 0),
+    [`${match.game}_losses`]:    match.player_b[`${match.game}_losses`] + (!aWon ? 0 : 1),
+  }).eq('id', match.player_b_id)
+
+  // Log transactions
+  await supabase.from('transactions').insert([
+    { player_id: winnerId, type: 'win',  amount: payout,              match_id: match.id, note: `CS2 win — score ${params.team1Score}:${params.team2Score}` },
+    { player_id: loserId,  type: 'loss', amount: match.stake_amount,  match_id: match.id },
+  ])
+
+  return { winnerId, payout, rake, eloResult }
+}
+
 // Auto-cancel expired matches (called by cron) — with refunds
 export async function cancelExpiredMatches() {
   const supabase = createServiceClient()

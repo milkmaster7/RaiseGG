@@ -29,6 +29,13 @@ function parseSlug(slug: string): { game: string; country: string } | null {
   return null
 }
 
+export function generateStaticParams() {
+  const countries = Object.keys(COUNTRIES)
+  return GAMES.flatMap((game) =>
+    countries.map((country) => ({ 'seo-page': `${game}-platform-${country}` }))
+  )
+}
+
 type Props = { params: Promise<{ 'seo-page': string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -107,6 +114,69 @@ export default async function SeoLandingPage({ params }: Props) {
         <a href="/api/auth/steam" className="btn-primary text-base px-8 py-4 inline-block">
           Connect Steam & Play in {countryName}
         </a>
+
+        {/* How it works */}
+        <div className="mt-16 mb-12">
+          <h2 className="font-orbitron text-2xl font-bold text-white mb-8">
+            How to Start Playing {gameName} in {countryName}
+          </h2>
+          <div className="grid md:grid-cols-4 gap-4">
+            {[
+              { step: '01', title: 'Connect Steam', body: 'Log in with your Steam account. No email or ID required.' },
+              { step: '02', title: 'Get USDC', body: 'Buy USDC on Binance or OKX and send it to your Phantom wallet.' },
+              { step: '03', title: 'Deposit', body: 'Deposit from your wallet to your RaiseGG balance in one click.' },
+              { step: '04', title: 'Play & Win', body: 'Create or join a stake match. Win 90% of the pot, paid instantly.' },
+            ].map((s) => (
+              <div key={s.step} className="card">
+                <div className="font-orbitron text-2xl font-black text-gradient mb-2">{s.step}</div>
+                <div className="font-semibold text-white text-sm mb-1">{s.title}</div>
+                <div className="text-muted text-xs leading-relaxed">{s.body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Local FAQ */}
+        <div className="mb-12">
+          <h2 className="font-orbitron text-xl font-bold text-white mb-6">
+            Common Questions from {countryName} Players
+          </h2>
+          <div className="space-y-3">
+            {[
+              {
+                q: `Is ${gameName} staking legal in ${countryName}?`,
+                a: `RaiseGG operates as a skill-based competition — outcomes depend entirely on player skill, not chance. It is your responsibility to verify local laws before playing.`,
+              },
+              {
+                q: 'Do I need to verify my identity?',
+                a: 'No KYC. A Steam account in good standing is the only requirement.',
+              },
+              {
+                q: 'How do I get USDC?',
+                a: `Buy USDC on Binance or OKX (available in ${countryName}). Withdraw to your Phantom wallet on the Solana network, then deposit to RaiseGG.`,
+              },
+              {
+                q: 'How fast are payouts?',
+                a: 'USDC arrives in your wallet within 30 seconds of match resolution via Solana.',
+              },
+            ].map((item) => (
+              <div key={item.q} className="card">
+                <div className="font-semibold text-white text-sm mb-1">{item.q}</div>
+                <div className="text-muted text-sm leading-relaxed">{item.a}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="card text-center py-8">
+          <p className="text-muted text-sm mb-4">
+            Join {countryName} players already competing on RaiseGG.
+          </p>
+          <a href="/api/auth/steam" className="btn-primary px-8 py-3 inline-block">
+            Start Playing — Connect Steam
+          </a>
+        </div>
       </div>
     </>
   )
