@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { readSession } from '@/lib/session'
 import { createServiceClient } from '@/lib/supabase'
-
-const ADMIN_PLAYER_IDS = (process.env.ADMIN_PLAYER_IDS ?? '').split(',').filter(Boolean)
+import { isAdmin } from '@/lib/admin'
 
 export async function GET(req: NextRequest) {
   const playerId = await readSession(req)
-  if (!playerId || !ADMIN_PLAYER_IDS.includes(playerId)) {
+  const supabase = createServiceClient()
+  if (!playerId || !(await isAdmin(playerId, supabase))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
-
-  const supabase = createServiceClient()
 
   const [
     { count: totalPlayers },

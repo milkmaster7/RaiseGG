@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { readSession } from '@/lib/session'
 import { createServiceClient } from '@/lib/supabase'
+import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
 import { DollarSign, Activity, Users, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
 import type { NextRequest } from 'next/server'
@@ -11,8 +12,6 @@ export const metadata: Metadata = {
   title: 'Admin — RaiseGG',
   robots: { index: false, follow: false },
 }
-
-const ADMIN_PLAYER_IDS = (process.env.ADMIN_PLAYER_IDS ?? '').split(',').filter(Boolean)
 
 async function getAdminData() {
   const supabase = createServiceClient()
@@ -62,7 +61,8 @@ export default async function AdminPage() {
   const cookieStore = await cookies()
   const mockReq = { cookies: { get: (name: string) => cookieStore.get(name) } } as any as NextRequest
   const playerId = await readSession(mockReq)
-  if (!playerId || !ADMIN_PLAYER_IDS.includes(playerId)) redirect('/')
+  const supabase = createServiceClient()
+  if (!playerId || !(await isAdmin(playerId, supabase))) redirect('/')
 
   const { totalPlayers, activeMatches, openDisputes, totalRake, recentMatches, disputes, recentPlayers } = await getAdminData()
 

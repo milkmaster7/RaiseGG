@@ -1,19 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { readSession } from '@/lib/session'
 import { createServiceClient } from '@/lib/supabase'
-
-const ADMIN_PLAYER_IDS = (process.env.ADMIN_PLAYER_IDS ?? '').split(',').filter(Boolean)
-
-function isAdmin(playerId: string) {
-  return ADMIN_PLAYER_IDS.includes(playerId)
-}
+import { isAdmin } from '@/lib/admin'
 
 export async function GET(req: NextRequest) {
   const playerId = await readSession(req)
-  if (!playerId || !isAdmin(playerId)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const supabase = createServiceClient()
+  if (!playerId || !(await isAdmin(playerId, supabase))) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const q = req.nextUrl.searchParams.get('q') ?? ''
-  const supabase = createServiceClient()
 
   let query = supabase
     .from('players')
@@ -29,12 +24,11 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   const playerId = await readSession(req)
-  if (!playerId || !isAdmin(playerId)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const supabase = createServiceClient()
+  if (!playerId || !(await isAdmin(playerId, supabase))) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const { targetId, banned, banReason } = await req.json()
   if (!targetId) return NextResponse.json({ error: 'targetId required' }, { status: 400 })
-
-  const supabase = createServiceClient()
 
   const { error } = await supabase.from('players').update({
     banned:     banned ?? false,
