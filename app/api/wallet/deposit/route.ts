@@ -27,12 +27,17 @@ export async function POST(req: NextRequest) {
 
   // Verify the on-chain transaction
   try {
+    const treasurySol = process.env.NEXT_PUBLIC_TREASURY_SOL
+    if (!treasurySol || treasurySol.startsWith('PLACEHOLDER')) {
+      return NextResponse.json({ error: 'Solana treasury not configured' }, { status: 503 })
+    }
+
     const connection = new Connection(
       process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? 'https://api.mainnet-beta.solana.com',
       'confirmed'
     )
 
-    const treasury = new PublicKey(process.env.NEXT_PUBLIC_TREASURY_SOL ?? '')
+    const treasury = new PublicKey(treasurySol)
     const treasuryAta = await getAssociatedTokenAddress(USDC_MINT_SOLANA, treasury)
 
     const tx = await connection.getParsedTransaction(txSignature, { commitment: 'confirmed', maxSupportedTransactionVersion: 0 })

@@ -24,7 +24,7 @@ import { AnchorProvider, Program, BN } from '@coral-xyz/anchor'
 
 const PROGRAM_ID = new PublicKey(
   process.env.NEXT_PUBLIC_SOLANA_PROGRAM_ID ??
-  'RGGeskrowAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+  '11111111111111111111111111111111'
 )
 
 export const USDC_MINT_SOLANA = new PublicKey(
