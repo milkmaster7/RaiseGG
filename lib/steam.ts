@@ -99,10 +99,5 @@ export async function checkPlayerEligibility(steamId: string): Promise<{
   // VAC ban check
   if (bans?.VACBanned) return { eligible: false, reason: 'VAC banned accounts are not allowed.' }
 
-  // Hours check (need 100h in at least one supported game)
-  if (cs2Hours < 100 && dota2Hours < 100) {
-    return { eligible: false, reason: 'Need at least 100 hours in CS2 or Dota 2.' }
-  }
-
   return { eligible: true }
 }

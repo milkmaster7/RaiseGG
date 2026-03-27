@@ -49,10 +49,8 @@ export async function GET(req: NextRequest) {
 
   const supabase = createServiceClient()
 
-  const [bans, cs2Hours, dota2Hours] = await Promise.all([
+  const [bans] = await Promise.all([
     getPlayerBans(steamId),
-    getHoursPlayed(steamId, 730),
-    getHoursPlayed(steamId, 570),
   ])
 
   // Upsert player
@@ -65,7 +63,7 @@ export async function GET(req: NextRequest) {
       eligible:       eligibility.eligible,
       account_age_ok: eligibility.eligible,
       vac_banned:     bans?.VACBanned ?? false,
-      hours_ok:       (cs2Hours >= 100 || dota2Hours >= 100),
+      hours_ok:       true,
       cs2_elo:        1000,
       dota2_elo:      1000,
       deadlock_elo:   1000,
