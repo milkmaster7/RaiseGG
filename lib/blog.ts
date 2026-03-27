@@ -118,8 +118,6 @@ export const BLOG_POSTS: BlogPost[] = [
       <p>Our users in Turkey, Georgia, Armenia, Serbia and surrounding regions often don't have reliable access to USD payment rails. With a Phantom wallet and $10 of USDC, anyone can stake in under 2 minutes — no bank account required.</p>
     `,
   },
-]
-
   {
     slug:        'raisegg-elo-system-explained',
     title:       'How the RaiseGG ELO System Works',
