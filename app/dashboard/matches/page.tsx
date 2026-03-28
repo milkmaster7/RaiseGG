@@ -8,6 +8,7 @@ import { SubmitResultButton } from '@/components/matches/SubmitResultButton'
 import { RaiseDisputeButton } from '@/components/matches/RaiseDisputeButton'
 import { CS2ConnectInfo } from '@/components/matches/CS2ConnectInfo'
 import { CancelMatchButton } from '@/components/matches/CancelMatchButton'
+import { MatchChat } from '@/components/matches/MatchChat'
 
 export const metadata: Metadata = {
   title: 'My Matches — Match History',
@@ -107,6 +108,13 @@ export default async function MyMatchesPage() {
                             <SubmitResultButton matchId={m.id} game={m.game} playerId={playerId} />
                           )}
                           <RaiseDisputeButton matchId={m.id} status={m.status} />
+                          {['locked', 'live'].includes(m.status) && m.player_b_id && (
+                            <MatchChat
+                              matchId={m.id}
+                              playerId={playerId}
+                              opponentName={opponent ?? '?'}
+                            />
+                          )}
                         </div>
                       </td>
                     </tr>

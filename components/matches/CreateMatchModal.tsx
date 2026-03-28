@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useRouter } from 'next/navigation'
-import { X, Zap, Loader2, Copy, CheckCircle, Lock } from 'lucide-react'
+import { X, Zap, Loader2, Copy, CheckCircle, Lock, Wifi } from 'lucide-react'
 import { solanaCreateMatch, type StakeCurrency } from '@/lib/escrow'
+import { usePing } from '@/hooks/usePing'
 import type { Game, MatchFormat } from '@/types'
 
 const GAMES: { value: Game; label: string; badge?: string }[] = [
@@ -51,6 +52,7 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
   const [createdId, setCreatedId] = useState<string | null>(null)
   const [copied, setCopied]       = useState(false)
 
+  const ping = usePing()
   const stakeNum = parseFloat(stake)
   const valid = connected && stakeNum > 0 && game !== 'deadlock'
 
@@ -194,7 +196,17 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
 
             {/* Region */}
             <div className="mb-5">
-              <label className="text-xs text-muted uppercase tracking-wider mb-2 block">Server Region</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs text-muted uppercase tracking-wider">Server Region</label>
+                <span className="flex items-center gap-1 text-xs text-muted">
+                  <Wifi className="w-3 h-3" />
+                  {ping === null ? 'Measuring…' : (
+                    <span className={ping < 60 ? 'text-green-400' : ping < 120 ? 'text-yellow-400' : 'text-red-400'}>
+                      {ping}ms
+                    </span>
+                  )}
+                </span>
+              </div>
               <div className="flex gap-2 flex-wrap">
                 {REGIONS.map((r) => (
                   <button
