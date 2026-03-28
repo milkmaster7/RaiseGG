@@ -52,7 +52,7 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
   const [createdId, setCreatedId] = useState<string | null>(null)
   const [copied, setCopied]       = useState(false)
 
-  const ping = usePing()
+  const pings = usePing()
   const stakeNum = parseFloat(stake)
   const valid = connected && stakeNum > 0 && game !== 'deadlock'
 
@@ -196,31 +196,29 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
 
             {/* Region */}
             <div className="mb-5">
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs text-muted uppercase tracking-wider">Server Region</label>
-                <span className="flex items-center gap-1 text-xs text-muted">
-                  <Wifi className="w-3 h-3" />
-                  {ping === null ? 'Measuring…' : (
-                    <span className={ping < 60 ? 'text-green-400' : ping < 120 ? 'text-yellow-400' : 'text-red-400'}>
-                      {ping}ms
-                    </span>
-                  )}
-                </span>
-              </div>
+              <label className="text-xs text-muted uppercase tracking-wider mb-2 block">Server Region</label>
               <div className="flex gap-2 flex-wrap">
-                {REGIONS.map((r) => (
-                  <button
-                    key={r.value}
-                    onClick={() => setRegion(r.value)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded border text-sm font-semibold transition-all ${
-                      region === r.value
-                        ? 'border-accent-cyan bg-accent-cyan/10 text-white'
-                        : 'border-border text-muted hover:border-accent-cyan/50'
-                    }`}
-                  >
-                    <span>{r.flag}</span> {r.label}
-                  </button>
-                ))}
+                {REGIONS.map((r) => {
+                  const ms = pings[r.value]
+                  const pingColor = ms === null ? 'text-muted' : ms < 60 ? 'text-green-400' : ms < 120 ? 'text-yellow-400' : 'text-red-400'
+                  return (
+                    <button
+                      key={r.value}
+                      onClick={() => setRegion(r.value)}
+                      className={`flex flex-col items-center px-3 py-2 rounded border text-sm font-semibold transition-all ${
+                        region === r.value
+                          ? 'border-accent-cyan bg-accent-cyan/10 text-white'
+                          : 'border-border text-muted hover:border-accent-cyan/50'
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">{r.flag} {r.label}</span>
+                      <span className={`text-[10px] font-mono mt-0.5 flex items-center gap-0.5 ${pingColor}`}>
+                        <Wifi className="w-2.5 h-2.5" />
+                        {ms === null ? '…' : ms >= 999 ? 'n/a' : `${ms}ms`}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
