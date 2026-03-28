@@ -49,7 +49,7 @@ export async function GET(req: Request) {
   // Find first unpublished topic (fuzzy: just check if any word from topic matches)
   const available = TOPIC_POOL.filter((topic) => {
     const words = topic.toLowerCase().split(' ').filter(w => w.length > 5)
-    return !words.some(w => [...publishedTitles].some(t => t.includes(w)))
+    return !words.some(w => Array.from(publishedTitles).some(t => t.includes(w)))
   })
 
   if (available.length === 0) {

@@ -62,7 +62,9 @@ export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: 
           </span>
         )}
         {match.has_password && (
-          <Lock className="w-3 h-3 text-muted flex-shrink-0" title="Password protected" />
+          <span title="Password protected">
+            <Lock className="w-3 h-3 text-muted flex-shrink-0" />
+          </span>
         )}
       </div>
 
