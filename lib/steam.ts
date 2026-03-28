@@ -78,26 +78,26 @@ export async function verifyDota2Match(
   return { winner: aWon ? 'a' : 'b' }
 }
 
-// Check player eligibility
+// Check player eligibility — returns summary and bans so callers don't re-fetch
 export async function checkPlayerEligibility(steamId: string): Promise<{
   eligible: boolean
   reason?: string
+  summary: Awaited<ReturnType<typeof getPlayerSummary>>
+  bans: Awaited<ReturnType<typeof getPlayerBans>>
 }> {
-  const [summary, bans, cs2Hours, dota2Hours] = await Promise.all([
+  const [summary, bans] = await Promise.all([
     getPlayerSummary(steamId),
     getPlayerBans(steamId),
-    getHoursPlayed(steamId, 730),
-    getHoursPlayed(steamId, 570),
   ])
 
-  if (!summary) return { eligible: false, reason: 'Steam account not found or private.' }
+  if (!summary) return { eligible: false, reason: 'Steam account not found or private.', summary, bans }
 
   // Account age check (1 year minimum)
   const accountAge = (Date.now() / 1000 - summary.timecreated) / (365 * 24 * 3600)
-  if (accountAge < 1) return { eligible: false, reason: 'Steam account must be at least 1 year old.' }
+  if (accountAge < 1) return { eligible: false, reason: 'Steam account must be at least 1 year old.', summary, bans }
 
   // VAC ban check
-  if (bans?.VACBanned) return { eligible: false, reason: 'VAC banned accounts are not allowed.' }
+  if (bans?.VACBanned) return { eligible: false, reason: 'VAC banned accounts are not allowed.', summary, bans }
 
-  return { eligible: true }
+  return { eligible: true, summary, bans }
 }

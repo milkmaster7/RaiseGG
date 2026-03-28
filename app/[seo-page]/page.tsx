@@ -5,17 +5,82 @@ import { landingPageSchema, videoGameSchema, breadcrumbSchema } from '@/lib/sche
 // Valid games and countries
 const GAMES = ['cs2', 'dota2', 'deadlock'] as const
 const COUNTRIES: Record<string, string> = {
+  // Caucasus & surroundings
   georgia: 'Georgia', turkey: 'Turkey', armenia: 'Armenia',
-  azerbaijan: 'Azerbaijan', ukraine: 'Ukraine', romania: 'Romania',
-  bulgaria: 'Bulgaria', serbia: 'Serbia', greece: 'Greece', iran: 'Iran',
-  kazakhstan: 'Kazakhstan', uzbekistan: 'Uzbekistan', russia: 'Russia',
-  poland: 'Poland', hungary: 'Hungary', croatia: 'Croatia',
-  slovenia: 'Slovenia', moldova: 'Moldova', belarus: 'Belarus',
+  azerbaijan: 'Azerbaijan', iran: 'Iran',
+  // Central Asia
+  kazakhstan: 'Kazakhstan', uzbekistan: 'Uzbekistan', kyrgyzstan: 'Kyrgyzstan',
+  tajikistan: 'Tajikistan', turkmenistan: 'Turkmenistan',
+  // Eastern Europe
+  ukraine: 'Ukraine', russia: 'Russia', belarus: 'Belarus', moldova: 'Moldova',
+  poland: 'Poland', czech: 'Czech Republic', slovakia: 'Slovakia',
+  hungary: 'Hungary', austria: 'Austria',
+  // Baltic
   lithuania: 'Lithuania', latvia: 'Latvia', estonia: 'Estonia',
+  // Balkans
+  romania: 'Romania', bulgaria: 'Bulgaria', serbia: 'Serbia', greece: 'Greece',
+  croatia: 'Croatia', slovenia: 'Slovenia', bosnia: 'Bosnia',
+  montenegro: 'Montenegro', albania: 'Albania', kosovo: 'Kosovo',
+  'north-macedonia': 'North Macedonia',
+  // Eastern Mediterranean
+  cyprus: 'Cyprus', israel: 'Israel', jordan: 'Jordan',
+  // Northern Europe
+  finland: 'Finland', sweden: 'Sweden',
+  // Western Europe
+  netherlands: 'Netherlands', belgium: 'Belgium', switzerland: 'Switzerland',
+  italy: 'Italy', spain: 'Spain', portugal: 'Portugal',
 }
 
 const GAME_NAMES: Record<string, string> = {
   cs2: 'Counter-Strike 2', dota2: 'Dota 2', deadlock: 'Deadlock',
+}
+
+type CountryGroupContent = {
+  groupIntro: string
+  exchangeTip: string
+  serverTip: string
+}
+
+const COUNTRY_GROUP_CONTENT: Record<string, CountryGroupContent> = {
+  turkey: {
+    groupIntro: `Turkey is one of the top 5 CS2 player bases globally. RaiseGG is purpose-built for Turkish players — no ping disadvantage, no payment barriers. Buy USDC or USDT on Binance Turkey (supports TRY deposits via local bank transfer) and deposit directly to your RaiseGG balance.`,
+    exchangeTip: 'Binance Turkey (binance.com/tr) supports TRY deposits via bank transfer. Buy USDC or USDT and withdraw to Solana network.',
+    serverTip: 'RaiseGG CS2 servers are optimised for Turkey and surrounding regions. Typical ping: 20–40ms.',
+  },
+  caucasus: {
+    groupIntro: `The Caucasus region — Georgia, Armenia, Azerbaijan and Iran — has a passionate competitive gaming community that has been underserved by Western platforms. RaiseGG was built specifically for this region. Buy USDC or USDT on Binance or OKX (both available in the Caucasus) and start playing within minutes.`,
+    exchangeTip: 'Binance and OKX support local payment methods in Georgia, Armenia and Azerbaijan. Buy USDC or USDT and withdraw on the Solana network.',
+    serverTip: 'Server locations cover the Caucasus region. Typical ping from Tbilisi, Yerevan and Baku: 25–50ms.',
+  },
+  balkans: {
+    groupIntro: `The Balkans produce some of Europe's most skilled CS2 and Dota 2 players — but Western esports platforms offer little financial reward for that skill. RaiseGG changes that. Buy USDC or USDT on Binance (EUR deposits supported across the region) and compete for real money.`,
+    exchangeTip: 'Binance supports EUR bank transfers across Serbia, Romania, Bulgaria, Greece and surrounding countries. USDC and USDT on Solana are the recommended options.',
+    serverTip: 'EU West and EU servers provide the best latency for Balkan players. Typical ping: 20–45ms.',
+  },
+  eastern_europe: {
+    groupIntro: `Eastern Europe has one of the world's highest concentrations of competitive CS2 and Dota 2 talent. RaiseGG gives Ukrainian, Polish, Romanian and regional players a platform to turn that skill into real earnings, with instant USDC or USDT payouts via Solana.`,
+    exchangeTip: 'Binance and OKX support local currencies and payment methods across Eastern Europe. Buy USDC or USDT on Solana network.',
+    serverTip: 'EU servers recommended for Eastern European players. Typical ping: 15–40ms.',
+  },
+  central_asia: {
+    groupIntro: `Central Asia — Kazakhstan, Uzbekistan, Kyrgyzstan, Tajikistan and Turkmenistan — has a growing competitive gaming scene with limited access to skill-based earning platforms. RaiseGG requires only a Steam account and USDC or USDT, both accessible via Binance across the region.`,
+    exchangeTip: 'Binance is widely available in Kazakhstan, Uzbekistan and Kyrgyzstan. Buy USDC or USDT and withdraw to Solana network.',
+    serverTip: 'CIS region servers provide the best connection for Central Asian players.',
+  },
+  other: {
+    groupIntro: `RaiseGG is open to competitive players across 44 countries. Connect Steam, deposit USDC or USDT via Phantom wallet, and compete in CS2, Dota 2 and Deadlock stake matches with instant payouts.`,
+    exchangeTip: 'Buy USDC or USDT on Binance or OKX and withdraw to your Phantom wallet on the Solana network.',
+    serverTip: 'Multiple server regions available. Choose the closest region when creating your match.',
+  },
+}
+
+function getCountryGroup(country: string): string {
+  if (country === 'turkey') return 'turkey'
+  if (['georgia', 'armenia', 'azerbaijan', 'iran'].includes(country)) return 'caucasus'
+  if (['romania', 'bulgaria', 'serbia', 'greece', 'croatia', 'slovenia', 'bosnia', 'montenegro', 'albania', 'kosovo', 'north-macedonia', 'cyprus'].includes(country)) return 'balkans'
+  if (['ukraine', 'russia', 'belarus', 'moldova', 'poland', 'czech', 'slovakia', 'hungary', 'austria', 'lithuania', 'latvia', 'estonia'].includes(country)) return 'eastern_europe'
+  if (['kazakhstan', 'uzbekistan', 'kyrgyzstan', 'tajikistan', 'turkmenistan'].includes(country)) return 'central_asia'
+  return 'other'
 }
 
 function parseSlug(slug: string): { game: string; country: string } | null {
@@ -48,12 +113,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const countryName = COUNTRIES[country]
 
   return {
-    title: `${gameName} Stake Platform in ${countryName} — Win USDC`,
-    description: `The leading ${gameName} stake platform for players in ${countryName}. Join RaiseGG.gg, compete in ranked lobbies and win real USDC. ${countryName} players welcome.`,
+    title: `${gameName} Stake Platform in ${countryName} — Win USDC/USDT`,
+    description: `The leading ${gameName} stake platform for players in ${countryName}. Join RaiseGG.gg, compete in ranked lobbies and win real USDC or USDT. ${countryName} players welcome.`,
     alternates: { canonical: `https://raisegg.gg/${slug}` },
     openGraph: {
       title: `RaiseGG.gg – ${gameName} in ${countryName}`,
-      description: `${gameName} stake matches for ${countryName} players. Win real USDC.`,
+      description: `${gameName} stake matches for ${countryName} players. Win real USDC or USDT.`,
       url: `https://raisegg.gg/${slug}`,
       images: [{ url: `/api/og?title=${encodeURIComponent(gameName + ' in ' + countryName)}&sub=raisegg.gg&color=7b61ff`, width: 1200, height: 630 }],
     },
@@ -73,6 +138,7 @@ export default async function SeoLandingPage({ params }: Props) {
   const { game, country } = parsed
   const gameName = GAME_NAMES[game]
   const countryName = COUNTRIES[country]
+  const groupContent = COUNTRY_GROUP_CONTENT[getCountryGroup(country)]
 
   const lpSchema = landingPageSchema(game, countryName)
   const vgSchema = videoGameSchema(game as 'cs2' | 'dota2' | 'deadlock')
@@ -94,7 +160,7 @@ export default async function SeoLandingPage({ params }: Props) {
         </h1>
         <p className="text-muted text-lg mb-8 leading-relaxed">
           RaiseGG.gg is the leading {gameName} stake platform for players in {countryName}.
-          Compete in ranked matches, stake USDC, and win instantly via Solana smart contract.
+          Compete in ranked matches, stake USDC or USDT, and win instantly via Solana smart contract.
           No Western ping disadvantage — servers built for your region.
         </p>
 
@@ -115,6 +181,24 @@ export default async function SeoLandingPage({ params }: Props) {
           Connect Steam & Play in {countryName}
         </a>
 
+        {/* Regional context */}
+        <div className="mt-12 mb-4 grid md:grid-cols-2 gap-4">
+          <div className="card">
+            <div className="font-orbitron text-xs text-muted uppercase tracking-widest mb-2">About {countryName} Players</div>
+            <p className="text-muted text-sm leading-relaxed">{groupContent.groupIntro}</p>
+          </div>
+          <div className="card space-y-4">
+            <div>
+              <div className="font-orbitron text-xs text-muted uppercase tracking-widest mb-1">Exchange Tip</div>
+              <p className="text-muted text-sm leading-relaxed">{groupContent.exchangeTip}</p>
+            </div>
+            <div>
+              <div className="font-orbitron text-xs text-muted uppercase tracking-widest mb-1">Server Info</div>
+              <p className="text-muted text-sm leading-relaxed">{groupContent.serverTip}</p>
+            </div>
+          </div>
+        </div>
+
         {/* How it works */}
         <div className="mt-16 mb-12">
           <h2 className="font-orbitron text-2xl font-bold text-white mb-8">
@@ -123,7 +207,7 @@ export default async function SeoLandingPage({ params }: Props) {
           <div className="grid md:grid-cols-4 gap-4">
             {[
               { step: '01', title: 'Connect Steam', body: 'Log in with your Steam account. No email or ID required.' },
-              { step: '02', title: 'Get USDC', body: 'Buy USDC on Binance or OKX and send it to your Phantom wallet.' },
+              { step: '02', title: 'Get USDC/USDT', body: 'Buy USDC or USDT on Binance or OKX and send it to your Phantom wallet.' },
               { step: '03', title: 'Deposit', body: 'Deposit from your wallet to your RaiseGG balance in one click.' },
               { step: '04', title: 'Play & Win', body: 'Create or join a stake match. Win 90% of the pot, paid instantly.' },
             ].map((s) => (
@@ -152,12 +236,12 @@ export default async function SeoLandingPage({ params }: Props) {
                 a: 'No KYC. A Steam account in good standing is the only requirement.',
               },
               {
-                q: 'How do I get USDC?',
-                a: `Buy USDC on Binance or OKX (available in ${countryName}). Withdraw to your Phantom wallet on the Solana network, then deposit to RaiseGG.`,
+                q: 'How do I get USDC or USDT?',
+                a: `Buy USDC or USDT on Binance or OKX (available in ${countryName}). Withdraw to your Phantom wallet on the Solana network, then deposit to RaiseGG.`,
               },
               {
                 q: 'How fast are payouts?',
-                a: 'USDC arrives in your wallet within 30 seconds of match resolution via Solana.',
+                a: 'USDC or USDT arrives in your wallet within 30 seconds of match resolution via Solana.',
               },
             ].map((item) => (
               <div key={item.q} className="card">

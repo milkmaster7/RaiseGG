@@ -43,8 +43,9 @@ export async function PATCH(
   if (!dispute) return NextResponse.json({ error: 'Dispute not found' }, { status: 404 })
   if (dispute.status !== 'open') return NextResponse.json({ error: 'Dispute is already resolved' }, { status: 400 })
 
+  const match = dispute.match as any
+
   if (action === 'resolve' && winnerId) {
-    const match = dispute.match as any
     if (winnerId !== match.player_a_id && winnerId !== match.player_b_id) {
       return NextResponse.json({ error: 'winnerId must be one of the two players' }, { status: 400 })
     }
@@ -52,7 +53,7 @@ export async function PATCH(
     const loserId = winnerId === match.player_a_id ? match.player_b_id : match.player_a_id
     const payout  = match.stake_amount * 2 * 0.9
 
-    // Update match winner
+    // Override match winner and mark completed
     await supabase.from('matches').update({
       winner_id:   winnerId,
       status:      'completed',
@@ -72,10 +73,18 @@ export async function PATCH(
       { player_id: loserId,  type: 'loss', amount: match.stake_amount, match_id: match.id, note: 'Admin dispute resolution' },
     ])
   } else if (action === 'resolve') {
-    // Resolve without changing winner (e.g. dismiss)
+    // Resolve without changing winner — mark completed (dismiss after result stands)
     await supabase.from('matches')
       .update({ status: 'completed' })
-      .eq('id', dispute.match.id)
+      .eq('id', match.id)
+  } else if (action === 'cancel') {
+    // Dismiss dispute — restore match to its pre-dispute status:
+    // If it already had a winner (was completed before dispute), keep completed.
+    // Otherwise revert to locked so it can still be resolved normally.
+    const restoreStatus = match.winner_id ? 'completed' : 'locked'
+    await supabase.from('matches')
+      .update({ status: restoreStatus })
+      .eq('id', match.id)
   }
 
   // Mark dispute resolved

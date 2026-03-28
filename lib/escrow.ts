@@ -34,6 +34,16 @@ export const USDC_MINT_SOLANA = new PublicKey(
   'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' // USDC on Solana mainnet
 )
 
+export const USDT_MINT_SOLANA = new PublicKey(
+  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB' // USDT on Solana mainnet
+)
+
+export type StakeCurrency = 'usdc' | 'usdt'
+
+export function getMintForCurrency(currency: StakeCurrency): PublicKey {
+  return currency === 'usdt' ? USDT_MINT_SOLANA : USDC_MINT_SOLANA
+}
+
 /** Convert a UUID string ("xxxxxxxx-xxxx-...") to a 16-byte Uint8Array */
 export function uuidToBytes(uuid: string): number[] {
   const hex = uuid.replace(/-/g, '')
@@ -68,19 +78,21 @@ export async function solanaCreateMatch(
   connection: Connection,
   wallet: AnchorWallet,
   matchId: string,
-  stakeUsdc: number,        // in full USDC (e.g. 10 for $10)
-  authorityPubkey: string   // backend authority pubkey stored in NEXT_PUBLIC_TREASURY_SOL
+  stakeUsdc: number,          // in full token units (e.g. 10 for $10)
+  authorityPubkey: string,    // backend authority pubkey stored in NEXT_PUBLIC_TREASURY_SOL
+  currency: StakeCurrency = 'usdc'
 ): Promise<{ vaultPda: string; txSignature: string }> {
   // Import IDL dynamically — only exists after `anchor build`
   const idl = await import('../anchor/target/idl/raise_gg.json')
   const provider = new AnchorProvider(connection, wallet, { commitment: 'confirmed' })
   const program = new Program(idl as any, provider)
 
+  const mint         = getMintForCurrency(currency)
   const matchIdBytes = uuidToBytes(matchId)
-  const stakeAmount  = new BN(stakeUsdc * 1_000_000) // USDC has 6 decimals
+  const stakeAmount  = new BN(stakeUsdc * 1_000_000) // 6 decimals for both USDC and USDT
   const authority    = new PublicKey(authorityPubkey)
 
-  const playerAta   = await getAssociatedTokenAddress(USDC_MINT_SOLANA, wallet.publicKey)
+  const playerAta   = await getAssociatedTokenAddress(mint, wallet.publicKey)
   const matchStatePda = getMatchStatePda(matchId)
   const vaultPda    = getVaultPda(matchId)
 
@@ -91,7 +103,7 @@ export async function solanaCreateMatch(
       playerAAta:      playerAta,
       matchState:      matchStatePda,
       vault:           vaultPda,
-      usdcMint:        USDC_MINT_SOLANA,
+      usdcMint:        mint,
     })
     .rpc({ commitment: 'confirmed' })
 
@@ -104,14 +116,16 @@ export async function solanaCreateMatch(
 export async function solanaJoinMatch(
   connection: Connection,
   wallet: AnchorWallet,
-  matchId: string
+  matchId: string,
+  currency: StakeCurrency = 'usdc'
 ): Promise<{ txSignature: string }> {
   const idl = await import('../anchor/target/idl/raise_gg.json')
   const provider = new AnchorProvider(connection, wallet, { commitment: 'confirmed' })
   const program = new Program(idl as any, provider)
 
+  const mint = getMintForCurrency(currency)
   const matchIdBytes = uuidToBytes(matchId)
-  const playerBata = await getAssociatedTokenAddress(USDC_MINT_SOLANA, wallet.publicKey)
+  const playerBata = await getAssociatedTokenAddress(mint, wallet.publicKey)
   const matchStatePda = getMatchStatePda(matchId)
   const vaultPda = getVaultPda(matchId)
 
@@ -135,7 +149,8 @@ export async function solanaJoinMatch(
 export async function solanaResolveMatch(
   connection: Connection,
   matchId: string,
-  winnerPublicKey: string
+  winnerPublicKey: string,
+  currency: StakeCurrency = 'usdc'
 ): Promise<{ txSignature: string }> {
   const { Keypair } = await import('@solana/web3.js')
   const rawKey = JSON.parse(process.env.SOLANA_AUTHORITY_PRIVATE_KEY ?? '[]') as number[]
@@ -154,10 +169,11 @@ export async function solanaResolveMatch(
   const provider = new AnchorProvider(connection, wallet, { commitment: 'confirmed' })
   const program = new Program(idl as any, provider)
 
+  const mint = getMintForCurrency(currency)
   const winner = new PublicKey(winnerPublicKey)
-  const winnerAta = await getAssociatedTokenAddress(USDC_MINT_SOLANA, winner)
+  const winnerAta = await getAssociatedTokenAddress(mint, winner)
   const treasury = new PublicKey(process.env.NEXT_PUBLIC_TREASURY_SOL ?? '')
-  const treasuryAta = await getAssociatedTokenAddress(USDC_MINT_SOLANA, treasury)
+  const treasuryAta = await getAssociatedTokenAddress(mint, treasury)
 
   const matchIdBytes = uuidToBytes(matchId)
   const matchStatePda = getMatchStatePda(matchId)
@@ -169,6 +185,59 @@ export async function solanaResolveMatch(
       authority:   authorityKeypair.publicKey,
       winnerAta,
       treasuryAta,
+      matchState:  matchStatePda,
+      vault:       vaultPda,
+    })
+    .rpc({ commitment: 'confirmed' })
+
+  return { txSignature: tx }
+}
+
+/**
+ * Cancel a match on Solana (called by backend authority).
+ * Refunds player A (open) or both players (locked).
+ */
+export async function solanaCancelMatch(
+  connection: Connection,
+  matchId: string,
+  playerAPublicKey: string,
+  playerBPublicKey: string | null,
+  status: 'open' | 'locked',
+  currency: StakeCurrency = 'usdc'
+): Promise<{ txSignature: string }> {
+  const { Keypair } = await import('@solana/web3.js')
+  const rawKey = JSON.parse(process.env.SOLANA_AUTHORITY_PRIVATE_KEY ?? '[]') as number[]
+  const authorityKeypair = Keypair.fromSecretKey(Uint8Array.from(rawKey))
+
+  const { Transaction: LegacyTransaction } = await import('@solana/web3.js')
+  const wallet: AnchorWallet = {
+    publicKey: authorityKeypair.publicKey,
+    signTransaction: async (tx) => { if (tx instanceof LegacyTransaction) tx.partialSign(authorityKeypair); return tx },
+    signAllTransactions: async (txs) => { txs.forEach(t => { if (t instanceof LegacyTransaction) t.partialSign(authorityKeypair) }); return txs },
+  }
+
+  const idl = await import('../anchor/target/idl/raise_gg.json')
+  const provider = new AnchorProvider(connection, wallet, { commitment: 'confirmed' })
+  const program = new Program(idl as any, provider)
+
+  const playerA = new PublicKey(playerAPublicKey)
+  const playerB = status === 'locked' && playerBPublicKey
+    ? new PublicKey(playerBPublicKey)
+    : playerA // pass playerA again for open matches (unused by contract)
+
+  const mint = getMintForCurrency(currency)
+  const playerAAta  = await getAssociatedTokenAddress(mint, playerA)
+  const playerBAta  = await getAssociatedTokenAddress(mint, playerB)
+  const matchIdBytes  = uuidToBytes(matchId)
+  const matchStatePda = getMatchStatePda(matchId)
+  const vaultPda      = getVaultPda(matchId)
+
+  const tx = await (program.methods as any)
+    .cancelMatch(matchIdBytes)
+    .accounts({
+      authority:   authorityKeypair.publicKey,
+      playerAAta,
+      playerBAta,
       matchState:  matchStatePda,
       vault:       vaultPda,
     })
@@ -209,6 +278,17 @@ export const ESCROW_ADDRESSES: Record<number, string> = {
 export const USDC_ADDRESSES: Record<number, string> = {
   1:   '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // ETH USDC
   56:  '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', // BNB USDC
+}
+
+/** USDT contract addresses per chain ID */
+export const USDT_ADDRESSES: Record<number, string> = {
+  1:   '0xdAC17F958D2ee523a2206206994597C13D831ec7', // ETH USDT
+  56:  '0x55d398326f99059fF775485246999027B3197955', // BNB USDT (BSC-USD)
+}
+
+export function getTokenAddress(currency: StakeCurrency, chainId: number): string {
+  const map = currency === 'usdt' ? USDT_ADDRESSES : USDC_ADDRESSES
+  return map[chainId] ?? ''
 }
 
 export const ERC20_APPROVE_ABI = [

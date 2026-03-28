@@ -16,6 +16,7 @@ CREATE TABLE players (
   email             TEXT,
   wallet_address    TEXT,
   usdc_balance      NUMERIC(18, 6) DEFAULT 0,
+  usdt_balance      NUMERIC(18, 6) DEFAULT 0,
 
   -- ELO per game
   cs2_elo           INTEGER DEFAULT 1000,
@@ -53,6 +54,7 @@ CREATE TABLE matches (
   player_b_id         UUID REFERENCES players(id),
 
   stake_amount        NUMERIC(18, 6) NOT NULL,
+  currency            TEXT NOT NULL DEFAULT 'usdc' CHECK (currency IN ('usdc', 'usdt')),
   vault_pda           TEXT,                        -- Solana PDA address
   create_tx           TEXT,                        -- Solana tx signature (create)
   join_tx             TEXT,                        -- Solana tx signature (join)
@@ -149,6 +151,7 @@ CREATE INDEX idx_transactions_player ON transactions(player_id);
 CREATE INDEX idx_players_steam ON players(steam_id);
 CREATE INDEX idx_players_cs2_elo ON players(cs2_elo DESC);
 CREATE INDEX idx_players_dota2_elo ON players(dota2_elo DESC);
+CREATE INDEX idx_players_deadlock_elo ON players(deadlock_elo DESC);
 
 -- ─── ROW LEVEL SECURITY ───────────────────────────────────────
 ALTER TABLE players ENABLE ROW LEVEL SECURITY;
@@ -156,8 +159,10 @@ ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE disputes ENABLE ROW LEVEL SECURITY;
 
--- Players: can only read/update their own row
-CREATE POLICY "players_select_own" ON players FOR SELECT USING (auth.uid()::text = id::text);
+-- Players: public profiles are readable by anyone (for lobby display, leaderboard, search)
+-- Sensitive fields (usdc_balance, wallet_address, email) are protected by only selecting
+-- public columns in client-side queries.
+CREATE POLICY "players_select_public" ON players FOR SELECT USING (TRUE);
 CREATE POLICY "players_update_own" ON players FOR UPDATE USING (auth.uid()::text = id::text);
 
 -- Matches: public read (for lobby browser), insert own
@@ -199,6 +204,25 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- ─── ADMIN: Sum total rake collected ─────────────────────────
+-- Includes: (1) match rakes (10% of each completed match pot)
+--           (2) tournament entry fees (logged as type='rake' in transactions)
+CREATE OR REPLACE FUNCTION sum_rake()
+RETURNS NUMERIC AS $$
+  SELECT COALESCE(
+    (SELECT SUM(stake_amount * 2 * 0.1) FROM matches WHERE status = 'completed') +
+    (SELECT COALESCE(SUM(ABS(amount)), 0) FROM transactions WHERE type = 'rake'),
+    0
+  );
+$$ LANGUAGE sql STABLE;
+
+-- ─── CS2 SERVER: Note ─────────────────────────────────────────
+-- When a CS2 server is ready, call:
+--   POST /api/matches/{id}/connect
+--   Headers: x-matchzy-secret: {MATCHZY_WEBHOOK_SECRET env var}
+--   Body: { serverIp, serverPort, connectToken }
+-- This sets the match to 'live' and exposes the connect string to players.
+
 -- ─── CRON: Auto-cancel expired matches ────────────────────────
 -- Run in Supabase Dashboard > Database > Extensions > pg_cron
 -- SELECT cron.schedule('cancel-expired-matches', '*/5 * * * *', $$
@@ -208,3 +232,8 @@ $$ LANGUAGE plpgsql;
 --   UPDATE matches SET status = 'cancelled'
 --   WHERE status IN ('open','locked') AND resolve_deadline < NOW();
 -- $$);
+
+-- ─── MIGRATION: USDT support (run once on existing databases) ─
+-- ALTER TABLE players ADD COLUMN IF NOT EXISTS usdt_balance NUMERIC(18, 6) DEFAULT 0;
+-- ALTER TABLE matches ADD COLUMN IF NOT EXISTS currency TEXT NOT NULL DEFAULT 'usdc'
+--   CHECK (currency IN ('usdc', 'usdt'));

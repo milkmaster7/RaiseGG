@@ -3,7 +3,7 @@ use anchor_spl::token::{self, CloseAccount, Token, TokenAccount, Transfer};
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token::Mint;
 
-declare_id!("RGGeskrowAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+declare_id!("BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv");
 
 // Replace after `anchor build && solana-keygen grind --starts-with RGG:1`
 
@@ -40,7 +40,7 @@ pub mod raise_gg {
         // Transfer player A's stake → vault
         token::transfer(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 Transfer {
                     from:      ctx.accounts.player_a_ata.to_account_info(),
                     to:        ctx.accounts.vault.to_account_info(),
@@ -74,7 +74,7 @@ pub mod raise_gg {
 
         token::transfer(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 Transfer {
                     from:      ctx.accounts.player_b_ata.to_account_info(),
                     to:        ctx.accounts.vault.to_account_info(),
@@ -124,7 +124,7 @@ pub mod raise_gg {
         // Pay winner
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 Transfer {
                     from:      ctx.accounts.vault.to_account_info(),
                     to:        ctx.accounts.winner_ata.to_account_info(),
@@ -138,7 +138,7 @@ pub mod raise_gg {
         // Pay rake to treasury
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 Transfer {
                     from:      ctx.accounts.vault.to_account_info(),
                     to:        ctx.accounts.treasury_ata.to_account_info(),
@@ -152,7 +152,7 @@ pub mod raise_gg {
         // Close empty vault — rent back to authority
         token::close_account(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 CloseAccount {
                     account:     ctx.accounts.vault.to_account_info(),
                     destination: ctx.accounts.authority.to_account_info(),
@@ -188,7 +188,7 @@ pub mod raise_gg {
         // Always refund player A
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 Transfer {
                     from:      ctx.accounts.vault.to_account_info(),
                     to:        ctx.accounts.player_a_ata.to_account_info(),
@@ -203,7 +203,7 @@ pub mod raise_gg {
         if status == MatchStatus::Locked {
             token::transfer(
                 CpiContext::new_with_signer(
-                    ctx.accounts.token_program.to_account_info(),
+                    ctx.accounts.token_program.key(),
                     Transfer {
                         from:      ctx.accounts.vault.to_account_info(),
                         to:        ctx.accounts.player_b_ata.to_account_info(),
@@ -218,7 +218,7 @@ pub mod raise_gg {
         // Close empty vault — rent back to authority
         token::close_account(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 CloseAccount {
                     account:     ctx.accounts.vault.to_account_info(),
                     destination: ctx.accounts.authority.to_account_info(),

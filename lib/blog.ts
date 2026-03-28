@@ -1,27 +1,29 @@
 export type BlogPost = {
-  slug:        string
-  title:       string
-  description: string
-  tag:         string
-  publishedAt: string
-  readTime:    number // minutes
-  content:     string // HTML
+  slug:         string
+  title:        string
+  description:  string
+  tag:          string
+  publishedAt:  string
+  readTime:     number // minutes
+  content:      string // HTML
+  relatedLinks?: { href: string; label: string }[]
 }
 
 export const BLOG_POSTS: BlogPost[] = [
   {
-    slug:        'how-staking-works-raisegg',
-    title:       'How Staking Works on RaiseGG',
-    description: 'A full breakdown of how RaiseGG handles stake matches — from depositing USDC to receiving your payout in seconds.',
-    tag:         'Guide',
-    publishedAt: '2025-09-01',
-    readTime:    5,
+    slug:         'how-staking-works-raisegg',
+    title:        'How Staking Works on RaiseGG',
+    description:  'A full breakdown of how RaiseGG handles stake matches — from depositing USDC or USDT to receiving your payout in seconds.',
+    tag:          'Guide',
+    publishedAt:  '2025-09-01',
+    readTime:     5,
+    relatedLinks: [{ href: '/how-it-works', label: 'How It Works' }, { href: '/play', label: 'Find a Match' }],
     content: `
       <p>RaiseGG is built on a simple idea: when two players disagree about who would win, money should be on the line — and it should be settled on the server, not in someone's PayPal account.</p>
       <h2>The Flow</h2>
       <ol>
         <li><strong>Connect Steam</strong> — we verify your account age, VAC status, and hours to confirm you're a legitimate player.</li>
-        <li><strong>Deposit USDC</strong> — transfer USDC from your Phantom or Solflare wallet to your RaiseGG balance. Funds sit in a Solana smart contract at all times.</li>
+        <li><strong>Deposit USDC or USDT</strong> — transfer USDC or USDT from your Phantom or Solflare wallet to your RaiseGG balance. Funds sit in a Solana smart contract at all times.</li>
         <li><strong>Create a Match</strong> — set your game, format, and stake. Your funds lock into a vault PDA the moment you confirm.</li>
         <li><strong>Opponent Joins</strong> — they deposit equal stake. The contract now holds both players' funds — neither side can touch them.</li>
         <li><strong>Play</strong> — for Dota 2, submit the match ID after the game. For CS2, results are recorded automatically from our game server.</li>
@@ -34,12 +36,13 @@ export const BLOG_POSTS: BlogPost[] = [
     `,
   },
   {
-    slug:        'cs2-1v1-tips-raisegg',
-    title:       'CS2 1v1 Tips: How to Win Your Stake Match',
-    description: 'Practical tips for winning CS2 1v1 stake matches on RaiseGG — map selection, aim warmup, and mental game.',
-    tag:         'CS2',
-    publishedAt: '2025-09-08',
-    readTime:    6,
+    slug:         'cs2-1v1-tips-raisegg',
+    title:        'CS2 1v1 Tips: How to Win Your Stake Match',
+    description:  'Practical tips for winning CS2 1v1 stake matches on RaiseGG — map selection, aim warmup, and mental game.',
+    tag:          'CS2',
+    publishedAt:  '2025-09-08',
+    readTime:     6,
+    relatedLinks: [{ href: '/games/cs2', label: 'CS2 on RaiseGG' }, { href: '/play', label: 'Play Now' }],
     content: `
       <p>A stake 1v1 is different from a ranked match. There's money on the line, it's just two players, and the meta shifts dramatically. Here's how to give yourself the best chance.</p>
       <h2>Map Selection</h2>
@@ -55,12 +58,13 @@ export const BLOG_POSTS: BlogPost[] = [
     `,
   },
   {
-    slug:        'dota2-how-to-submit-match-id',
-    title:       'Dota 2: How to Submit Your Match ID for Payout',
-    description: 'Step-by-step guide to submitting your Dota 2 match ID on RaiseGG and receiving your USDC payout.',
-    tag:         'Dota 2',
-    publishedAt: '2025-09-15',
-    readTime:    3,
+    slug:         'dota2-how-to-submit-match-id',
+    title:        'Dota 2: How to Submit Your Match ID for Payout',
+    description:  'Step-by-step guide to submitting your Dota 2 match ID on RaiseGG and receiving your USDC/USDT payout.',
+    tag:          'Dota 2',
+    publishedAt:  '2025-09-15',
+    readTime:     3,
+    relatedLinks: [{ href: '/games/dota2', label: 'Dota 2 on RaiseGG' }, { href: '/dashboard/matches', label: 'My Matches' }],
     content: `
       <p>Dota 2 results on RaiseGG are verified via Valve's Steam API. Here's how to get paid after a win.</p>
       <h2>Step 1: Find Your Match ID</h2>
@@ -75,18 +79,19 @@ export const BLOG_POSTS: BlogPost[] = [
         <li>The lobby type is valid (not a bot match)</li>
       </ul>
       <h2>Payout Timeline</h2>
-      <p>If verification passes, your USDC payout hits your RaiseGG balance immediately. Withdraw to your wallet anytime — it arrives in under 30 seconds.</p>
+      <p>If verification passes, your USDC or USDT payout hits your RaiseGG balance immediately. Withdraw to your wallet anytime — it arrives in under 30 seconds.</p>
       <h2>What If It Fails?</h2>
       <p>If the verification fails, you'll see an error explaining why. If you believe it's a bug, raise a dispute from the match page and our team will review within 24 hours.</p>
     `,
   },
   {
-    slug:        'what-is-deadlock-valve',
-    title:       'What is Deadlock? Valve\'s New Hero Shooter Explained',
-    description: 'A quick introduction to Deadlock, Valve\'s newest game — and why RaiseGG is the first stake platform to support it.',
-    tag:         'Deadlock',
-    publishedAt: '2025-09-22',
-    readTime:    4,
+    slug:         'what-is-deadlock-valve',
+    title:        'What is Deadlock? Valve\'s New Hero Shooter Explained',
+    description:  'A quick introduction to Deadlock, Valve\'s newest game — and why RaiseGG is the first stake platform to support it.',
+    tag:          'Deadlock',
+    publishedAt:  '2025-09-22',
+    readTime:     4,
+    relatedLinks: [{ href: '/games/deadlock', label: 'Deadlock on RaiseGG' }, { href: '/play', label: 'Play Now' }],
     content: `
       <p>Deadlock is Valve's third major multiplayer game after CS and Dota 2. Released in early access in 2024, it blends MOBA mechanics with a third-person shooter — think Dota 2 lanes with CS2-level gunplay.</p>
       <h2>The Basics</h2>
@@ -98,12 +103,13 @@ export const BLOG_POSTS: BlogPost[] = [
     `,
   },
   {
-    slug:        'why-usdc-solana-for-gaming',
-    title:       'Why We Use USDC on Solana — Not PayPal, Not ETH',
-    description: 'The technical and practical reasons RaiseGG uses Solana + USDC instead of traditional payment methods or Ethereum.',
-    tag:         'Tech',
-    publishedAt: '2025-09-29',
-    readTime:    5,
+    slug:         'why-usdc-solana-for-gaming',
+    title:        'Why We Use USDC on Solana — Not PayPal, Not ETH',
+    description:  'The technical and practical reasons RaiseGG uses Solana + USDC instead of traditional payment methods or Ethereum.',
+    tag:          'Tech',
+    publishedAt:  '2025-09-29',
+    readTime:     5,
+    relatedLinks: [{ href: '/how-it-works', label: 'How It Works' }, { href: '/dashboard/wallet', label: 'Wallet' }],
     content: `
       <p>When we built RaiseGG, we had a choice: credit cards, PayPal, Ethereum, or Solana. Here's why we picked Solana with USDC — and why it matters for you as a player.</p>
       <h2>PayPal & Cards: The Problem</h2>
@@ -129,12 +135,12 @@ export const BLOG_POSTS: BlogPost[] = [
       <p>Your RaiseGG ELO isn't just a number — it determines who you get matched against, what stake tiers you can access, and your position on the regional leaderboard. Here's how the system works.</p>
       <h2>The Six Tiers</h2>
       <ul>
-        <li><strong>Bronze</strong> — 0–999 ELO. New players start here.</li>
-        <li><strong>Silver</strong> — 1000–1249</li>
-        <li><strong>Gold</strong> — 1250–1499</li>
-        <li><strong>Platinum</strong> — 1500–1749</li>
-        <li><strong>Diamond</strong> — 1750–1999</li>
-        <li><strong>Apex</strong> — 2000+. The top of the leaderboard.</li>
+        <li><strong>Bronze</strong> — 0–899 ELO</li>
+        <li><strong>Silver</strong> — 900–1099. New players start at 1000 (Silver).</li>
+        <li><strong>Gold</strong> — 1100–1299</li>
+        <li><strong>Platinum</strong> — 1300–1499</li>
+        <li><strong>Diamond</strong> — 1500–1699</li>
+        <li><strong>Apex</strong> — 1700+. The top of the leaderboard.</li>
       </ul>
       <h2>How ELO Changes After a Match</h2>
       <p>We use a modified Elo formula where K (the maximum points per game) scales with your current tier. Lower-ranked players gain and lose more per match — this lets skilled players climb faster. Higher-ranked players have smaller swings, keeping the top of the ladder stable.</p>
@@ -146,61 +152,64 @@ export const BLOG_POSTS: BlogPost[] = [
     `,
   },
   {
-    slug:        'cs2-stake-platform-turkey',
-    title:       'CS2 Stake Matches for Turkish Players — Full Guide',
-    description: 'How Turkish CS2 players can join RaiseGG, deposit USDC, and start winning stake matches with fast Solana payouts.',
-    tag:         'CS2',
-    publishedAt: '2025-10-13',
-    readTime:    5,
+    slug:         'cs2-stake-platform-turkey',
+    title:        'CS2 Stake Matches for Turkish Players — Full Guide',
+    description:  'How Turkish CS2 players can join RaiseGG, deposit USDC or USDT, and start winning stake matches with fast Solana payouts.',
+    tag:          'CS2',
+    publishedAt:  '2025-10-13',
+    readTime:     5,
+    relatedLinks: [{ href: '/cs2-platform-turkey', label: 'CS2 in Turkey' }, { href: '/play', label: 'Play Now' }],
     content: `
       <p>Turkey has one of the most active CS2 player bases in the world — and almost no legitimate stake platform built for it. RaiseGG fills that gap. Here's everything Turkish players need to know.</p>
       <h2>Why Turkish Players Use RaiseGG</h2>
       <p>Traditional esports betting sites in Turkey are restricted or require identity verification that many players don't want to complete. RaiseGG is different — it's skill-based competition, not betting. You're not wagering on someone else's outcome; you're competing directly.</p>
       <p>No ID required. Just a Steam account and a Phantom wallet.</p>
-      <h2>Getting USDC in Turkey</h2>
-      <p>You can buy USDC on Solana through Binance, OKX or any major exchange that serves Turkey. Transfer from your exchange to a Phantom wallet, then deposit to RaiseGG. The whole process takes about 5 minutes.</p>
+      <h2>Getting USDC or USDT in Turkey</h2>
+      <p>You can buy USDC or USDT on Solana through Binance, OKX or any major exchange that serves Turkey. Transfer from your exchange to a Phantom wallet, then deposit to RaiseGG. The whole process takes about 5 minutes.</p>
       <h2>Turkish CS2 Scene on RaiseGG</h2>
       <p>We specifically serve the Turkey and Caucasus region — you'll find opponents at your skill level with no ping disadvantage. Our servers are located to minimise latency for the region.</p>
       <h2>Language Support</h2>
-      <p>The platform is in English, but our Discord has a dedicated Turkish community channel. Join at discord.gg/raisegg.</p>
+      <p>The platform is in English, but our Telegram has a dedicated Turkish community channel. Join at t.me/raisegg.</p>
     `,
   },
   {
-    slug:        'cs2-stake-platform-georgia',
-    title:       'CS2 Stake Matches in Georgia — RaiseGG Guide',
-    description: 'Georgian CS2 players: how to register, deposit USDC, and compete in stake matches on RaiseGG. Step-by-step.',
-    tag:         'CS2',
-    publishedAt: '2025-10-20',
-    readTime:    4,
+    slug:         'cs2-stake-platform-georgia',
+    title:        'CS2 Stake Matches in Georgia — RaiseGG Guide',
+    description:  'Georgian CS2 players: how to register, deposit USDC or USDT, and compete in stake matches on RaiseGG. Step-by-step.',
+    tag:          'CS2',
+    publishedAt:  '2025-10-20',
+    readTime:     4,
+    relatedLinks: [{ href: '/cs2-platform-georgia', label: 'CS2 in Georgia' }, { href: '/play', label: 'Play Now' }],
     content: `
       <p>Georgia's competitive gaming scene is growing fast — and RaiseGG was built in part for it. Here's how Georgian players get started.</p>
       <h2>Registration</h2>
       <p>Click "Connect Steam" and authenticate with your Steam account. That's it — no email, no ID, no waiting. Your profile is created instantly and your ELO starts at 1000 (Silver).</p>
-      <h2>Depositing USDC in Georgia</h2>
-      <p>USDC on Solana is available through Binance, which accepts GEL via local payment methods. Buy USDC, send it to your Phantom wallet, then deposit to your RaiseGG balance. Minimum deposit is $5.</p>
+      <h2>Depositing USDC or USDT in Georgia</h2>
+      <p>USDC and USDT on Solana are available through Binance, which accepts GEL via local payment methods. Buy USDC or USDT, send it to your Phantom wallet, then deposit to your RaiseGG balance. Minimum deposit is $5.</p>
       <h2>Playing Your First Match</h2>
       <p>Go to the Play page, set your stake (start small — $2–5 is common for new players), select CS2 and your preferred format, and create the lobby. When an opponent joins, you'll get a real-time notification.</p>
       <h2>Withdrawing Winnings</h2>
-      <p>Won a match? Your USDC balance updates automatically. Withdraw anytime from your Wallet page — it hits your Phantom wallet in under 30 seconds.</p>
+      <p>Won a match? Your USDC or USDT balance updates automatically. Withdraw anytime from your Wallet page — it hits your Phantom wallet in under 30 seconds.</p>
       <h2>Community</h2>
-      <p>Join our Discord (discord.gg/raisegg) to find Georgian opponents, discuss maps, and get help from the team.</p>
+      <p>Join our Telegram (t.me/raisegg) to find Georgian opponents, discuss maps, and get help from the team.</p>
     `,
   },
   {
-    slug:        'how-to-get-usdc-solana-wallet',
-    title:       'How to Get a Solana Wallet and USDC for RaiseGG',
-    description: 'Complete beginner\'s guide to setting up Phantom wallet and buying USDC on Solana to fund your RaiseGG account.',
-    tag:         'Guide',
-    publishedAt: '2025-10-27',
-    readTime:    6,
+    slug:         'how-to-get-usdc-solana-wallet',
+    title:        'How to Get a Solana Wallet and USDC/USDT for RaiseGG',
+    description:  'Complete beginner\'s guide to setting up Phantom wallet and buying USDC or USDT on Solana to fund your RaiseGG account.',
+    tag:          'Guide',
+    publishedAt:  '2025-10-27',
+    readTime:     6,
+    relatedLinks: [{ href: '/dashboard/wallet', label: 'Wallet' }, { href: '/how-it-works', label: 'How It Works' }],
     content: `
-      <p>Never used crypto before? Don't worry — getting a wallet and USDC takes about 10 minutes. Here's the step-by-step.</p>
+      <p>Never used crypto before? Don't worry — getting a wallet and USDC or USDT takes about 10 minutes. Here's the step-by-step.</p>
       <h2>Step 1: Install Phantom Wallet</h2>
       <p>Phantom is the most popular Solana wallet. Install the browser extension from phantom.app (Chrome, Firefox, Brave, Edge). Create a new wallet and <strong>write down your seed phrase on paper</strong> — if you lose it, your funds are gone forever.</p>
-      <h2>Step 2: Buy USDC</h2>
-      <p>You need USDC on the Solana network (not Ethereum). You can get it from:</p>
+      <h2>Step 2: Buy USDC or USDT</h2>
+      <p>You need USDC or USDT on the Solana network (not Ethereum). You can get it from:</p>
       <ul>
-        <li><strong>Binance</strong> — available in most countries. Buy USDC and withdraw to your Phantom address on the Solana network.</li>
+        <li><strong>Binance</strong> — available in most countries. Buy USDC or USDT and withdraw to your Phantom address on the Solana network.</li>
         <li><strong>OKX</strong> — similar process, widely available in the Caucasus and Turkey.</li>
         <li><strong>Coinbase</strong> — available in some countries, has a native Solana USDC option.</li>
       </ul>
@@ -210,20 +219,21 @@ export const BLOG_POSTS: BlogPost[] = [
       <h2>How Much Should I Start With?</h2>
       <p>$10–$20 is plenty to start. You can enter matches for as little as $2. Don't deposit more than you're comfortable competing with.</p>
       <h2>Is It Safe?</h2>
-      <p>Your USDC is held in a smart contract vault — not in RaiseGG's bank account. The contract code determines who gets paid; we can't take your money without a verified match result.</p>
+      <p>Your USDC or USDT is held in a smart contract vault — not in RaiseGG's bank account. The contract code determines who gets paid; we can't take your money without a verified match result.</p>
     `,
   },
   {
-    slug:        'dota2-stake-matches-armenia-azerbaijan',
-    title:       'Dota 2 Stake Matches for Armenian and Azerbaijani Players',
-    description: 'How players from Armenia and Azerbaijan can compete in Dota 2 stake matches on RaiseGG and win USDC.',
-    tag:         'Dota 2',
-    publishedAt: '2025-11-03',
-    readTime:    4,
+    slug:         'dota2-stake-matches-armenia-azerbaijan',
+    title:        'Dota 2 Stake Matches for Armenian and Azerbaijani Players',
+    description:  'How players from Armenia and Azerbaijan can compete in Dota 2 stake matches on RaiseGG and win USDC or USDT.',
+    tag:          'Dota 2',
+    publishedAt:  '2025-11-03',
+    readTime:     4,
+    relatedLinks: [{ href: '/dota2-platform-armenia', label: 'Dota 2 in Armenia' }, { href: '/games/dota2', label: 'Dota 2' }],
     content: `
       <p>The Caucasus has some of the world's most dedicated Dota 2 players — and almost no platform that lets you profit from your skills. RaiseGG changes that for Armenia and Azerbaijan.</p>
       <h2>Getting Started</h2>
-      <p>You need a Steam account with at least 100 hours of Dota 2. Connect Steam on RaiseGG, set up your Phantom wallet, and deposit USDC. The registration process takes under 5 minutes.</p>
+      <p>You need a Steam account with at least 100 hours of Dota 2. Connect Steam on RaiseGG, set up your Phantom wallet, and deposit USDC or USDT. The registration process takes under 5 minutes.</p>
       <h2>How Dota 2 Matches Work on RaiseGG</h2>
       <p>Unlike CS2 (which uses automatic server verification), Dota 2 matches are verified by match ID submission. After your match ends, you submit the Dota 2 match ID in your active match page, and our system verifies the result via Steam API within seconds.</p>
       <h2>What Makes a Valid Match?</h2>
@@ -238,16 +248,17 @@ export const BLOG_POSTS: BlogPost[] = [
     `,
   },
   {
-    slug:        'raisegg-smart-contract-security',
-    title:       'How RaiseGG\'s Smart Contract Keeps Your Funds Safe',
-    description: 'A plain-English explanation of how the RaiseGG Anchor program works — and why no one, not even us, can take your stake.',
-    tag:         'Tech',
-    publishedAt: '2025-11-10',
-    readTime:    5,
+    slug:         'raisegg-smart-contract-security',
+    title:        'How RaiseGG\'s Smart Contract Keeps Your Funds Safe',
+    description:  'A plain-English explanation of how the RaiseGG Anchor program works — and why no one, not even us, can take your stake.',
+    tag:          'Tech',
+    publishedAt:  '2025-11-10',
+    readTime:     5,
+    relatedLinks: [{ href: '/about', label: 'About RaiseGG' }, { href: '/dashboard/wallet', label: 'Wallet' }],
     content: `
       <p>When you stake $20 on a match, where does that money actually go? The answer is: a Solana smart contract vault that neither we nor you can access until a verified result arrives.</p>
       <h2>What is a PDA Vault?</h2>
-      <p>A PDA (Program Derived Address) is an on-chain account controlled entirely by program logic — not by any private key. When you create a match, your USDC is transferred to a PDA vault specific to that match. The vault address is deterministic (derived from the match ID and program ID), so anyone can verify it exists on-chain.</p>
+      <p>A PDA (Program Derived Address) is an on-chain account controlled entirely by program logic — not by any private key. When you create a match, your USDC or USDT is transferred to a PDA vault specific to that match. The vault address is deterministic (derived from the match ID and program ID), so anyone can verify it exists on-chain.</p>
       <h2>Who Can Release the Funds?</h2>
       <p>Only the smart contract's <code>resolve_match</code> instruction can release funds — and it only fires when called by the RaiseGG authority wallet with a valid winner. The authority wallet is controlled by our backend, but the contract enforces the rules: 90% to the winner's wallet, 10% to the treasury. There's no "admin drain" function.</p>
       <h2>What If RaiseGG Goes Down?</h2>
@@ -257,12 +268,13 @@ export const BLOG_POSTS: BlogPost[] = [
     `,
   },
   {
-    slug:        'first-tournament-raisegg',
-    title:       'How Tournaments Work on RaiseGG — Entry, Format, Prizes',
-    description: 'Everything you need to know about competing in RaiseGG tournaments — from entry requirements to prize pool distribution.',
-    tag:         'Guide',
-    publishedAt: '2025-11-17',
-    readTime:    4,
+    slug:         'first-tournament-raisegg',
+    title:        'How Tournaments Work on RaiseGG — Entry, Format, Prizes',
+    description:  'Everything you need to know about competing in RaiseGG tournaments — from entry requirements to prize pool distribution.',
+    tag:          'Guide',
+    publishedAt:  '2025-11-17',
+    readTime:     4,
+    relatedLinks: [{ href: '/tournaments', label: 'Tournaments' }, { href: '/play', label: 'Play Now' }],
     content: `
       <p>Beyond 1v1 stake matches, RaiseGG hosts structured tournaments with prize pools funded by entry fees and platform contributions. Here's how to compete.</p>
       <h2>Finding Tournaments</h2>
@@ -278,12 +290,60 @@ export const BLOG_POSTS: BlogPost[] = [
     `,
   },
   {
-    slug:        'raisegg-vs-faceit-vs-esea',
-    title:       'RaiseGG vs FACEIT vs ESEA — What\'s the Difference?',
-    description: 'How RaiseGG compares to FACEIT and ESEA for competitive CS2 players — and why staking adds a dimension neither platform has.',
-    tag:         'CS2',
-    publishedAt: '2025-11-24',
-    readTime:    5,
+    slug:         'cs2-dota2-stake-balkans',
+    title:        'CS2 & Dota 2 Stake Matches for Balkan Players — Full Guide',
+    description:  'How players from Serbia, Croatia, Bosnia, Montenegro, Albania and North Macedonia can win USDC or USDT on RaiseGG. Regional guide.',
+    tag:          'Guide',
+    publishedAt:  '2025-12-01',
+    readTime:     5,
+    relatedLinks: [{ href: '/cs2-platform-serbia', label: 'CS2 in Serbia' }, { href: '/play', label: 'Play Now' }],
+    content: `
+      <p>The Western Balkans has one of the highest concentrations of competitive CS2 and Dota 2 talent per capita in Europe — and almost no platform that rewards that skill with real money. RaiseGG was built to change that.</p>
+      <h2>Who Is RaiseGG For in the Balkans?</h2>
+      <p>Whether you're in Belgrade, Zagreb, Sarajevo, Podgorica, Tirana, Skopje, or anywhere in the region, RaiseGG gives you access to USDC/USDT stake matches for CS2, Dota 2 and Deadlock. No third-party payment processors. No country-specific restrictions. Just a Steam account and a Phantom wallet.</p>
+      <h2>Getting USDC or USDT in the Balkans</h2>
+      <p>USDC and USDT on Solana are available through Binance, OKX and most major exchanges that operate in the region. The process: create an exchange account, buy USDC or USDT, withdraw to Solana network into a Phantom wallet, then deposit to RaiseGG. Total time: under 10 minutes.</p>
+      <h2>Playing CS2 vs Dota 2</h2>
+      <p><strong>CS2:</strong> Matches are played on RaiseGG dedicated servers — you'll receive a connect string after both players are ready. Results are recorded automatically. No match ID required.</p>
+      <p><strong>Dota 2:</strong> Play your match in the Dota 2 client (EU West or EU East server for lowest ping). After the game ends, paste the match ID into your active match on RaiseGG. Payout follows within seconds of verification.</p>
+      <h2>Community</h2>
+      <p>Our Telegram has a Balkan community channel where you can find opponents, discuss meta, and get support. Join at t.me/raisegg.</p>
+    `,
+  },
+  {
+    slug:         'cs2-stake-platform-central-asia',
+    title:        'CS2 Stake Matches in Central Asia — Kazakhstan, Uzbekistan & Beyond',
+    description:  'A guide for CS2 players in Kazakhstan, Uzbekistan, Kyrgyzstan and Tajikistan on how to join RaiseGG and compete for real USDC/USDT.',
+    tag:          'CS2',
+    publishedAt:  '2025-12-08',
+    readTime:     4,
+    relatedLinks: [{ href: '/cs2-platform-kazakhstan', label: 'CS2 in Kazakhstan' }, { href: '/play', label: 'Play Now' }],
+    content: `
+      <p>Central Asia has a large and growing competitive gaming scene — but almost no financial infrastructure built around it. RaiseGG opens stake competition to players across Kazakhstan, Uzbekistan, Kyrgyzstan, Tajikistan, and Turkmenistan.</p>
+      <h2>Why Central Asian Players Choose RaiseGG</h2>
+      <p>Most Western esports platforms require payment methods that aren't widely available in Central Asia. RaiseGG only needs a Steam account and USDC or USDT on Solana — both globally accessible. Binance is widely used across the region and supports easy on-ramps for both.</p>
+      <h2>Server Recommendations</h2>
+      <p>For CS2 stake matches, we recommend testing your ping to our servers before committing to a high-stakes match. Players in Kazakhstan typically get best results on CIS-region servers. Our dedicated CS2 servers for stake matches aim to minimise latency for all served regions.</p>
+      <h2>Depositing from Central Asia</h2>
+      <ol>
+        <li>Create a Binance account (available in KZ, UZ, KG, TJ)</li>
+        <li>Buy USDC or USDT — select Solana as the withdrawal network</li>
+        <li>Install Phantom wallet (phantom.app)</li>
+        <li>Withdraw USDC or USDT from Binance to your Phantom address</li>
+        <li>Connect Phantom to RaiseGG and deposit from the Wallet page</li>
+      </ol>
+      <h2>Minimum Stake</h2>
+      <p>You can start with as little as $2 per match. New players start at 1000 ELO (Silver tier) — the minimum stake for Silver is low, making it easy to start without risk exposure.</p>
+    `,
+  },
+  {
+    slug:         'raisegg-vs-faceit-vs-esea',
+    title:        'RaiseGG vs FACEIT vs ESEA — What\'s the Difference?',
+    description:  'How RaiseGG compares to FACEIT and ESEA for competitive CS2 players — and why staking adds a dimension neither platform has.',
+    tag:          'CS2',
+    publishedAt:  '2025-11-24',
+    readTime:     5,
+    relatedLinks: [{ href: '/games/cs2', label: 'CS2 on RaiseGG' }, { href: '/play', label: 'Play Now' }],
     content: `
       <p>If you're a serious CS2 player, you've heard of FACEIT and ESEA. Here's how RaiseGG fits alongside them — and what it offers that they don't.</p>
       <h2>FACEIT</h2>
@@ -294,7 +354,7 @@ export const BLOG_POSTS: BlogPost[] = [
       <p>RaiseGG isn't trying to replace FACEIT's matchmaking volume. Instead, it adds a stake layer: when you want to put something on the line against a specific opponent, RaiseGG is where you do it. The combination that many players use: FACEIT for practice volume, RaiseGG when they want real stakes.</p>
       <h2>Key Differences</h2>
       <ul>
-        <li><strong>Financial rewards</strong> — only RaiseGG pays in real USDC</li>
+        <li><strong>Financial rewards</strong> — only RaiseGG pays in real USDC/USDT</li>
         <li><strong>Region focus</strong> — RaiseGG is built for Caucasus, Turkey, and Balkans; FACEIT is global</li>
         <li><strong>Format</strong> — FACEIT is 5v5 matchmaking; RaiseGG is 1v1 stake matches and tournaments</li>
         <li><strong>Account requirements</strong> — RaiseGG requires Steam only; FACEIT requires email + account</li>

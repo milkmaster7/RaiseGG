@@ -14,7 +14,7 @@ export function LiveMatchFeed() {
     async function fetchMatches() {
       const { data } = await supabase
         .from('matches')
-        .select('*, player_a:players!player_a_id(*), player_b:players!player_b_id(*)')
+        .select('*, player_a:players!player_a_id(id,username,avatar_url,cs2_elo,dota2_elo,deadlock_elo,country), player_b:players!player_b_id(id,username,avatar_url,cs2_elo,dota2_elo,deadlock_elo,country)')
         .in('status', ['open', 'locked', 'live'])
         .order('created_at', { ascending: false })
         .limit(10)
@@ -64,7 +64,7 @@ export function LiveMatchFeed() {
   return (
     <div className="space-y-3">
       {matches.map((match) => (
-        <MatchCard key={match.id} match={match} showJoin />
+        <MatchCard key={match.id} match={match} />
       ))}
     </div>
   )

@@ -13,6 +13,11 @@ export const metadata: Metadata = {
     url: 'https://raisegg.gg/about',
     images: [{ url: '/api/og?title=About+RaiseGG&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About RaiseGG.gg',
+    images: ['/api/og?title=About+RaiseGG&sub=RaiseGG.gg&color=7b61ff'],
+  },
 }
 
 const VALUES = [
@@ -91,8 +96,8 @@ export default function AboutPage() {
             We looked at Ethereum (too expensive — gas fees would eat small stakes), PayPal and
             Stripe (don't support this use case in most of our target countries), and traditional
             banking (excludes large parts of our player base). Solana gives us sub-cent transaction
-            fees, 400ms finality, and USDC — a dollar-pegged stablecoin that means your $10 stake
-            is worth exactly $10, not subject to SOL price swings.
+            fees, 400ms finality, and stablecoins (USDC and USDT) — dollar-pegged tokens that mean
+            your $10 stake is worth exactly $10, not subject to SOL price swings.
           </p>
 
           <h2 className="font-orbitron text-2xl font-bold text-white mt-10">The Platform Fee</h2>
@@ -103,10 +108,98 @@ export default function AboutPage() {
           </p>
         </div>
 
+        {/* Team */}
+        <div className="mb-16">
+          <h2 className="font-orbitron text-2xl font-bold text-white mb-6">The Team</h2>
+          <div className="card flex gap-5 items-start">
+            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-accent-purple/20 border-2 border-accent-purple/40 flex items-center justify-center">
+              <span className="font-orbitron font-black text-accent-purple text-lg">RG</span>
+            </div>
+            <div>
+              <div className="font-orbitron font-bold text-white text-base mb-1">The RaiseGG Team</div>
+              <p className="text-muted text-sm leading-relaxed">
+                Building RaiseGG to give Caucasus, Turkey and Balkans players a platform that rewards skill with real money. More details coming soon.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Smart Contract Transparency */}
+        <div className="card mb-8">
+          <h2 className="font-orbitron text-xl font-bold text-white mb-4">Smart Contract Transparency</h2>
+          <p className="text-muted text-sm leading-relaxed mb-4">
+            RaiseGG runs on a publicly verifiable Solana smart contract. All vaults and payouts can be inspected on-chain by anyone.
+          </p>
+          <div className="space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+              <span className="text-xs text-muted uppercase tracking-wider font-semibold w-24 flex-shrink-0">Program</span>
+              <a
+                href="https://solscan.io/account/BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-accent-purple hover:text-accent-cyan transition-colors break-all"
+              >
+                BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv ↗
+              </a>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+              <span className="text-xs text-muted uppercase tracking-wider font-semibold w-24 flex-shrink-0">Treasury</span>
+              <a
+                href="https://solscan.io/account/CT7qFYnCwDgDquTxAL8eBQqBvDBqUJemSz3KEZvqc2HW"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-accent-purple hover:text-accent-cyan transition-colors break-all"
+              >
+                CT7qFYnCwDgDquTxAL8eBQqBvDBqUJemSz3KEZvqc2HW ↗
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Community */}
+        <div className="mb-8">
+          <h2 className="font-orbitron text-2xl font-bold text-white mb-4">Community</h2>
+          <p className="text-muted text-sm mb-6 leading-relaxed">
+            Join 500+ players on our Telegram. Get match alerts, find opponents, talk strategy.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4 mb-6">
+            <a
+              href="https://t.me/raisegg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card flex items-center gap-4 hover:border-accent-purple/50 transition-colors group"
+            >
+              <span className="text-2xl">✈️</span>
+              <div>
+                <div className="font-orbitron font-bold text-white text-sm group-hover:text-gradient transition-all">Telegram</div>
+                <div className="text-xs text-muted">t.me/raisegg · 500+ players</div>
+              </div>
+            </a>
+            <a
+              href="https://twitter.com/RaiseGG"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card flex items-center gap-4 hover:border-accent-purple/50 transition-colors group"
+            >
+              <span className="text-2xl">𝕏</span>
+              <div>
+                <div className="font-orbitron font-bold text-white text-sm group-hover:text-gradient transition-all">Twitter / X</div>
+                <div className="text-xs text-muted">@RaiseGG · Updates &amp; announcements</div>
+              </div>
+            </a>
+          </div>
+          <p className="text-xs text-muted">
+            Press &amp; partnerships:{' '}
+            <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:text-accent-cyan transition-colors">
+              hello@raisegg.gg
+            </a>
+          </p>
+        </div>
+
         {/* CTA */}
         <div className="card text-center py-10">
           <h2 className="font-orbitron text-2xl font-bold text-white mb-3">Ready to compete?</h2>
-          <p className="text-muted text-sm mb-6">Connect Steam, deposit USDC, and play your first match in under 5 minutes.</p>
+          <p className="text-muted text-sm mb-6">Connect Steam, deposit USDC or USDT, and play your first match in under 5 minutes.</p>
           <div className="flex gap-3 justify-center flex-wrap">
             <a href="/api/auth/steam" className="btn-primary px-6 py-3">
               Connect Steam

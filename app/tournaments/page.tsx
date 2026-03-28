@@ -6,18 +6,18 @@ import { Trophy, Users, Calendar, DollarSign } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Tournaments — Compete for Prize Pools',
-  description: 'Browse upcoming CS2, Dota 2 and Deadlock tournaments on RaiseGG.gg. Open registration, USDC prize pools. Filter by game, date and buy-in.',
+  description: 'Browse upcoming CS2, Dota 2 and Deadlock tournaments on RaiseGG.gg. Open registration, USDC/USDT prize pools. Filter by game, date and buy-in.',
   alternates: { canonical: 'https://raisegg.gg/tournaments' },
   openGraph: {
     title: 'RaiseGG.gg – Tournaments',
-    description: 'CS2, Dota 2 & Deadlock tournaments. USDC prize pools.',
+    description: 'CS2, Dota 2 & Deadlock tournaments. USDC/USDT prize pools.',
     url: 'https://raisegg.gg/tournaments',
-    images: [{ url: '/api/og?title=Tournaments&sub=USDC+Prize+Pools&color=7b61ff', width: 1200, height: 630 }],
+    images: [{ url: '/api/og?title=Tournaments&sub=USDC%2FUSDT+Prize+Pools&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'RaiseGG.gg – Tournaments',
-    images: ['/api/og?title=Tournaments&sub=USDC+Prize+Pools&color=7b61ff'],
+    images: ['/api/og?title=Tournaments&sub=USDC%2FUSDT+Prize+Pools&color=7b61ff'],
   },
 }
 
@@ -69,7 +69,7 @@ export default async function TournamentsPage() {
             <h1 className="font-orbitron text-4xl font-black mb-2">
               <span className="text-gradient">Tournaments</span>
             </h1>
-            <p className="text-muted">Compete for USDC prize pools across CS2, Dota 2 and Deadlock.</p>
+            <p className="text-muted">Compete for USDC/USDT prize pools across CS2, Dota 2 and Deadlock.</p>
           </div>
         </div>
 

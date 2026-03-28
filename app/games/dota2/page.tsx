@@ -6,12 +6,12 @@ import { LeaderboardTable } from '@/components/ui/LeaderboardTable'
 import { CheckCircle, Clock, Zap, Globe } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Dota 2 Stake Matches — Compete & Win USDC',
-  description: 'Stake USDC on Dota 2 matches on RaiseGG.gg. Automatic result verification via Steam API. The competitive Dota 2 stake platform for the Caucasus, Turkey and Balkans.',
+  title: 'Dota 2 Stake Matches — Compete & Win USDC/USDT',
+  description: 'Stake USDC or USDT on Dota 2 matches on RaiseGG.gg. Automatic result verification via Steam API. The competitive Dota 2 stake platform for the Caucasus, Turkey and Balkans.',
   alternates: { canonical: 'https://raisegg.gg/games/dota2' },
   openGraph: {
     title: 'RaiseGG.gg – Dota 2 Stake Matches',
-    description: 'Dota 2 competitive stake lobbies. Win real USDC.',
+    description: 'Dota 2 competitive stake lobbies. Win real USDC/USDT.',
     url: 'https://raisegg.gg/games/dota2',
     images: [{ url: '/api/og?title=Dota+2+Stake+Matches&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
   },
@@ -88,7 +88,7 @@ export default async function Dota2Page() {
           <h2 className="section-title text-center mb-10">How Dota 2 Stakes Work</h2>
           <div className="space-y-4">
             {[
-              ['01', 'Create a lobby on RaiseGG',   'Set your stake. USDC locks into the Solana smart contract. Wait for an opponent.'],
+              ['01', 'Create a lobby on RaiseGG',   'Set your stake. USDC/USDT locks into the Solana smart contract. Wait for an opponent.'],
               ['02', 'Opponent joins',               'They deposit equal stake. The contract holds both sides — neither can withdraw.'],
               ['03', 'Play your Dota 2 match',       'Play in any lobby type. The match must last at least 10 minutes to count.'],
               ['04', 'Submit the match ID',          'After the game, copy the match ID from Dota 2 and paste it on RaiseGG. We verify via Steam API.'],

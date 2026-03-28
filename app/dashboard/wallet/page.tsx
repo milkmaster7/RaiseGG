@@ -6,7 +6,7 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { PublicKey, Transaction } from '@solana/web3.js'
 import { getAssociatedTokenAddress, createTransferInstruction } from '@solana/spl-token'
 import { breadcrumbSchema } from '@/lib/schemas'
-import { USDC_MINT_SOLANA } from '@/lib/escrow'
+import { getMintForCurrency, type StakeCurrency } from '@/lib/escrow'
 import { ArrowDownToLine, ArrowUpFromLine, Clock, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
@@ -37,6 +37,8 @@ export default function WalletPage() {
   const { connected, publicKey, signTransaction } = useWallet()
 
   const [balance, setBalance]                   = useState<number | null>(null)
+  const [usdtBalance, setUsdtBalance]           = useState<number | null>(null)
+  const [currency, setCurrency]                 = useState<StakeCurrency>('usdc')
   const [transactions, setTransactions]         = useState<TxRecord[]>([])
   const [depositAmount, setDepositAmount]       = useState('')
   const [withdrawAmount, setWithdrawAmount]     = useState('')
@@ -63,6 +65,7 @@ export default function WalletPage() {
       if (!res.ok) return
       const data = await res.json()
       setBalance(data.balance ?? 0)
+      setUsdtBalance(data.usdtBalance ?? 0)
       setTransactions(data.transactions ?? [])
     } finally {
       setBalanceLoading(false)
@@ -70,8 +73,18 @@ export default function WalletPage() {
   }, [])
 
   useEffect(() => {
-    if (connected) fetchBalance()
-  }, [connected, fetchBalance])
+    if (connected) {
+      fetchBalance()
+      // Auto-save wallet address when connected
+      if (publicKey) {
+        fetch('/api/wallet/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ walletAddress: publicKey.toBase58() }),
+        }).catch(() => {})
+      }
+    }
+  }, [connected, publicKey, fetchBalance])
 
   async function handleDeposit() {
     if (!publicKey || !signTransaction || !depositAmount) return
@@ -81,9 +94,10 @@ export default function WalletPage() {
     setLoading(true)
     try {
       const treasury = new PublicKey(process.env.NEXT_PUBLIC_TREASURY_SOL ?? '')
-      const fromAta  = await getAssociatedTokenAddress(USDC_MINT_SOLANA, publicKey)
-      const toAta    = await getAssociatedTokenAddress(USDC_MINT_SOLANA, treasury)
-      const lamports = Math.round(amount * 1_000_000) // USDC 6 decimals
+      const mint     = getMintForCurrency(currency)
+      const fromAta  = await getAssociatedTokenAddress(mint, publicKey)
+      const toAta    = await getAssociatedTokenAddress(mint, treasury)
+      const lamports = Math.round(amount * 1_000_000) // 6 decimals for both USDC and USDT
 
       const { blockhash } = await connection.getLatestBlockhash()
       const tx = new Transaction({ recentBlockhash: blockhash, feePayer: publicKey })
@@ -96,11 +110,11 @@ export default function WalletPage() {
       const res = await fetch('/api/wallet/deposit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount, txSignature }),
+        body: JSON.stringify({ amount, txSignature, currency }),
       })
       if (!res.ok) throw new Error((await res.json()).error ?? 'Deposit failed')
 
-      showToast(`Deposited $${amount.toFixed(2)} USDC`, true)
+      showToast(`Deposited $${amount.toFixed(2)} ${currency.toUpperCase()}`, true)
       setDepositAmount('')
       await fetchBalance()
     } catch (err: any) {
@@ -111,10 +125,10 @@ export default function WalletPage() {
   }
 
   async function handleWithdraw() {
-    if (!depositAmount && !withdrawAmount) return
+    if (!withdrawAmount) return
     const amount = parseFloat(withdrawAmount)
     if (isNaN(amount) || amount <= 0) return
-    if (balance !== null && amount > balance) {
+    if (activeBalance !== null && amount > activeBalance) {
       showToast('Insufficient balance', false)
       return
     }
@@ -124,11 +138,11 @@ export default function WalletPage() {
       const res = await fetch('/api/wallet/withdraw', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
+        body: JSON.stringify({ amount, currency }),
       })
       if (!res.ok) throw new Error((await res.json()).error ?? 'Withdraw failed')
 
-      showToast(`Withdrawn $${amount.toFixed(2)} USDC`, true)
+      showToast(`Withdrawn $${amount.toFixed(2)} ${currency.toUpperCase()}`, true)
       setWithdrawAmount('')
       await fetchBalance()
     } catch (err: any) {
@@ -138,10 +152,11 @@ export default function WalletPage() {
     }
   }
 
+  const activeBalance = currency === 'usdt' ? usdtBalance : balance
   const displayBalance = balanceLoading
     ? '…'
-    : balance !== null
-      ? `$${balance.toFixed(2)}`
+    : activeBalance !== null
+      ? `$${activeBalance.toFixed(2)}`
       : '$0.00'
 
   return (
@@ -159,13 +174,31 @@ export default function WalletPage() {
       )}
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="font-orbitron text-3xl font-black mb-2 text-gradient">Wallet</h1>
-        <p className="text-muted text-sm mb-8">Manage your USDC balance on RaiseGG.</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="font-orbitron text-3xl font-black text-gradient">Wallet</h1>
+            <p className="text-muted text-sm mt-1">Deposit and withdraw to stake on RaiseGG.</p>
+          </div>
+          {/* Currency selector */}
+          <div className="flex bg-space-800 border border-border rounded p-1 gap-1 self-start sm:self-auto">
+            {(['usdc', 'usdt'] as StakeCurrency[]).map((c) => (
+              <button
+                key={c}
+                onClick={() => { setCurrency(c); setDepositAmount(''); setWithdrawAmount('') }}
+                className={`px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all ${
+                  currency === c ? 'bg-accent-purple text-white' : 'text-muted hover:text-white'
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Connect wallet prompt */}
         {!connected && (
           <div className="card text-center py-12 mb-8">
-            <p className="text-muted mb-6">Connect your Solana wallet to deposit and withdraw USDC.</p>
+            <p className="text-muted mb-6">Connect your Solana wallet to deposit and withdraw USDC or USDT.</p>
             <WalletMultiButton />
           </div>
         )}
@@ -174,9 +207,19 @@ export default function WalletPage() {
           <>
             {/* Balance card */}
             <div className="card bg-gradient-card mb-8">
-              <div className="text-xs text-muted uppercase tracking-widest mb-2">Platform Balance</div>
+              <div className="text-xs text-muted uppercase tracking-widest mb-2">
+                {currency.toUpperCase()} Balance
+              </div>
               <div className="font-orbitron text-4xl font-black text-gradient mb-1">{displayBalance}</div>
-              <div className="text-xs text-muted">USDC available to stake</div>
+              <div className="text-xs text-muted">{currency.toUpperCase()} available to stake</div>
+              {/* Show the other balance as a hint */}
+              {!balanceLoading && (
+                <div className="mt-3 text-xs text-muted">
+                  {currency === 'usdc'
+                    ? `USDT balance: $${(usdtBalance ?? 0).toFixed(2)}`
+                    : `USDC balance: $${(balance ?? 0).toFixed(2)}`}
+                </div>
+              )}
               {publicKey && (
                 <div className="mt-4 text-xs text-muted font-mono truncate">
                   {publicKey.toString()}
@@ -204,11 +247,11 @@ export default function WalletPage() {
               <div className="card space-y-4">
                 <div className="flex items-center gap-2 mb-2">
                   <ArrowDownToLine className="w-5 h-5 text-accent-cyan" />
-                  <h2 className="font-orbitron font-bold text-white">Deposit USDC</h2>
+                  <h2 className="font-orbitron font-bold text-white">Deposit {currency.toUpperCase()}</h2>
                 </div>
-                <p className="text-muted text-sm">Send USDC from your wallet to your RaiseGG balance. Funds are held in a Solana smart contract.</p>
+                <p className="text-muted text-sm">Send {currency.toUpperCase()} from your wallet to your RaiseGG balance. Funds are held in a Solana smart contract.</p>
                 <div>
-                  <label className="text-xs text-muted uppercase tracking-wider block mb-2">Amount (USDC)</label>
+                  <label className="text-xs text-muted uppercase tracking-wider block mb-2">Amount ({currency.toUpperCase()})</label>
                   <input
                     type="number"
                     min="1"
@@ -237,7 +280,7 @@ export default function WalletPage() {
                   disabled={!depositAmount || Number(depositAmount) <= 0}
                   onClick={handleDeposit}
                 >
-                  Deposit {depositAmount ? `$${depositAmount}` : ''} USDC
+                  Deposit {depositAmount ? `$${depositAmount}` : ''} {currency.toUpperCase()}
                 </Button>
               </div>
             )}
@@ -247,16 +290,16 @@ export default function WalletPage() {
               <div className="card space-y-4">
                 <div className="flex items-center gap-2 mb-2">
                   <ArrowUpFromLine className="w-5 h-5 text-accent-purple" />
-                  <h2 className="font-orbitron font-bold text-white">Withdraw USDC</h2>
+                  <h2 className="font-orbitron font-bold text-white">Withdraw {currency.toUpperCase()}</h2>
                 </div>
-                <p className="text-muted text-sm">Withdraw USDC from your platform balance back to your wallet. Arrives in seconds.</p>
-                {balance !== null && (
+                <p className="text-muted text-sm">Withdraw {currency.toUpperCase()} from your platform balance back to your wallet. Arrives in seconds.</p>
+                {activeBalance !== null && (
                   <div className="text-xs text-muted">
-                    Available: <span className="text-white font-semibold">${balance.toFixed(2)}</span>
+                    Available: <span className="text-white font-semibold">${activeBalance.toFixed(2)} {currency.toUpperCase()}</span>
                   </div>
                 )}
                 <div>
-                  <label className="text-xs text-muted uppercase tracking-wider block mb-2">Amount (USDC)</label>
+                  <label className="text-xs text-muted uppercase tracking-wider block mb-2">Amount ({currency.toUpperCase()})</label>
                   <input
                     type="number"
                     min="1"
@@ -267,9 +310,9 @@ export default function WalletPage() {
                     className="input"
                   />
                 </div>
-                {balance !== null && (
+                {activeBalance !== null && (
                   <button
-                    onClick={() => setWithdrawAmount(balance.toFixed(2))}
+                    onClick={() => setWithdrawAmount(activeBalance.toFixed(2))}
                     className="text-xs text-accent-purple hover:text-accent-purple-glow"
                   >
                     Withdraw all
@@ -279,10 +322,10 @@ export default function WalletPage() {
                   variant="primary"
                   loading={loading}
                   className="w-full"
-                  disabled={!withdrawAmount || Number(withdrawAmount) <= 0 || (balance !== null && Number(withdrawAmount) > balance)}
+                  disabled={!withdrawAmount || Number(withdrawAmount) <= 0 || (activeBalance !== null && Number(withdrawAmount) > activeBalance)}
                   onClick={handleWithdraw}
                 >
-                  Withdraw {withdrawAmount ? `$${withdrawAmount}` : ''} USDC
+                  Withdraw {withdrawAmount ? `$${withdrawAmount}` : ''} {currency.toUpperCase()}
                 </Button>
               </div>
             )}
@@ -301,7 +344,20 @@ export default function WalletPage() {
                     {transactions.map((tx) => (
                       <div key={tx.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                         <div>
-                          <div className="text-sm font-semibold capitalize text-white">{tx.type}</div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm font-semibold capitalize text-white">{tx.type}</div>
+                            {(tx.type === 'deposit' || tx.type === 'withdraw') && publicKey && (
+                              <a
+                                href={`https://solscan.io/address/${publicKey.toString()}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-muted hover:text-accent-purple transition-colors"
+                                title="View on Solscan"
+                              >
+                                ↗
+                              </a>
+                            )}
+                          </div>
                           {tx.note && <div className="text-xs text-muted">{tx.note}</div>}
                           <div className="text-xs text-muted">{new Date(tx.created_at).toLocaleDateString()}</div>
                         </div>

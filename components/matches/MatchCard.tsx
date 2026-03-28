@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Clock, Zap } from 'lucide-react'
 import { TierBadge, Badge } from '@/components/ui/Badge'
+import { CancelMatchButton } from '@/components/matches/CancelMatchButton'
 import type { Match } from '@/types'
 
 const GAME_LABELS = { cs2: 'CS2', dota2: 'Dota 2', deadlock: 'Deadlock' }
@@ -17,9 +18,11 @@ const STATUS_CONFIG = {
 interface MatchCardProps {
   match: Match
   showJoin?: boolean
+  onJoin?: (match: Match) => void
+  currentPlayerId?: string | null
 }
 
-export function MatchCard({ match, showJoin = false }: MatchCardProps) {
+export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: MatchCardProps) {
   const status = STATUS_CONFIG[match.status]
 
   return (
@@ -87,15 +90,23 @@ export function MatchCard({ match, showJoin = false }: MatchCardProps) {
         <span className="font-orbitron font-bold text-sm text-accent-cyan">
           ${match.stake_amount.toFixed(2)}
         </span>
+        <span className="text-xs text-muted uppercase">{match.currency ?? 'usdc'}</span>
       </div>
 
       {/* Status + action */}
       <div className="flex items-center gap-2 flex-shrink-0">
         <Badge variant={status.variant}>{status.label}</Badge>
         {showJoin && match.status === 'open' && (
-          <Link href={`/play?join=${match.id}`} className="btn-primary text-xs py-1.5 px-3">
-            Join
-          </Link>
+          currentPlayerId === match.player_a_id ? (
+            <CancelMatchButton matchId={match.id} />
+          ) : (
+            <button
+              onClick={() => onJoin?.(match)}
+              className="btn-primary text-xs py-1.5 px-3"
+            >
+              Join
+            </button>
+          )
         )}
       </div>
     </div>

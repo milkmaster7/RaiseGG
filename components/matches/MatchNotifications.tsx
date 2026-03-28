@@ -71,9 +71,9 @@ export function MatchNotifications() {
 
         if (prev.status === 'open' && match.status === 'locked') {
           addToast({ type: 'join', message: 'Someone joined your match! Get ready to play.', matchId: match.id })
-        } else if (prev.status === 'locked' && match.status === 'completed') {
+        } else if (['locked', 'live'].includes(prev.status) && match.status === 'completed') {
           if (match.winner_id === playerId) {
-            addToast({ type: 'win', message: 'You won! USDC payout has been credited.', matchId: match.id })
+            addToast({ type: 'win', message: 'You won! Payout has been credited to your balance.', matchId: match.id })
           } else {
             addToast({ type: 'loss', message: 'Match over. Better luck next time.', matchId: match.id })
           }
@@ -90,7 +90,7 @@ export function MatchNotifications() {
         const match = payload.new as any
         if (match.status === 'completed') {
           if (match.winner_id === playerId) {
-            addToast({ type: 'win', message: 'You won! USDC payout has been credited.', matchId: match.id })
+            addToast({ type: 'win', message: 'You won! Payout has been credited to your balance.', matchId: match.id })
           } else {
             addToast({ type: 'loss', message: 'Match over. Better luck next time.', matchId: match.id })
           }
@@ -112,8 +112,11 @@ export function MatchNotifications() {
           <div className="flex-shrink-0 mt-0.5">{ICONS[t.type]}</div>
           <div className="flex-1 min-w-0">
             <div className="text-sm text-white font-semibold leading-snug">{t.message}</div>
-            <Link href={`/play?join=${t.matchId}`} className="text-xs text-accent-purple hover:underline mt-1 inline-block">
-              View match →
+            <Link
+              href={t.type === 'join' ? `/play?join=${t.matchId}` : '/dashboard/matches'}
+              className="text-xs text-accent-purple hover:underline mt-1 inline-block"
+            >
+              {t.type === 'join' ? 'View lobby →' : 'Match history →'}
             </Link>
           </div>
           <button

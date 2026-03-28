@@ -22,11 +22,11 @@ export const metadata: Metadata = {
 
   title: {
     template: '%s | RaiseGG.gg',
-    default: 'CS2, Dota 2 & Deadlock Stake Matches — Win Real USDC',
+    default: 'CS2, Dota 2 & Deadlock Stake Matches — Win Real USDC/USDT',
   },
 
   description:
-    'Stake USDC on CS2, Dota 2 and Deadlock matches. The first competitive wagering platform for the Caucasus, Turkey and Balkans — fair play, instant payouts, no trust required.',
+    'Stake USDC or USDT on CS2, Dota 2 and Deadlock matches. The first competitive wagering platform for the Caucasus, Turkey and Balkans — fair play, instant payouts, no trust required.',
 
   keywords: [
     'cs2 stake matches', 'dota 2 stake', 'deadlock competitive',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: 'RaiseGG.gg – CS2, Dota 2 & Deadlock Stake Matches',
-    description: 'Stake USDC on competitive matches. Instant payouts. 44 countries.',
+    description: 'Stake USDC/USDT on competitive matches. Instant payouts. 44 countries.',
     type: 'website',
     siteName: 'RaiseGG.gg',
     locale: 'en_US',
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     site: '@RaiseGG',
     creator: '@RaiseGG',
     title: 'RaiseGG.gg – CS2, Dota 2 & Deadlock Stake Matches',
-    description: 'Stake USDC on competitive matches. Instant payouts. 44 countries.',
+    description: 'Stake USDC/USDT on competitive matches. Instant payouts. 44 countries.',
     images: ['/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG.gg&color=7b61ff'],
   },
 
@@ -95,7 +95,7 @@ const organizationSchema = {
     height: 60,
   },
   image: 'https://raisegg.gg/og-default.png',
-  description: 'Competitive CS2, Dota 2 and Deadlock stake platform for the Caucasus, Turkey and Balkans. USDC payouts via trustless Solana smart contract.',
+  description: 'Competitive CS2, Dota 2 and Deadlock stake platform for the Caucasus, Turkey and Balkans. USDC/USDT payouts via trustless Solana smart contract.',
   areaServed: [
     'Georgia', 'Turkey', 'Armenia', 'Azerbaijan', 'Ukraine',
     'Romania', 'Bulgaria', 'Serbia', 'Greece', 'Iran',
@@ -103,7 +103,7 @@ const organizationSchema = {
   ],
   sameAs: [
     'https://twitter.com/RaiseGG',
-    'https://discord.gg/raisegg',
+    'https://t.me/raisegg',
   ],
   contactPoint: {
     '@type': 'ContactPoint',
@@ -118,7 +118,7 @@ const websiteSchema = {
   name: 'RaiseGG.gg',
   alternateName: 'RaiseGG',
   url: 'https://raisegg.gg',
-  description: 'Competitive CS2, Dota 2 and Deadlock stake matches. Win real USDC. Serving 44 countries across the Caucasus, Turkey and Balkans.',
+  description: 'Competitive CS2, Dota 2 and Deadlock stake matches. Win real USDC or USDT. Serving 44 countries across the Caucasus, Turkey and Balkans.',
   inLanguage: 'en-US',
   creator: { '@type': 'Organization', name: 'RaiseGG', url: 'https://raisegg.gg' },
   potentialAction: {

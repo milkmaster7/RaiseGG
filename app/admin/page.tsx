@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { readSession } from '@/lib/session'
+import { readSessionFromCookies } from '@/lib/session'
 import { createServiceClient } from '@/lib/supabase'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
 import { DollarSign, Activity, Users, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
-import type { NextRequest } from 'next/server'
+import { DisputeCard } from '@/components/admin/DisputeCard'
 
 export const metadata: Metadata = {
   title: 'Admin — RaiseGG',
@@ -20,7 +20,7 @@ async function getAdminData() {
     { count: totalPlayers },
     { count: activeMatches },
     { count: openDisputes },
-    { data: rakeRows },
+    { data: rakeAgg },
     { data: recentMatches },
     { data: disputes },
     { data: recentPlayers },
@@ -28,13 +28,13 @@ async function getAdminData() {
     supabase.from('players').select('*', { count: 'exact', head: true }),
     supabase.from('matches').select('*', { count: 'exact', head: true }).in('status', ['open', 'locked', 'live']),
     supabase.from('disputes').select('*', { count: 'exact', head: true }).eq('status', 'open'),
-    supabase.from('transactions').select('amount').eq('type', 'rake'),
+    supabase.rpc('sum_rake'),
     supabase.from('matches')
       .select('id, game, format, stake_amount, status, created_at, player_a:players!player_a_id(username), player_b:players!player_b_id(username)')
       .order('created_at', { ascending: false })
       .limit(20),
     supabase.from('disputes')
-      .select('id, reason, status, created_at, raised_by:players!raised_by_id(username), match:matches(id, game, stake_amount)')
+      .select('id, reason, status, created_at, raised_by:players!raised_by_id(username), match:matches(id, game, stake_amount, player_a_id, player_b_id, player_a:players!player_a_id(username), player_b:players!player_b_id(username))')
       .eq('status', 'open')
       .order('created_at', { ascending: false })
       .limit(20),
@@ -44,7 +44,7 @@ async function getAdminData() {
       .limit(20),
   ])
 
-  const totalRake = (rakeRows ?? []).reduce((sum, r) => sum + Math.abs(Number(r.amount)), 0)
+  const totalRake = Number(rakeAgg ?? 0)
   return { totalPlayers, activeMatches, openDisputes, totalRake, recentMatches, disputes, recentPlayers }
 }
 
@@ -59,8 +59,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default async function AdminPage() {
   const cookieStore = await cookies()
-  const mockReq = { cookies: { get: (name: string) => cookieStore.get(name) } } as any as NextRequest
-  const playerId = await readSession(mockReq)
+  const playerId = await readSessionFromCookies(cookieStore)
   const supabase = createServiceClient()
   if (!playerId || !(await isAdmin(playerId, supabase))) redirect('/')
 
@@ -110,17 +109,24 @@ export default async function AdminPage() {
           ) : (
             <div className="space-y-2">
               {disputes.map((d: any) => (
-                <div key={d.id} className="card flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-white">{d.raised_by?.username ?? '—'}</div>
-                    <div className="text-xs text-muted mb-1">{d.match?.game?.toUpperCase()} · ${d.match?.stake_amount}</div>
-                    <div className="text-xs text-muted line-clamp-2">{d.reason}</div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1 flex-shrink-0 text-xs">
-                    <span className="text-muted">{new Date(d.created_at).toLocaleDateString()}</span>
-                    <span className="text-yellow-400 font-semibold">OPEN</span>
-                  </div>
-                </div>
+                <DisputeCard
+                  key={d.id}
+                  dispute={{
+                    id:         d.id,
+                    reason:     d.reason,
+                    created_at: d.created_at,
+                    raised_by:  d.raised_by,
+                    match: d.match ? {
+                      id:                 d.match.id,
+                      game:               d.match.game,
+                      stake_amount:       d.match.stake_amount,
+                      player_a_id:        d.match.player_a_id,
+                      player_b_id:        d.match.player_b_id,
+                      player_a_username:  d.match.player_a?.username ?? '?',
+                      player_b_username:  d.match.player_b?.username ?? '?',
+                    } : null,
+                  }}
+                />
               ))}
             </div>
           )}

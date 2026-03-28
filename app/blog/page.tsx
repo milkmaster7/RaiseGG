@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { breadcrumbSchema } from '@/lib/schemas'
+import { breadcrumbSchema, blogListSchema } from '@/lib/schemas'
 import { BLOG_POSTS } from '@/lib/blog'
 import { Clock, Tag } from 'lucide-react'
 
@@ -37,9 +37,18 @@ export default function BlogIndexPage() {
 
   const sorted = [...BLOG_POSTS].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 
+  const blogList = blogListSchema(
+    sorted.map((p) => ({
+      title: p.title,
+      url: `https://raisegg.gg/blog/${p.slug}`,
+      description: p.description,
+    }))
+  )
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs).replace(/</g, '\\u003c') }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogList).replace(/</g, '\\u003c') }} />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="font-orbitron text-4xl font-black mb-2 text-gradient">Blog</h1>

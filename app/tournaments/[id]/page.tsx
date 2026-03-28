@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { readSession } from '@/lib/session'
-import { tournamentSchema, breadcrumbSchema } from '@/lib/schemas'
+import { readSessionFromCookies } from '@/lib/session'
+import { tournamentSchema, eventSchema, breadcrumbSchema } from '@/lib/schemas'
 import { createServiceClient } from '@/lib/supabase'
 import { Trophy, Users, Calendar, DollarSign, CheckCircle } from 'lucide-react'
-import type { NextRequest } from 'next/server'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -19,17 +18,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${t.name} — RaiseGG.gg Tournament`,
-    description: `${GAME_LABELS[t.game] ?? t.game} tournament with $${t.prize_pool} USDC prize pool. Starting ${new Date(t.starts_at).toLocaleDateString()}.`,
+    description: `${GAME_LABELS[t.game] ?? t.game} tournament with $${t.prize_pool} USDC/USDT prize pool. Starting ${new Date(t.starts_at).toLocaleDateString()}.`,
     alternates: { canonical: `https://raisegg.gg/tournaments/${id}` },
     openGraph: {
       title: `${t.name} | RaiseGG.gg`,
       description: `$${t.prize_pool} prize pool · ${GAME_LABELS[t.game] ?? t.game}`,
       url: `https://raisegg.gg/tournaments/${id}`,
-      images: [{ url: `/api/og?title=${encodeURIComponent(t.name)}&sub=USDC+Tournament&color=7b61ff`, width: 1200, height: 630 }],
+      images: [{ url: `/api/og?title=${encodeURIComponent(t.name)}&sub=USDC%2FUSDT+Tournament&color=7b61ff`, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
-      images: [`/api/og?title=${encodeURIComponent(t.name)}&sub=USDC+Tournament&color=7b61ff`],
+      images: [`/api/og?title=${encodeURIComponent(t.name)}&sub=USDC%2FUSDT+Tournament&color=7b61ff`],
     },
   }
 }
@@ -53,8 +52,7 @@ export default async function TournamentDetailPage({ params }: Props) {
     .order('created_at', { ascending: true })
 
   const cookieStore = await cookies()
-  const mockReq = { cookies: { get: (name: string) => cookieStore.get(name) } } as any as NextRequest
-  const playerId = await readSession(mockReq)
+  const playerId = await readSessionFromCookies(cookieStore)
   const isRegistered = registrations?.some((r) => r.player_id === playerId) ?? false
   const regCount  = registrations?.length ?? 0
   const spotsLeft = tournament.max_players - regCount
@@ -67,6 +65,13 @@ export default async function TournamentDetailPage({ params }: Props) {
     startDate: tournament.starts_at,
     prizePool: tournament.prize_pool,
   })
+  const eSchema = eventSchema({
+    id: tournament.id,
+    name: tournament.name,
+    game: tournament.game,
+    prizePool: tournament.prize_pool,
+    startsAt: tournament.starts_at,
+  })
   const crumbs = breadcrumbSchema([
     { name: 'Home',        url: 'https://raisegg.gg' },
     { name: 'Tournaments', url: 'https://raisegg.gg/tournaments' },
@@ -78,6 +83,7 @@ export default async function TournamentDetailPage({ params }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(tSchema).replace(/</g, '\\u003c') }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eSchema).replace(/</g, '\\u003c') }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs).replace(/</g, '\\u003c') }} />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

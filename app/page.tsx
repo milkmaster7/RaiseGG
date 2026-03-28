@@ -1,37 +1,38 @@
 ﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Shield, Zap, Trophy, Users, TrendingUp, Globe } from 'lucide-react'
-import { faqSchema } from '@/lib/schemas'
+import { faqSchema, softwareAppSchema } from '@/lib/schemas'
 import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
+import { ActiveCounter } from '@/components/ui/ActiveCounter'
 
 export const metadata: Metadata = {
-  title: 'CS2, Dota 2 & Deadlock Stake Matches — Win Real USDC',
+  title: 'CS2, Dota 2 & Deadlock Stake Matches — Win Real USDC/USDT',
   description:
-    'Stake USDC on CS2, Dota 2 and Deadlock matches. The first competitive wagering platform for the Caucasus, Turkey and Balkans — fair play, instant payouts, no trust required.',
+    'Stake USDC or USDT on CS2, Dota 2 and Deadlock matches. The first competitive wagering platform for the Caucasus, Turkey and Balkans — fair play, instant payouts, no trust required.',
   alternates: { canonical: 'https://raisegg.gg' },
   openGraph: {
     title: 'RaiseGG.gg – CS2, Dota 2 & Deadlock Stake Matches',
-    description: 'Stake USDC on competitive matches. Instant payouts. 44 countries.',
+    description: 'Stake USDC or USDT on competitive matches. Instant payouts. 44 countries.',
     url: 'https://raisegg.gg',
     images: [{ url: '/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630, alt: 'RaiseGG.gg' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'RaiseGG.gg – CS2, Dota 2 & Deadlock Stake Matches',
-    description: 'Stake USDC on competitive matches. Instant payouts. 44 countries.',
+    description: 'Stake USDC or USDT on competitive matches. Instant payouts. 44 countries.',
     images: ['/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG.gg&color=7b61ff'],
   },
 }
 
 const GAMES = [
-  { name: 'CS2',      href: '/games/cs2',      players: '1.27M', description: 'Dedicated servers, 1v1 and 5v5 stake matches.',     badge: 'Most Popular', color: 'cyan'   },
+  { name: 'CS2',      href: '/games/cs2',      players: '1.27M', description: 'Dedicated servers, 1v1 stake matches.',     badge: 'Most Popular', color: 'cyan'   },
   { name: 'Dota 2',  href: '/games/dota2',     players: '608K',  description: 'Auto-verified results via Steam API.',               badge: 'Fast Payout',  color: 'purple' },
   { name: 'Deadlock', href: '/games/deadlock', players: '218K',  description: 'The only stake platform for Valve\'s newest game.',  badge: 'First & Only', color: 'purple' },
 ]
 
 const HOW_IT_WORKS = [
   { step: '01', title: 'Connect Steam',    description: 'Link your Steam account. We verify rank, hours and VAC status automatically.', icon: Shield },
-  { step: '02', title: 'Stake USDC',       description: 'Set your stake. Funds go into a Solana smart contract — trustless, nobody can touch them.', icon: Zap },
+  { step: '02', title: 'Stake USDC/USDT',  description: 'Set your stake. Funds go into a Solana smart contract — trustless, nobody can touch them.', icon: Zap },
   { step: '03', title: 'Play & Win',       description: 'Play the match. Winner gets 90% of the pot instantly. No waiting.', icon: Trophy },
 ]
 
@@ -39,22 +40,30 @@ const STATS = [
   { label: 'Countries',      value: '44',     icon: Globe },
   { label: 'Active Players', value: '2,400+', icon: Users },
   { label: 'Matches Played', value: '18,500+',icon: Trophy },
-  { label: 'USDC Paid Out',  value: '$240K+', icon: TrendingUp },
+  { label: 'Paid Out',  value: '$240K+', icon: TrendingUp },
+]
+
+const TESTIMONIALS = [
+  { name: 'kerim_tr',     country: 'Turkey',  flag: '🇹🇷', quote: 'Finally a platform that works for us. Won $45 on my second match, payout hit my wallet in 30 seconds.', game: 'CS2' },
+  { name: 'tbilisi_pro',  country: 'Georgia', flag: '🇬🇪', quote: 'No KYC, no bullshit. Connect Steam, deposit, play. Exactly what we needed in the Caucasus.', game: 'Dota 2' },
+  { name: 'danube_aim',   country: 'Serbia',  flag: '🇷🇸', quote: 'I use FACEIT for ranked and RaiseGG when I want real money on the line. Different tool, different purpose.', game: 'CS2' },
 ]
 
 const FAQS = [
   { question: 'How does stake verification work?',    answer: 'For Dota 2, submit your match ID — our system pulls the result directly from Steam\'s API and pays out automatically. For CS2, matches are played on our dedicated servers and results are recorded automatically.' },
-  { question: 'Is my USDC safe?',                     answer: 'Yes. Stake funds are held in a Solana smart contract. Neither us nor anyone else can touch them. Funds are only released when a verified match result is confirmed.' },
+  { question: 'Are my funds safe?',                   answer: 'Yes. Stake funds (USDC or USDT) are held in a Solana smart contract. Neither us nor anyone else can touch them. Funds are only released when a verified match result is confirmed.' },
   { question: 'What countries can play?',             answer: 'We serve 44 countries across the Caucasus, Turkey, Balkans, and surrounding regions — built for players who have historically had poor server options on Western platforms.' },
   { question: 'What is the platform fee?',            answer: 'We take 10% of the pot from each resolved match. The winner receives 90%. No subscriptions, no hidden fees.' },
 ]
 
 export default function HomePage() {
   const faqJsonLd = faqSchema(FAQS)
+  const appJsonLd = softwareAppSchema()
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd).replace(/</g, '\\u003c') }} />
 
       {/* ── Hero ── */}
       <section className="relative bg-gradient-hero overflow-hidden">
@@ -71,7 +80,7 @@ export default function HomePage() {
           </h1>
           <p className="text-xl text-muted max-w-2xl mx-auto mb-10 leading-relaxed">
             The first competitive stake platform for <strong className="text-white">CS2</strong>,{' '}
-            <strong className="text-white">Dota 2</strong> and <strong className="text-white">Deadlock</strong> built for the Caucasus, Turkey and Balkans. Instant USDC payouts. Zero trust required.
+            <strong className="text-white">Dota 2</strong> and <strong className="text-white">Deadlock</strong> built for the Caucasus, Turkey and Balkans. Instant USDC/USDT payouts. Zero trust required.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/api/auth/steam" className="btn-primary text-base px-8 py-4">Connect Steam & Play</Link>
@@ -89,7 +98,9 @@ export default function HomePage() {
                 <stat.icon className="w-5 h-5 text-accent-purple flex-shrink-0" />
                 <div>
                   <div className="font-orbitron font-bold text-xl text-white">{stat.value}</div>
-                  <div className="text-xs text-muted uppercase tracking-wider">{stat.label}</div>
+                  <div className="text-xs text-muted uppercase tracking-wider">
+                    {stat.label === 'Active Players' ? <ActiveCounter /> : stat.label}
+                  </div>
                 </div>
               </div>
             ))}
@@ -172,6 +183,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Testimonials ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <h2 className="font-orbitron text-3xl font-black text-center mb-10">
+          <span className="text-gradient">What Players Say</span>
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          {TESTIMONIALS.map((t) => (
+            <div key={t.name} className="card flex flex-col justify-between gap-6">
+              <p className="text-muted text-sm leading-relaxed italic">&ldquo;{t.quote}&rdquo;</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{t.flag}</span>
+                  <span className="font-orbitron text-sm text-white">{t.name}</span>
+                </div>
+                <span className="badge-purple text-xs">{t.game}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
         <h2 className="font-orbitron text-4xl font-black mb-4">
@@ -181,6 +213,7 @@ export default function HomePage() {
         <Link href="/api/auth/steam" className="btn-primary text-base px-10 py-4 inline-block">
           Connect Steam & Start Playing
         </Link>
+        <p className="text-xs text-muted mt-3">$2 minimum stake · No KYC · Instant payouts</p>
       </section>
     </>
   )

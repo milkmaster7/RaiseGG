@@ -101,6 +101,20 @@ export default async function BlogPostPage({ params }: Props) {
 
         <hr className="border-border my-10" />
 
+        {/* Read Next */}
+        {post.relatedLinks && post.relatedLinks.length > 0 && (
+          <div className="my-8 p-4 bg-space-800 rounded border border-border">
+            <div className="text-xs text-muted uppercase tracking-wider mb-3">Read Next</div>
+            <div className="flex flex-wrap gap-3">
+              {post.relatedLinks.map(link => (
+                <Link key={link.href} href={link.href} className="text-accent-purple hover:text-white text-sm font-semibold transition-colors">
+                  {link.label} →
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* CTA */}
         <div className="card text-center py-8">
           <h2 className="font-orbitron text-xl font-black text-white mb-2">Ready to stake?</h2>

@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description: 'RaiseGG.gg Terms of Service. Read our rules, eligibility requirements and platform policies.',
   alternates: { canonical: 'https://raisegg.gg/terms' },
   robots: { index: true, follow: true },
+  openGraph: {
+    title: 'Terms of Service — RaiseGG.gg',
+    description: 'RaiseGG.gg rules, eligibility requirements and platform policies.',
+    url: 'https://raisegg.gg/terms',
+    images: [{ url: '/api/og?title=Terms+of+Service&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Terms of Service — RaiseGG.gg',
+    images: ['/api/og?title=Terms+of+Service&sub=RaiseGG.gg&color=7b61ff'],
+  },
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -87,7 +98,7 @@ export default function TermsPage() {
             <p>
               RaiseGG.gg charges a <span className="text-white font-semibold">10% fee</span> on the total
               stake pot of each completed match (5% from each side). This fee is deducted automatically at
-              payout. The fee may change with 14 days notice posted on Discord.
+              payout. The fee may change with 14 days notice posted on our Telegram channel.
             </p>
           </Section>
 
@@ -184,7 +195,7 @@ export default function TermsPage() {
 
           <Section title="12. Changes to These Terms">
             <p>
-              We may update these terms at any time. Material changes will be announced on our Discord
+              We may update these terms at any time. Material changes will be announced on our Telegram
               with at least 7 days notice. Continued use after the effective date constitutes acceptance.
             </p>
           </Section>

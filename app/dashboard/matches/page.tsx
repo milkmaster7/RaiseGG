@@ -1,13 +1,13 @@
 ﻿import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { jwtVerify } from 'jose'
 import { breadcrumbSchema } from '@/lib/schemas'
 import { createServiceClient } from '@/lib/supabase'
-
-const SECRET = new TextEncoder().encode(
-  process.env.SESSION_SECRET ?? 'dev-secret-change-in-production-min-32-chars'
-)
+import { readSessionFromCookies } from '@/lib/session'
+import { SubmitResultButton } from '@/components/matches/SubmitResultButton'
+import { RaiseDisputeButton } from '@/components/matches/RaiseDisputeButton'
+import { CS2ConnectInfo } from '@/components/matches/CS2ConnectInfo'
+import { CancelMatchButton } from '@/components/matches/CancelMatchButton'
 
 export const metadata: Metadata = {
   title: 'My Matches — Match History',
@@ -28,22 +28,15 @@ const STATUS_STYLE: Record<string, string> = {
 
 export default async function MyMatchesPage() {
   const cookieStore = await cookies()
-  const token = cookieStore.get('rgg_session')?.value
-  if (!token) redirect('/api/auth/steam')
-
-  let playerId: string
-  try {
-    const { payload } = await jwtVerify(token, SECRET)
-    playerId = payload.playerId as string
-  } catch {
-    redirect('/api/auth/steam')
-  }
+  const playerId = await readSessionFromCookies(cookieStore)
+  if (!playerId) redirect('/api/auth/steam')
 
   const db = createServiceClient()
   const { data: matches } = await db
     .from('matches')
     .select(`
-      id, game, format, stake_amount, status, winner_id, created_at, resolved_at,
+      id, game, format, stake_amount, currency, status, winner_id, created_at, resolved_at,
+      player_a_id, player_b_id, server_ip, server_port, connect_token,
       player_a:players!player_a_id(username),
       player_b:players!player_b_id(username)
     `)
@@ -78,12 +71,12 @@ export default async function MyMatchesPage() {
                   <th className="pb-3 text-center">Result</th>
                   <th className="pb-3 text-center">Status</th>
                   <th className="pb-3 text-right">Date</th>
+                  <th className="pb-3 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {matches.map((m: any) => {
-                  const isPlayerA  = m.player_a?.username !== undefined
-                  const opponent   = isPlayerA ? m.player_b?.username : m.player_a?.username
+                  const opponent   = m.player_a_id === playerId ? m.player_b?.username : m.player_a?.username
                   const won        = m.status === 'completed' && m.winner_id === playerId
                   const lost       = m.status === 'completed' && m.winner_id && m.winner_id !== playerId
                   const result     = m.status !== 'completed' ? '—' : won ? 'WIN' : 'LOSS'
@@ -94,10 +87,28 @@ export default async function MyMatchesPage() {
                     <tr key={m.id} className="hover:bg-space-800/50 transition-colors">
                       <td className="py-3 text-white font-medium">{GAME_LABEL[m.game] ?? m.game}</td>
                       <td className="py-3 text-muted">{opponent ?? '—'}</td>
-                      <td className="py-3 text-right text-white">${Number(m.stake_amount).toFixed(2)}</td>
+                      <td className="py-3 text-right text-white">${Number(m.stake_amount).toFixed(2)} <span className="text-xs text-muted uppercase">{m.currency ?? 'usdc'}</span></td>
                       <td className={`py-3 text-center ${resultStyle}`}>{result}</td>
                       <td className={`py-3 text-center capitalize ${STATUS_STYLE[m.status] ?? 'text-muted'}`}>{m.status}</td>
                       <td className="py-3 text-right text-muted">{date}</td>
+                      <td className="py-3 text-right">
+                        <div className="flex items-center justify-end gap-3 flex-wrap">
+                          {m.game === 'cs2' && ['locked', 'live'].includes(m.status) && m.server_ip && (
+                            <CS2ConnectInfo
+                              serverIp={m.server_ip}
+                              serverPort={m.server_port}
+                              connectToken={m.connect_token}
+                            />
+                          )}
+                          {m.status === 'open' && m.player_a_id === playerId && (
+                            <CancelMatchButton matchId={m.id} />
+                          )}
+                          {m.status === 'locked' && (
+                            <SubmitResultButton matchId={m.id} game={m.game} playerId={playerId} />
+                          )}
+                          <RaiseDisputeButton matchId={m.id} status={m.status} />
+                        </div>
+                      </td>
                     </tr>
                   )
                 })}

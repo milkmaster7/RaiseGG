@@ -5,12 +5,12 @@ import { useState } from 'react'
 import { Menu, X, Zap } from 'lucide-react'
 
 const NAV_LINKS = [
-  { href: '/play', label: 'Play' },
-  { href: '/tournaments', label: 'Tournaments' },
-  { href: '/leaderboard', label: 'Leaderboard' },
-  { href: '/games/cs2', label: 'CS2' },
-  { href: '/games/dota2', label: 'Dota 2' },
-  { href: '/games/deadlock', label: 'Deadlock' },
+  { href: '/play', label: 'Play', soon: false },
+  { href: '/tournaments', label: 'Tournaments', soon: false },
+  { href: '/leaderboard', label: 'Leaderboard', soon: false },
+  { href: '/games/cs2', label: 'CS2', soon: false },
+  { href: '/games/dota2', label: 'Dota 2', soon: false },
+  { href: '/games/deadlock', label: 'Deadlock', soon: true },
 ]
 
 export default function NavbarClient({ isLoggedIn }: { isLoggedIn: boolean }) {
@@ -33,9 +33,12 @@ export default function NavbarClient({ isLoggedIn }: { isLoggedIn: boolean }) {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-3 py-2 text-sm text-muted hover:text-white transition-colors rounded hover:bg-space-800"
+                className="px-3 py-2 text-sm text-muted hover:text-white transition-colors rounded hover:bg-space-800 flex items-center gap-1.5"
               >
                 {link.label}
+                {link.soon && (
+                  <span className="text-[9px] font-bold bg-accent-purple/20 text-accent-purple border border-accent-purple/40 rounded px-1 py-0.5 leading-none">SOON</span>
+                )}
               </Link>
             ))}
           </div>
@@ -80,10 +83,13 @@ export default function NavbarClient({ isLoggedIn }: { isLoggedIn: boolean }) {
             <Link
               key={link.href}
               href={link.href}
-              className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-space-800 rounded transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm text-muted hover:text-white hover:bg-space-800 rounded transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
+              {link.soon && (
+                <span className="text-[9px] font-bold bg-accent-purple/20 text-accent-purple border border-accent-purple/40 rounded px-1 py-0.5 leading-none">SOON</span>
+              )}
             </Link>
           ))}
           <div className="pt-3 border-t border-border space-y-2">

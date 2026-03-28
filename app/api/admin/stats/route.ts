@@ -14,20 +14,23 @@ export async function GET(req: NextRequest) {
     { count: totalPlayers },
     { count: activeMatches },
     { count: openDisputes },
-    { data: rakeRows },
+    { count: totalMatches },
+    { data: rakeAgg },
   ] = await Promise.all([
     supabase.from('players').select('*', { count: 'exact', head: true }),
     supabase.from('matches').select('*', { count: 'exact', head: true }).in('status', ['open', 'locked', 'live']),
     supabase.from('disputes').select('*', { count: 'exact', head: true }).eq('status', 'open'),
-    supabase.from('transactions').select('amount').eq('type', 'rake'),
+    supabase.from('matches').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+    supabase.rpc('sum_rake'),
   ])
 
-  const totalRake = (rakeRows ?? []).reduce((sum, r) => sum + Math.abs(Number(r.amount)), 0)
+  const totalRake = Number(rakeAgg ?? 0)
 
   return NextResponse.json({
-    totalPlayers:  totalPlayers ?? 0,
-    activeMatches: activeMatches ?? 0,
-    openDisputes:  openDisputes ?? 0,
+    totalPlayers:   totalPlayers  ?? 0,
+    activeMatches:  activeMatches ?? 0,
+    openDisputes:   openDisputes  ?? 0,
+    completedMatches: totalMatches ?? 0,
     totalRake,
   })
 }

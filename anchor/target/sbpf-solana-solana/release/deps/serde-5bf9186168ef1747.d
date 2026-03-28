@@ -1,0 +1,14 @@
+C:\Users\Me\Desktop\RaiseGG\anchor\target\sbpf-solana-solana\release\deps\serde-5bf9186168ef1747.d: C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\lib.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\integer128.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\mod.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\de.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\ser.rs C:\Users\Me\Desktop\RaiseGG\anchor\target\sbpf-solana-solana\release\build\serde-21c8c8b76e3df021\out/private.rs
+
+C:\Users\Me\Desktop\RaiseGG\anchor\target\sbpf-solana-solana\release\deps\libserde-5bf9186168ef1747.rlib: C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\lib.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\integer128.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\mod.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\de.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\ser.rs C:\Users\Me\Desktop\RaiseGG\anchor\target\sbpf-solana-solana\release\build\serde-21c8c8b76e3df021\out/private.rs
+
+C:\Users\Me\Desktop\RaiseGG\anchor\target\sbpf-solana-solana\release\deps\libserde-5bf9186168ef1747.rmeta: C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\lib.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\integer128.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\mod.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\de.rs C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\ser.rs C:\Users\Me\Desktop\RaiseGG\anchor\target\sbpf-solana-solana\release\build\serde-21c8c8b76e3df021\out/private.rs
+
+C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\lib.rs:
+C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\integer128.rs:
+C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\mod.rs:
+C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\de.rs:
+C:\Users\Me\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.228\src\private\ser.rs:
+C:\Users\Me\Desktop\RaiseGG\anchor\target\sbpf-solana-solana\release\build\serde-21c8c8b76e3df021\out/private.rs:
+
+# env-dep:OUT_DIR=C:\\Users\\Me\\Desktop\\RaiseGG\\anchor\\target\\sbpf-solana-solana\\release\\build\\serde-21c8c8b76e3df021\\out

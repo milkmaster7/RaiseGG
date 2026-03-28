@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { readSession } from '@/lib/session'
 import { createServiceClient } from '@/lib/supabase'
-import { USDC_MINT_SOLANA } from '@/lib/escrow'
+import { getMintForCurrency, type StakeCurrency } from '@/lib/escrow'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 
 export async function POST(req: NextRequest) {
@@ -10,10 +10,11 @@ export async function POST(req: NextRequest) {
   if (!playerId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { amount, txSignature } = body as { amount: number; txSignature: string }
+  const { amount, txSignature, currency = 'usdc' } = body as { amount: number; txSignature: string; currency: StakeCurrency }
 
   if (!amount || amount <= 0) return NextResponse.json({ error: 'Invalid amount' }, { status: 400 })
   if (!txSignature)           return NextResponse.json({ error: 'Missing transaction signature' }, { status: 400 })
+  if (!['usdc', 'usdt'].includes(currency)) return NextResponse.json({ error: 'Invalid currency' }, { status: 400 })
 
   const supabase = createServiceClient()
 
@@ -38,7 +39,8 @@ export async function POST(req: NextRequest) {
     )
 
     const treasury = new PublicKey(treasurySol)
-    const treasuryAta = await getAssociatedTokenAddress(USDC_MINT_SOLANA, treasury)
+    const mint = getMintForCurrency(currency)
+    const treasuryAta = await getAssociatedTokenAddress(mint, treasury)
 
     const tx = await connection.getParsedTransaction(txSignature, { commitment: 'confirmed', maxSupportedTransactionVersion: 0 })
     if (!tx) return NextResponse.json({ error: 'Transaction not found on-chain' }, { status: 400 })
@@ -65,23 +67,51 @@ export async function POST(req: NextRequest) {
     }
 
     if (!verified) {
-      return NextResponse.json({ error: 'Could not verify USDC transfer to platform' }, { status: 400 })
+      return NextResponse.json({ error: `Could not verify ${currency.toUpperCase()} transfer to platform` }, { status: 400 })
     }
   } catch (err) {
     console.error('Deposit verification error:', err)
     return NextResponse.json({ error: 'Failed to verify transaction' }, { status: 500 })
   }
 
-  // Credit balance and record transaction atomically
-  const { error } = await supabase.rpc('credit_deposit', {
-    p_player_id:    playerId,
-    p_amount:       amount,
-    p_tx_signature: txSignature,
-  })
+  // Credit balance and record transaction
+  const balanceField = currency === 'usdt' ? 'usdt_balance' : 'usdc_balance'
 
-  if (error) {
-    console.error('credit_deposit RPC error:', error)
-    return NextResponse.json({ error: 'Failed to update balance' }, { status: 500 })
+  if (currency === 'usdc') {
+    // Use atomic RPC for USDC (handles duplicate-tx guard inside SQL)
+    const { error } = await supabase.rpc('credit_deposit', {
+      p_player_id:    playerId,
+      p_amount:       amount,
+      p_tx_signature: txSignature,
+    })
+    if (error) {
+      console.error('credit_deposit RPC error:', error)
+      return NextResponse.json({ error: 'Failed to update balance' }, { status: 500 })
+    }
+  } else {
+    // USDT — update balance and insert transaction record
+    const { data: player } = await supabase
+      .from('players')
+      .select('usdt_balance')
+      .eq('id', playerId)
+      .single()
+
+    if (!player) return NextResponse.json({ error: 'Player not found' }, { status: 404 })
+
+    const { error: updateErr } = await supabase
+      .from('players')
+      .update({ usdt_balance: Number(player.usdt_balance ?? 0) + amount })
+      .eq('id', playerId)
+
+    if (updateErr) return NextResponse.json({ error: 'Failed to update balance' }, { status: 500 })
+
+    await supabase.from('transactions').insert({
+      player_id:    playerId,
+      type:         'deposit',
+      amount,
+      tx_signature: txSignature,
+      note:         'USDT deposit',
+    })
   }
 
   return NextResponse.json({ success: true, amount })

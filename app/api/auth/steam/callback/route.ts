@@ -1,7 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
 import { createServiceClient } from '@/lib/supabase'
-import { checkPlayerEligibility, getPlayerSummary, getPlayerBans, getHoursPlayed } from '@/lib/steam'
+import { checkPlayerEligibility } from '@/lib/steam'
 import { signSession } from '@/lib/session'
 
 const STEAM_OPENID_URL = 'https://steamcommunity.com/openid/login'
@@ -43,40 +43,50 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${SITE_URL}?error=invalid_steam_id`)
   }
 
-  // Check eligibility
+  // Check eligibility — also returns pre-fetched summary and bans
   const eligibility = await checkPlayerEligibility(steamId)
-  const summary = await getPlayerSummary(steamId)
+  const { summary, bans } = eligibility
 
   const supabase = createServiceClient()
 
-  const [bans] = await Promise.all([
-    getPlayerBans(steamId),
-  ])
+  // Check if player exists
+  const { data: existing } = await supabase
+    .from('players').select('id').eq('steam_id', steamId).single()
 
-  // Upsert player
-  const { data: player, error } = await supabase
-    .from('players')
-    .upsert({
-      steam_id:       steamId,
-      username:       summary?.personaname ?? `Player_${steamId.slice(-6)}`,
-      avatar_url:     summary?.avatarfull,
-      eligible:       eligibility.eligible,
-      account_age_ok: eligibility.eligible,
-      vac_banned:     bans?.VACBanned ?? false,
-      hours_ok:       true,
-      cs2_elo:        1000,
-      dota2_elo:      1000,
-      deadlock_elo:   1000,
-      cs2_wins:       0,
-      cs2_losses:     0,
-      dota2_wins:     0,
-      dota2_losses:   0,
-      deadlock_wins:  0,
-      deadlock_losses: 0,
-      updated_at:     new Date().toISOString(),
-    }, { onConflict: 'steam_id' })
-    .select()
-    .single()
+  let player: any, error: any
+
+  if (existing) {
+    // Returning player — only refresh profile, never reset ELO/stats
+    ;({ data: player, error } = await supabase
+      .from('players')
+      .update({
+        username:       summary?.personaname ?? `Player_${steamId.slice(-6)}`,
+        avatar_url:     summary?.avatarfull,
+        eligible:       eligibility.eligible,
+        account_age_ok: eligibility.eligible,
+        vac_banned:     bans?.VACBanned ?? false,
+        updated_at:     new Date().toISOString(),
+      })
+      .eq('steam_id', steamId)
+      .select().single())
+  } else {
+    // New player — insert with default ELO
+    ;({ data: player, error } = await supabase
+      .from('players')
+      .insert({
+        steam_id:        steamId,
+        username:        summary?.personaname ?? `Player_${steamId.slice(-6)}`,
+        avatar_url:      summary?.avatarfull,
+        eligible:        eligibility.eligible,
+        account_age_ok:  eligibility.eligible,
+        vac_banned:      bans?.VACBanned ?? false,
+        hours_ok:        true,
+        cs2_elo: 1000, dota2_elo: 1000, deadlock_elo: 1000,
+        cs2_wins: 0, cs2_losses: 0, dota2_wins: 0,
+        dota2_losses: 0, deadlock_wins: 0, deadlock_losses: 0,
+      })
+      .select().single())
+  }
 
   if (error || !player) {
     return NextResponse.redirect(`${SITE_URL}?error=db_error`)

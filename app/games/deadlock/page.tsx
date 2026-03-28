@@ -5,11 +5,11 @@ import { Bell, Trophy, Users, Zap } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Deadlock Stake Matches — The Only Platform',
-  description: 'RaiseGG.gg is the first and only competitive stake platform for Deadlock. Stake USDC, compete, win. Join the Caucasus, Turkey and Balkans Deadlock community.',
+  description: 'RaiseGG.gg is the first and only competitive stake platform for Deadlock. Stake USDC or USDT, compete, win. Join the Caucasus, Turkey and Balkans Deadlock community.',
   alternates: { canonical: 'https://raisegg.gg/games/deadlock' },
   openGraph: {
     title: 'RaiseGG.gg – Deadlock Stake Matches',
-    description: 'The only Deadlock stake platform. Win real USDC.',
+    description: 'The only Deadlock stake platform. Win real USDC/USDT.',
     url: 'https://raisegg.gg/games/deadlock',
     images: [{ url: '/api/og?title=Deadlock+Stake+Matches&sub=First+%26+Only&color=7b61ff', width: 1200, height: 630 }],
   },
@@ -71,7 +71,7 @@ export default function DeadlockPage() {
           {[
             { icon: Users,  label: '200K+',      sub: 'Active Players' },
             { icon: Trophy, label: '6v6',         sub: 'Format' },
-            { icon: Zap,    label: 'USDC Payout', sub: 'On Win' },
+            { icon: Zap,    label: 'Instant Payout', sub: 'On Win' },
           ].map((s) => (
             <div key={s.label} className="card text-center">
               <s.icon className="w-8 h-8 text-accent-purple mx-auto mb-2" />

@@ -40,14 +40,53 @@ async function getTopPlayers(game: Game) {
   return data ?? []
 }
 
+async function getWeeklyTopPlayers(game: Game) {
+  const supabase = createServiceClient()
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const { data: matches } = await supabase
+    .from('matches')
+    .select('winner_id')
+    .eq('status', 'completed')
+    .eq('game', game)
+    .gte('resolved_at', since)
+
+  if (!matches || matches.length === 0) return []
+
+  // Tally wins per player
+  const winCounts: Record<string, number> = {}
+  for (const m of matches) {
+    if (m.winner_id) {
+      winCounts[m.winner_id] = (winCounts[m.winner_id] ?? 0) + 1
+    }
+  }
+
+  const topIds = Object.entries(winCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 100)
+    .map(([id]) => id)
+
+  if (topIds.length === 0) return []
+
+  const { data: players } = await supabase
+    .from('players')
+    .select('*')
+    .in('id', topIds)
+
+  // Sort by weekly wins
+  return (players ?? []).sort((a, b) => (winCounts[b.id] ?? 0) - (winCounts[a.id] ?? 0))
+}
+
 export default async function LeaderboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ game?: string }>
+  searchParams: Promise<{ game?: string; period?: string }>
 }) {
-  const { game: gameParam } = await searchParams
+  const { game: gameParam, period: periodParam } = await searchParams
   const activeGame: Game = (GAMES.find((g) => g.value === gameParam)?.value) ?? 'cs2'
-  const players = await getTopPlayers(activeGame)
+  const activePeriod = periodParam === 'week' ? 'week' : 'all'
+  const players = activePeriod === 'week'
+    ? await getWeeklyTopPlayers(activeGame)
+    : await getTopPlayers(activeGame)
 
   const lbSchema = leaderboardSchema(
     players.slice(0, 10).map((p, i) => ({
@@ -67,16 +106,45 @@ export default async function LeaderboardPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs).replace(/</g, '\\u003c') }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="font-orbitron text-3xl font-black mb-8">
+        <h1 className="font-orbitron text-3xl font-black mb-2">
           <span className="text-gradient">Leaderboard</span>
         </h1>
+
+        {/* Season 1 banner */}
+        <div className="flex items-center gap-3 mb-6 p-3 bg-space-800 border border-accent-purple/30 rounded">
+          <span className="badge-purple text-xs">SEASON 1</span>
+          <span className="text-sm text-muted">Current season · Ends when Season 2 is announced · Top 3 earn reduced rake</span>
+        </div>
+
+        {activePeriod === 'week' && (
+          <p className="text-xs text-muted mb-6">Resets every Monday</p>
+        )}
+
+        {/* Period toggle */}
+        <div className="flex bg-space-800 rounded border border-border p-1 gap-1 w-fit mb-4">
+          {(['all', 'week'] as const).map((p) => (
+            <a
+              key={p}
+              href={`/leaderboard?game=${activeGame}&period=${p}`}
+              className={`px-4 py-2 rounded text-sm font-semibold transition-all ${
+                activePeriod === p
+                  ? 'bg-accent-purple text-white'
+                  : 'text-muted hover:text-white'
+              }`}
+            >
+              {p === 'all' ? (
+                <span>All Time <span className="text-xs font-normal opacity-70 ml-1">— Season 1</span></span>
+              ) : 'This Week'}
+            </a>
+          ))}
+        </div>
 
         {/* Game tabs */}
         <div className="flex bg-space-800 rounded border border-border p-1 gap-1 w-fit mb-8">
           {GAMES.map((g) => (
             <a
               key={g.value}
-              href={`/leaderboard?game=${g.value}`}
+              href={`/leaderboard?game=${g.value}&period=${activePeriod}`}
               className={`px-4 py-2 rounded text-sm font-semibold transition-all ${
                 activeGame === g.value
                   ? 'bg-accent-purple text-white'

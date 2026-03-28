@@ -6,12 +6,12 @@ import { LeaderboardTable } from '@/components/ui/LeaderboardTable'
 import { Server, Zap, Shield, Trophy } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'CS2 Stake Matches — Compete & Win USDC',
-  description: 'Compete in CS2 stake matches on RaiseGG.gg. Browse open lobbies, join ranked 1v1 games and win real USDC. The competitive CS2 stake platform for the Caucasus, Turkey and Balkans.',
+  title: 'CS2 Stake Matches — Compete & Win USDC/USDT',
+  description: 'Compete in CS2 stake matches on RaiseGG.gg. Browse open lobbies, join ranked 1v1 games and win real USDC or USDT. The competitive CS2 stake platform for the Caucasus, Turkey and Balkans.',
   alternates: { canonical: 'https://raisegg.gg/games/cs2' },
   openGraph: {
     title: 'RaiseGG.gg – CS2 Stake Matches',
-    description: 'CS2 competitive stake lobbies. Win real USDC.',
+    description: 'CS2 competitive stake lobbies. Win real USDC/USDT.',
     url: 'https://raisegg.gg/games/cs2',
     images: [{ url: '/api/og?title=CS2+Stake+Matches&sub=RaiseGG.gg&color=00d4ff', width: 1200, height: 630 }],
   },
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 const FEATURES = [
   { icon: Server,  title: 'Dedicated Servers',    desc: 'Matches run on our own CS2 servers — no faceit, no ESEA. Results are recorded automatically.' },
-  { icon: Zap,     title: 'Instant Payout',        desc: 'Win the match, receive 90% of the pot in USDC to your platform balance within seconds.' },
+  { icon: Zap,     title: 'Instant Payout',        desc: 'Win the match, receive 90% of the pot in USDC or USDT to your platform balance within seconds.' },
   { icon: Shield,  title: 'VAC Verified',          desc: 'All players are screened for VAC bans and account age before they can stake.' },
   { icon: Trophy,  title: '1v1 & 5v5',             desc: 'Solo duels and full-team stakes. All formats on the same platform.' },
 ]
@@ -60,12 +60,13 @@ export default async function CS2Page() {
             <span className="text-gradient">CS2</span> <span className="text-white">Stake Matches</span>
           </h1>
           <p className="text-xl text-muted max-w-xl mb-8 leading-relaxed">
-            Counter-Strike 2 on dedicated servers. Stake USDC, play the match, get paid automatically. No trust required.
+            Counter-Strike 2 on dedicated servers. Stake USDC or USDT, play the match, get paid automatically. No trust required.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/play?game=cs2" className="btn-primary px-8 py-4 text-base">Browse CS2 Lobbies</Link>
             <Link href="/api/auth/steam" className="btn-secondary px-8 py-4 text-base">Connect Steam</Link>
           </div>
+          <p className="text-xs text-muted mt-4">$2 minimum stake · No KYC · Instant payouts</p>
         </div>
       </section>
 
@@ -88,7 +89,7 @@ export default async function CS2Page() {
           <h2 className="section-title text-center mb-10">How CS2 Stakes Work</h2>
           <div className="space-y-4">
             {[
-              ['01', 'Create a lobby', 'Set your stake amount, format (1v1 or 5v5), and wait. Your USDC locks into the smart contract.'],
+              ['01', 'Create a lobby', 'Set your stake amount, format (1v1 or 5v5), and wait. Your USDC/USDT locks into the smart contract.'],
               ['02', 'Opponent joins', 'Another player deposits equal stake. The contract now holds both sides.'],
               ['03', 'Connect to server', 'You receive a connect string. Join the dedicated CS2 server.'],
               ['04', 'Play & win', 'The server records the result automatically. The winner is paid 90% of the pot.'],

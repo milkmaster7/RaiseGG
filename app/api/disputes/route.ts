@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'You were not part of this match' }, { status: 403 })
   }
 
-  if (!['locked', 'completed'].includes(match.status)) {
-    return NextResponse.json({ error: 'Disputes can only be raised on locked or completed matches' }, { status: 400 })
+  if (!['locked', 'live', 'completed'].includes(match.status)) {
+    return NextResponse.json({ error: 'Disputes can only be raised on locked, live, or completed matches' }, { status: 400 })
   }
 
   // Prevent duplicate disputes by the same player on the same match

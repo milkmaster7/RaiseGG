@@ -5,6 +5,17 @@ export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'RaiseGG.gg Privacy Policy. How we handle your data, Steam account information and wallet addresses.',
   alternates: { canonical: 'https://raisegg.gg/privacy' },
+  openGraph: {
+    title: 'Privacy Policy — RaiseGG.gg',
+    description: 'How we handle your Steam account data, wallet addresses and match history.',
+    url: 'https://raisegg.gg/privacy',
+    images: [{ url: '/api/og?title=Privacy+Policy&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy — RaiseGG.gg',
+    images: ['/api/og?title=Privacy+Policy&sub=RaiseGG.gg&color=7b61ff'],
+  },
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -139,7 +150,7 @@ export default function PrivacyPage() {
 
           <Section title="10. Changes to This Policy">
             <p>
-              We may update this policy. Material changes will be announced on our Discord. Continued use
+              We may update this policy. Material changes will be announced on our Telegram. Continued use
               of the platform after the effective date constitutes acceptance of the updated policy.
             </p>
           </Section>

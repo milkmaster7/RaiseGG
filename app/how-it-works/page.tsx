@@ -1,15 +1,20 @@
 ﻿import type { Metadata } from 'next'
-import { howToSchema, faqSchema, breadcrumbSchema } from '@/lib/schemas'
+import { howToSchema, faqSchema, breadcrumbSchema, priceSchema } from '@/lib/schemas'
 
 export const metadata: Metadata = {
   title: 'How It Works — Start Staking in 2 Minutes',
-  description: 'Learn how RaiseGG.gg works. Connect Steam, deposit USDC, find a match and compete. Winnings paid instantly via Solana smart contract. Takes 2 minutes to start.',
+  description: 'Learn how RaiseGG.gg works. Connect Steam, deposit USDC or USDT, find a match and compete. Winnings paid instantly via Solana smart contract. Takes 2 minutes to start.',
   alternates: { canonical: 'https://raisegg.gg/how-it-works' },
   openGraph: {
     title: 'RaiseGG.gg – How It Works',
-    description: 'Connect Steam, stake USDC, play and win. Takes 2 minutes to start.',
+    description: 'Connect Steam, stake USDC or USDT, play and win. Takes 2 minutes to start.',
     url: 'https://raisegg.gg/how-it-works',
     images: [{ url: '/api/og?title=How+It+Works&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'RaiseGG.gg – How It Works',
+    images: ['/api/og?title=How+It+Works&sub=RaiseGG.gg&color=7b61ff'],
   },
 }
 
@@ -20,8 +25,8 @@ const STEPS = [
     url: 'https://raisegg.gg/how-it-works#step-1',
   },
   {
-    name: 'Set up your wallet and deposit USDC',
-    text: 'Connect a Phantom or Solflare wallet. Deposit USDC — your balance is held securely in a Solana smart contract. No middleman.',
+    name: 'Set up your wallet and deposit USDC or USDT',
+    text: 'Connect a Phantom or Solflare wallet. Deposit USDC or USDT — your balance is held securely in a Solana smart contract. No middleman.',
     url: 'https://raisegg.gg/how-it-works#step-2',
   },
   {
@@ -54,12 +59,14 @@ export default function HowItWorksPage() {
     { name: 'Home', url: 'https://raisegg.gg' },
     { name: 'How It Works', url: 'https://raisegg.gg/how-it-works' },
   ])
+  const price = priceSchema()
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo).replace(/</g, '\\u003c') }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqs).replace(/</g, '\\u003c') }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs).replace(/</g, '\\u003c') }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(price).replace(/</g, '\\u003c') }} />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h1 className="font-orbitron text-4xl font-black mb-4 text-gradient">How It Works</h1>

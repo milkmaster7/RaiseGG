@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cancelExpiredMatches } from '@/lib/matches'
+import { getTodaysChallenges } from '@/lib/challenges'
+import { createServiceClient } from '@/lib/supabase'
 
 // GET /api/cron — called by Vercel Cron every 5 minutes
 // Add to vercel.json: { "crons": [{ "path": "/api/cron", "schedule": "*/5 * * * *" }] }
@@ -12,5 +14,14 @@ export async function GET(req: NextRequest) {
   }
 
   await cancelExpiredMatches()
+
+  // Pre-seed today's daily challenges so they exist before users hit the dashboard
+  const todaysChallenges = getTodaysChallenges()
+  const supabase = createServiceClient()
+  await supabase.from('daily_challenges').upsert(
+    todaysChallenges.map(c => ({ ...c })),
+    { onConflict: 'challenge_date,slot', ignoreDuplicates: true }
+  )
+
   return NextResponse.json({ ok: true, time: new Date().toISOString() })
 }

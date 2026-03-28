@@ -1,11 +1,15 @@
 ﻿'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { lobbyListSchema, breadcrumbSchema } from '@/lib/schemas'
 import { MatchCard } from '@/components/matches/MatchCard'
+import { CreateMatchModal } from '@/components/matches/CreateMatchModal'
+import { JoinMatchModal } from '@/components/matches/JoinMatchModal'
 import { Button } from '@/components/ui/Button'
+import { ActiveCounter } from '@/components/ui/ActiveCounter'
 import { Plus } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 import type { Match, Game } from '@/types'
 
 const GAMES: { value: Game | 'all'; label: string }[] = [
@@ -25,12 +29,22 @@ const STAKE_FILTERS = [
 export default function PlayPage() {
   const searchParams  = useSearchParams()
   const joinMatchId   = searchParams.get('join')
+  const gameParam     = searchParams.get('game') as Game | null
   const highlightRef  = useRef<HTMLDivElement>(null)
 
   const [matches, setMatches]         = useState<Match[]>([])
   const [loading, setLoading]         = useState(true)
-  const [gameFilter, setGameFilter]   = useState<Game | 'all'>('all')
+  const [gameFilter, setGameFilter]   = useState<Game | 'all'>(
+    gameParam && ['cs2', 'dota2', 'deadlock'].includes(gameParam) ? gameParam : 'all'
+  )
   const [stakeFilter, setStakeFilter] = useState('all')
+  const [showCreate, setShowCreate]     = useState(false)
+  const [joinMatch, setJoinMatch]       = useState<Match | null>(null)
+  const [playerId, setPlayerId]         = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/auth/me').then(r => r.ok ? r.json() : null).then(d => d?.player?.id && setPlayerId(d.player.id))
+  }, [])
 
   const lobbySchema = lobbyListSchema(matches.length)
   const crumbs = breadcrumbSchema([
@@ -38,25 +52,42 @@ export default function PlayPage() {
     { name: 'Play',  url: 'https://raisegg.gg/play' },
   ])
 
-  useEffect(() => {
-    async function fetchLobbies() {
-      setLoading(true)
-      const params = new URLSearchParams({ status: 'open', limit: '50' })
-      if (gameFilter !== 'all') params.set('game', gameFilter)
-      const res = await fetch(`/api/matches?${params}`)
-      const data = await res.json()
-      setMatches(data ?? [])
-      setLoading(false)
-    }
-    fetchLobbies()
+  const fetchLobbies = useCallback(async () => {
+    setLoading(true)
+    const params = new URLSearchParams({ status: 'open', limit: '50' })
+    if (gameFilter !== 'all') params.set('game', gameFilter)
+    const res = await fetch(`/api/matches?${params}`)
+    const data = await res.json()
+    setMatches(data ?? [])
+    setLoading(false)
   }, [gameFilter])
 
-  // Scroll to and highlight the match linked via ?join=
   useEffect(() => {
-    if (!loading && joinMatchId && highlightRef.current) {
-      highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    fetchLobbies()
+
+    // Real-time: re-fetch when any match changes
+    const channel = supabase
+      .channel('play-lobby')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, () => {
+        fetchLobbies()
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [fetchLobbies])
+
+  // When ?join=X is in the URL, auto-open the JoinMatchModal and scroll to it
+  useEffect(() => {
+    if (!loading && joinMatchId) {
+      const target = matches.find((m) => m.id === joinMatchId && m.status === 'open')
+      if (target && playerId && playerId !== target.player_a_id) {
+        setJoinMatch(target)
+      }
+      if (highlightRef.current) {
+        highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
     }
-  }, [loading, joinMatchId])
+  }, [loading, joinMatchId, matches, playerId])
 
   const filtered = matches.filter((m) => {
     if (stakeFilter === 'low')  return m.stake_amount >= 1  && m.stake_amount < 10
@@ -67,6 +98,12 @@ export default function PlayPage() {
 
   return (
     <>
+      {showCreate && playerId && (
+        <CreateMatchModal playerId={playerId} onClose={() => setShowCreate(false)} />
+      )}
+      {joinMatch && playerId && (
+        <JoinMatchModal match={joinMatch} playerId={playerId} onClose={() => setJoinMatch(null)} />
+      )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(lobbySchema).replace(/</g, '\\u003c') }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs).replace(/</g, '\\u003c') }} />
 
@@ -80,7 +117,7 @@ export default function PlayPage() {
             </h1>
             <p className="text-muted text-sm">{filtered.length} lobbies available</p>
           </div>
-          <Button variant="primary" className="flex items-center gap-2">
+          <Button variant="primary" className="flex items-center gap-2" onClick={() => playerId ? setShowCreate(true) : (window.location.href = '/api/auth/steam')}>
             <Plus className="w-4 h-4" /> Create Match
           </Button>
         </div>
@@ -132,8 +169,11 @@ export default function PlayPage() {
         ) : filtered.length === 0 ? (
           <div className="card text-center py-20">
             <p className="text-muted text-lg mb-2">No open lobbies right now.</p>
-            <p className="text-muted text-sm mb-6">Be the first — create a match and wait for an opponent.</p>
-            <Button variant="primary">Create Match</Button>
+            <p className="text-muted text-sm mb-4">Be the first — create a match and wait for an opponent.</p>
+            <div className="text-sm text-muted mb-6">
+              <ActiveCounter />
+            </div>
+            <Button variant="primary" onClick={() => playerId ? setShowCreate(true) : (window.location.href = '/api/auth/steam')}>Create Match</Button>
           </div>
         ) : (
           <div className="space-y-3">
@@ -145,7 +185,7 @@ export default function PlayPage() {
                   ref={isTarget ? highlightRef : undefined}
                   className={isTarget ? 'ring-2 ring-accent-purple rounded' : undefined}
                 >
-                  <MatchCard match={match} showJoin />
+                  <MatchCard match={match} showJoin onJoin={setJoinMatch} currentPlayerId={playerId} />
                 </div>
               )
             })}

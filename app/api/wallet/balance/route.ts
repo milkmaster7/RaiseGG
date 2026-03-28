@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const supabase = createServiceClient()
 
   const [{ data: player }, { data: transactions }] = await Promise.all([
-    supabase.from('players').select('usdc_balance, wallet_address').eq('id', playerId).single(),
+    supabase.from('players').select('usdc_balance, usdt_balance, wallet_address').eq('id', playerId).single(),
     supabase
       .from('transactions')
       .select('*')
@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
   if (!player) return NextResponse.json({ error: 'Player not found' }, { status: 404 })
 
   return NextResponse.json({
-    balance: Number(player.usdc_balance ?? 0),
+    balance:      Number(player.usdc_balance ?? 0),
+    usdtBalance:  Number(player.usdt_balance ?? 0),
     walletAddress: player.wallet_address,
     transactions: transactions ?? [],
   })

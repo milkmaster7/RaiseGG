@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { joinMatch } from '@/lib/matches'
 import { readSession } from '@/lib/session'
+import { createServiceClient } from '@/lib/supabase'
 
 // POST /api/matches/join — player B joins and stakes
 export async function POST(req: NextRequest) {
@@ -18,6 +19,18 @@ export async function POST(req: NextRequest) {
   if (sessionPlayerId !== playerBId) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
+
+  // Check player is eligible and not banned
+  const supabase = createServiceClient()
+  const { data: player } = await supabase
+    .from('players')
+    .select('eligible, banned')
+    .eq('id', playerBId)
+    .single()
+
+  if (!player) return NextResponse.json({ error: 'Player not found' }, { status: 404 })
+  if (player.banned) return NextResponse.json({ error: 'Your account has been suspended.' }, { status: 403 })
+  if (!player.eligible) return NextResponse.json({ error: 'Your account does not meet eligibility requirements.' }, { status: 403 })
 
   const { match, error } = await joinMatch(matchId, playerBId, joinTx)
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })

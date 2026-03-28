@@ -71,11 +71,17 @@ export async function POST(
     .insert({
       tournament_id: tournamentId,
       player_id:     playerId,
-      paid:          tournament.entry_fee === 0 || true,
+      paid:          true,
     })
     .select()
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // If submitted via HTML form, redirect back; otherwise return JSON
+  const accept = req.headers.get('accept') ?? ''
+  if (!accept.includes('application/json')) {
+    return NextResponse.redirect(new URL(`/tournaments/${tournamentId}`, req.url), 303)
+  }
   return NextResponse.json({ registration }, { status: 201 })
 }

@@ -13,11 +13,15 @@ const PLATFORM = [
   { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/how-it-works', label: 'How It Works' },
   { href: '/faq', label: 'FAQ' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/about', label: 'About' },
+  { href: '/feed', label: 'Activity Feed' },
 ]
 
 const LEGAL = [
   { href: '/terms', label: 'Terms of Service' },
   { href: '/privacy', label: 'Privacy Policy' },
+  { href: '/responsible-play', label: 'Responsible Play' },
 ]
 
 export default function Footer() {
@@ -36,15 +40,16 @@ export default function Footer() {
               Competitive stake platform for CS2, Dota 2 & Deadlock. Fair play for the Caucasus, Turkey and Balkans.
             </p>
             <div className="flex gap-4 mt-4">
-              <a href="https://discord.gg/raisegg" target="_blank" rel="noopener noreferrer"
-                className="text-muted hover:text-accent-purple transition-colors text-sm">
-                Discord
+              <a href="https://t.me/raisegg" target="_blank" rel="noopener noreferrer"
+                className="text-muted hover:text-accent-purple transition-colors text-sm font-semibold">
+                Telegram
               </a>
               <a href="https://twitter.com/RaiseGG" target="_blank" rel="noopener noreferrer"
                 className="text-muted hover:text-accent-purple transition-colors text-sm">
                 Twitter/X
               </a>
             </div>
+            <p className="text-xs text-muted mt-2">500+ players on Telegram</p>
           </div>
 
           {/* Games */}

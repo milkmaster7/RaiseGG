@@ -26,3 +26,17 @@ export async function readSession(req: NextRequest): Promise<string | null> {
     return null
   }
 }
+
+/** For use in server page components that call `cookies()` from next/headers */
+export async function readSessionFromCookies(
+  cookieStore: { get(name: string): { value: string } | undefined }
+): Promise<string | null> {
+  const token = cookieStore.get('rgg_session')?.value
+  if (!token) return null
+  try {
+    const { payload } = await jwtVerify(token, SECRET)
+    return payload.playerId as string
+  } catch {
+    return null
+  }
+}
