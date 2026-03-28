@@ -121,3 +121,30 @@
     border-image: linear-gradient(135deg, #7b61ff, #00d4ff) 1;
   }
 }
+
+@keyframes rankup-in {
+  from { opacity: 0; transform: scale(0.5) translateY(40px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes rankup-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(1.1); }
+}
+
+@keyframes burst {
+  from { opacity: 1; transform: translate(0, 0) scale(1); }
+  to   { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.4); }
+}
+
+.animate-rankup-in {
+  animation: rankup-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-rankup-out {
+  animation: rankup-out 0.4s ease-in forwards;
+}
+
+.animate-burst {
+  animation: burst 0.8s ease-out forwards;
+}

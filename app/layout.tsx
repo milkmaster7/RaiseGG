@@ -1,9 +1,10 @@
 ﻿import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
+import Sidebar from '@/components/layout/Sidebar'
+import MobileNav from '@/components/layout/MobileNav'
 import { SolanaWalletProvider } from '@/components/providers/WalletProvider'
 import { MatchNotifications } from '@/components/matches/MatchNotifications'
+import LiveWinTicker from '@/components/ui/LiveWinTicker'
 
 // ─── Viewport ────────────────────────────────────────────────────────────────
 export const viewport: Viewport = {
@@ -135,7 +136,7 @@ const websiteSchema = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-space-900">
+      <body className="min-h-screen bg-space-900 flex">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -149,10 +150,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <SolanaWalletProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <MatchNotifications />
+          {/* Persistent left sidebar — hidden on mobile */}
+          <Sidebar />
+
+          {/* Main content area fills remaining space */}
+          <div className="flex-1 min-w-0 flex flex-col">
+            <main className="flex-1 pb-20 md:pb-9">{children}</main>
+
+            <LiveWinTicker />
+
+            <MatchNotifications />
+
+            {/* Bottom mobile nav — hidden on desktop */}
+            <MobileNav />
+          </div>
         </SolanaWalletProvider>
       </body>
     </html>

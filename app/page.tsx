@@ -1,9 +1,12 @@
 ﻿import type { Metadata } from 'next'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { Shield, Zap, Trophy, Users, TrendingUp, Globe } from 'lucide-react'
 import { faqSchema, softwareAppSchema } from '@/lib/schemas'
 import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
 import { ActiveCounter } from '@/components/ui/ActiveCounter'
+import { readSessionFromCookies } from '@/lib/session'
 
 export const metadata: Metadata = {
   title: 'CS2, Dota 2 & Deadlock Stake Matches — Win Real USDC/USDT',
@@ -56,7 +59,12 @@ const FAQS = [
   { question: 'What is the platform fee?',            answer: 'We take 10% of the pot from each resolved match. The winner receives 90%. No subscriptions, no hidden fees.' },
 ]
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Logged-in users skip the marketing page and go straight to live matches
+  const cookieStore = await cookies()
+  const playerId = await readSessionFromCookies(cookieStore)
+  if (playerId) redirect('/play')
+
   const faqJsonLd = faqSchema(FAQS)
   const appJsonLd = softwareAppSchema()
 

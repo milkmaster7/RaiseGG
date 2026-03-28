@@ -41,3 +41,5 @@ contracts/typechain-types/
 
 # Package locks inside sub-packages (keep root only)
 contracts/package-lock.json
+
+.env*.local

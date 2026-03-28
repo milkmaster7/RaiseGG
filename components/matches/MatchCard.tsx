@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Clock, Zap } from 'lucide-react'
 import { TierBadge, Badge } from '@/components/ui/Badge'
 import { CancelMatchButton } from '@/components/matches/CancelMatchButton'
+import { getStakeRarity, RARITY_STYLES } from '@/lib/rarity'
 import type { Match } from '@/types'
 
 const GAME_LABELS = { cs2: 'CS2', dota2: 'Dota 2', deadlock: 'Deadlock' }
@@ -24,9 +25,19 @@ interface MatchCardProps {
 
 export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: MatchCardProps) {
   const status = STATUS_CONFIG[match.status]
+  const rarity = getStakeRarity(match.stake_amount)
+  const rarityStyle = RARITY_STYLES[rarity]
 
   return (
-    <div className="card-hover flex items-center justify-between gap-4">
+    <div className={`relative card-hover flex items-center justify-between gap-4 border-2 ${rarityStyle.border} shadow-lg ${rarityStyle.glow}`}>
+      {/* Rarity badge — top-right corner */}
+      <span
+        className="absolute top-1.5 right-2 text-[10px] font-orbitron font-bold uppercase tracking-wider px-1.5 py-0.5 rounded"
+        style={{ color: rarityStyle.color, background: `${rarityStyle.color}18`, border: `1px solid ${rarityStyle.color}40` }}
+      >
+        {rarityStyle.label}
+      </span>
+
       {/* Game + format */}
       <div className="flex items-center gap-3 min-w-0">
         <div className="flex-shrink-0">
