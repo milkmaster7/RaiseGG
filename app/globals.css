@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -14,9 +14,9 @@
   }
 
   body {
-    background-color: #0d0d1a;
-    color: #ffffff;
-    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #0b0c1d;
+    color: #e0e6ef;
+    font-family: 'Outfit', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -26,56 +26,67 @@
     letter-spacing: 0.02em;
   }
 
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #0d0d1a;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #2a2a4a;
-    border-radius: 3px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #7b61ff;
-  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0b0c1d; }
+  ::-webkit-scrollbar-thumb { background: #2a2d4f; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #00e6ff; }
 }
 
 @layer components {
+
+  /* ── Buttons ─────────────────────────────────────────────────────── */
   .btn-primary {
-    @apply bg-accent-purple hover:bg-accent-purple-dim text-white font-semibold px-6 py-3 rounded transition-all duration-200 shadow-glow-sm hover:shadow-glow;
+    @apply bg-accent-cyan hover:bg-accent-cyan-dim text-space-900 font-semibold px-6 py-3 rounded-lg
+           transition-all duration-200
+           shadow-[0_0_10px_rgba(0,230,255,0.3)] hover:shadow-[0_0_25px_rgba(0,230,255,0.7)]
+           hover:scale-[1.02];
   }
 
   .btn-secondary {
-    @apply border border-border hover:border-accent-purple text-white font-semibold px-6 py-3 rounded transition-all duration-200 bg-space-800 hover:bg-space-700;
+    @apply border border-accent-cyan/40 hover:border-accent-cyan text-white font-semibold px-6 py-3 rounded-lg
+           transition-all duration-200 bg-space-800
+           hover:bg-space-700 hover:shadow-[0_0_15px_rgba(0,230,255,0.25)];
   }
 
-  .btn-cyan {
-    @apply bg-accent-cyan hover:bg-accent-cyan-dim text-space-900 font-semibold px-6 py-3 rounded transition-all duration-200 shadow-glow-cyan;
+  .btn-gold {
+    @apply bg-gradient-gold text-space-900 font-semibold px-6 py-3 rounded-lg
+           transition-all duration-200
+           shadow-[0_0_10px_rgba(255,200,0,0.4)] hover:shadow-[0_0_25px_rgba(255,200,0,0.7)]
+           hover:scale-[1.02];
   }
 
+  .btn-ghost {
+    @apply bg-transparent text-white hover:bg-space-800 hover:text-accent-cyan
+           font-semibold px-6 py-3 rounded-lg transition-all duration-200;
+  }
+
+  /* ── Cards ───────────────────────────────────────────────────────── */
   .card {
-    @apply bg-space-800 border border-border rounded p-6 transition-all duration-200;
+    @apply bg-space-800 border border-border rounded-xl p-6
+           shadow-card transition-all duration-200;
   }
 
   .card-hover {
-    @apply card hover:border-accent-purple hover:shadow-glow-sm;
+    @apply card hover:border-accent-cyan/50
+           hover:shadow-[0_0_0_1px_rgba(0,230,255,0.3),0_0_20px_rgba(0,230,255,0.15)]
+           hover:scale-[1.005];
   }
 
+  /* ── Badges ──────────────────────────────────────────────────────── */
   .badge {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider;
-  }
-
-  .badge-purple {
-    @apply badge bg-accent-purple/20 text-accent-purple-glow border border-accent-purple/30;
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold uppercase tracking-wider;
   }
 
   .badge-cyan {
     @apply badge bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/30;
+  }
+
+  .badge-gold {
+    @apply badge bg-accent-gold/20 text-accent-gold border border-accent-gold/30;
+  }
+
+  .badge-purple {
+    @apply badge bg-accent-purple/20 text-accent-purple-glow border border-accent-purple/30;
   }
 
   .badge-green {
@@ -86,31 +97,45 @@
     @apply badge bg-red-500/20 text-red-400 border border-red-500/30;
   }
 
+  /* ── Typography ──────────────────────────────────────────────────── */
   .section-title {
     @apply font-orbitron text-2xl font-bold text-white tracking-wide;
   }
 
   .glow-text {
-    @apply text-accent-purple-glow;
-    text-shadow: 0 0 20px rgba(123, 97, 255, 0.5);
+    color: #00e6ff;
+    text-shadow: 0 0 20px rgba(0, 230, 255, 0.5);
   }
 
+  /* ── Form inputs ─────────────────────────────────────────────────── */
   .input {
-    @apply bg-space-700 border border-border rounded px-4 py-3 text-white placeholder-muted focus:outline-none focus:border-accent-purple transition-colors duration-200 w-full;
+    @apply bg-space-700 border border-border rounded-lg px-4 py-3 text-white placeholder-muted
+           focus:outline-none focus:border-accent-cyan
+           transition-colors duration-200 w-full;
   }
 
   .divider {
     @apply border-t border-border my-6;
   }
 
+  /* ── Live dot ────────────────────────────────────────────────────── */
   .live-dot {
-    @apply inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse;
+    @apply inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse;
   }
 }
 
 @layer utilities {
+  /* Cyan + gold gradient text */
   .text-gradient {
-    background: linear-gradient(135deg, #7b61ff, #00d4ff);
+    background: linear-gradient(135deg, #00e6ff, #ffc800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Cyan-only gradient text */
+  .text-gradient-cyan {
+    background: linear-gradient(135deg, #00e6ff, #4df0ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -118,10 +143,11 @@
 
   .border-gradient {
     border: 1px solid;
-    border-image: linear-gradient(135deg, #7b61ff, #00d4ff) 1;
+    border-image: linear-gradient(135deg, #00e6ff, #ffc800) 1;
   }
 }
 
+/* ── Rank-up animation ─────────────────────────────────────────────── */
 @keyframes rankup-in {
   from { opacity: 0; transform: scale(0.5) translateY(40px); }
   to   { opacity: 1; transform: scale(1) translateY(0); }
@@ -137,14 +163,6 @@
   to   { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.4); }
 }
 
-.animate-rankup-in {
-  animation: rankup-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.animate-rankup-out {
-  animation: rankup-out 0.4s ease-in forwards;
-}
-
-.animate-burst {
-  animation: burst 0.8s ease-out forwards;
-}
+.animate-rankup-in  { animation: rankup-in  0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+.animate-rankup-out { animation: rankup-out 0.4s ease-in forwards; }
+.animate-burst      { animation: burst      0.8s ease-out forwards; }
