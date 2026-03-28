@@ -2,29 +2,46 @@
 
 import { useEffect, useState } from 'react'
 
-async function measurePing(): Promise<number> {
-  const samples: number[] = []
-  for (let i = 0; i < 3; i++) {
-    const t = performance.now()
+const REGION_STUN: Record<string, string> = {
+  EU: 'stun:stun.l.google.com:19302',
+  TR: 'stun:stun.voipbuster.com:3478',
+  GE: 'stun:stun.ekiga.net:3478',
+  KZ: 'stun:stun.sipnet.ru:3478',
+  RU: 'stun:stun.sipnet.ru:3478',
+}
+
+function measureStun(stunUrl: string): Promise<number> {
+  return new Promise((resolve) => {
     try {
-      await fetch('/api/ping', { cache: 'no-store' })
+      const pc = new RTCPeerConnection({ iceServers: [{ urls: stunUrl }] })
+      const start = performance.now()
+      pc.createDataChannel('')
+      pc.createOffer().then((o) => pc.setLocalDescription(o))
+      pc.onicecandidate = (e) => {
+        if (e.candidate?.type === 'srflx') {
+          resolve(Math.round(performance.now() - start))
+          try { pc.close() } catch { /* ignore */ }
+        }
+      }
+      setTimeout(() => { try { pc.close() } catch { /* ignore */ } resolve(999) }, 3000)
     } catch {
-      // ignore
+      resolve(999)
     }
-    samples.push(Math.round(performance.now() - t))
-  }
-  // Drop highest, average rest
-  samples.sort((a, b) => a - b)
-  const used = samples.slice(0, 2)
-  return Math.round(used.reduce((a, b) => a + b, 0) / used.length)
+  })
 }
 
 export function usePing() {
-  const [ping, setPing] = useState<number | null>(null)
+  const [pings, setPings] = useState<Record<string, number | null>>(
+    Object.fromEntries(Object.keys(REGION_STUN).map((r) => [r, null]))
+  )
 
   useEffect(() => {
-    measurePing().then(setPing)
+    Object.entries(REGION_STUN).forEach(([region, stun]) => {
+      measureStun(stun).then((ms) => {
+        setPings((prev) => ({ ...prev, [region]: ms }))
+      })
+    })
   }, [])
 
-  return ping
+  return pings
 }
