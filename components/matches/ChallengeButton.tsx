@@ -6,9 +6,10 @@ import { CreateMatchModal } from './CreateMatchModal'
 
 interface Props {
   profileUsername: string
+  profilePlayerId: string
 }
 
-export function ChallengeButton({ profileUsername }: Props) {
+export function ChallengeButton({ profileUsername, profilePlayerId }: Props) {
   const [playerId, setPlayerId]     = useState<string | null>(null)
   const [myUsername, setMyUsername] = useState<string | null>(null)
   const [showModal, setShowModal]   = useState(false)
@@ -24,13 +25,17 @@ export function ChallengeButton({ profileUsername }: Props) {
       })
   }, [])
 
-  // Don't render if not logged in or viewing own profile
   if (!playerId || myUsername === profileUsername) return null
 
   return (
     <>
       {showModal && (
-        <CreateMatchModal playerId={playerId} onClose={() => setShowModal(false)} />
+        <CreateMatchModal
+          playerId={playerId}
+          onClose={() => setShowModal(false)}
+          challengedPlayerId={profilePlayerId}
+          challengedUsername={profileUsername}
+        />
       )}
       <button
         onClick={() => setShowModal(true)}

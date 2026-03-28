@@ -46,6 +46,7 @@ export interface Match {
   connect_token: string | null
   region: string | null
   has_password: boolean | null
+  challenged_player_id: string | null
   created_at: string
   resolved_at: string | null
   player_a?: Player

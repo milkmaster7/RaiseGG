@@ -23,14 +23,17 @@ export async function POST(req: NextRequest) {
   // Check player is eligible and not banned
   const supabase = createServiceClient()
 
-  // Validate password if match is password-protected
+  // Validate password and challenge lock
   const { data: matchData } = await supabase
     .from('matches')
-    .select('invite_password, has_password')
+    .select('invite_password, has_password, challenged_player_id')
     .eq('id', matchId)
     .single()
   if (matchData?.has_password && matchData.invite_password !== password) {
     return NextResponse.json({ error: 'Incorrect match password.' }, { status: 403 })
+  }
+  if (matchData?.challenged_player_id && matchData.challenged_player_id !== playerBId) {
+    return NextResponse.json({ error: 'This match is a private challenge — only the challenged player can join.' }, { status: 403 })
   }
 
   const { data: player } = await supabase

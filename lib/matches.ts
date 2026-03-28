@@ -23,6 +23,7 @@ export async function createMatch(params: {
   createTx: string
   region?: string
   invitePassword?: string
+  challengedPlayerId?: string
 }) {
   const supabase = createServiceClient()
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000) // 30 min to join
@@ -40,9 +41,10 @@ export async function createMatch(params: {
       create_tx:       params.createTx,
       status:          'open',
       expires_at:      expiresAt.toISOString(),
-      region:          params.region ?? 'EU',
-      invite_password: params.invitePassword ?? null,
-      has_password:    !!params.invitePassword,
+      region:                params.region ?? 'EU',
+      invite_password:       params.invitePassword ?? null,
+      has_password:          !!params.invitePassword,
+      challenged_player_id:  params.challengedPlayerId ?? null,
     })
     .select()
     .single()

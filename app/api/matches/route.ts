@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json()
-  const { matchId, playerAId, game, format, stakeAmount, currency = 'usdc', vaultPda, createTx, region, invitePassword } = body
+  const { matchId, playerAId, game, format, stakeAmount, currency = 'usdc', vaultPda, createTx, region, invitePassword, challengedPlayerId } = body
 
   if (!matchId || !playerAId || !game || !format || !stakeAmount || !vaultPda || !createTx) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Minimum stake for your rank is $${minStake}` }, { status: 400 })
   }
 
-  const { match, error } = await createMatch({ matchId, playerAId, game, format, stakeAmount, currency, vaultPda, createTx, region, invitePassword })
+  const { match, error } = await createMatch({ matchId, playerAId, game, format, stakeAmount, currency, vaultPda, createTx, region, invitePassword, challengedPlayerId })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json(match, { status: 201 })

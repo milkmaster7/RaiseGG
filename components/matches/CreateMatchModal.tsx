@@ -33,9 +33,11 @@ const STAKE_PRESETS = [5, 10, 25, 50, 100]
 interface Props {
   playerId: string
   onClose: () => void
+  challengedPlayerId?: string
+  challengedUsername?: string
 }
 
-export function CreateMatchModal({ playerId, onClose }: Props) {
+export function CreateMatchModal({ playerId, onClose, challengedPlayerId, challengedUsername }: Props) {
   const router = useRouter()
   const { connection } = useConnection()
   const { connected, publicKey, signTransaction, signAllTransactions } = useWallet()
@@ -80,15 +82,16 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           matchId,
-          playerAId:     playerId,
+          playerAId:          playerId,
           game,
           format,
-          stakeAmount:   stakeNum,
+          stakeAmount:        stakeNum,
           currency,
           vaultPda,
-          createTx:      txSignature,
+          createTx:           txSignature,
           region,
-          invitePassword: usePassword && password ? password : undefined,
+          invitePassword:     usePassword && password ? password : undefined,
+          challengedPlayerId: challengedPlayerId ?? undefined,
         }),
       })
 
@@ -112,7 +115,9 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-orbitron font-bold text-white text-lg">Create Match</h2>
+          <h2 className="font-orbitron font-bold text-white text-lg">
+            {challengedUsername ? `Challenge ${challengedUsername}` : 'Create Match'}
+          </h2>
           <button onClick={onClose} className="text-muted hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
@@ -124,7 +129,11 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
               <Zap className="w-7 h-7 text-green-400" />
             </div>
             <p className="text-white font-semibold mb-1">Match Created!</p>
-            <p className="text-muted text-sm mb-5">Share this link so your opponent can join directly.</p>
+            <p className="text-muted text-sm mb-5">
+              {challengedUsername
+                ? `Share this link with ${challengedUsername} — only they can join.`
+                : 'Share this link so your opponent can join directly.'}
+            </p>
             <button
               onClick={() => {
                 navigator.clipboard.writeText(`${window.location.origin}/play?join=${createdId}`)

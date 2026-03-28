@@ -146,7 +146,7 @@ export default async function ProfilePage({ params }: Props) {
                   <TierBadge key={g} elo={player[`${g}_elo`] ?? 1000} />
                 ))}
               </div>
-              <ChallengeButton profileUsername={player.username} />
+              <ChallengeButton profileUsername={player.username} profilePlayerId={player.id} />
             </div>
           </div>
         </div>
