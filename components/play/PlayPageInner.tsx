@@ -58,7 +58,6 @@ export function PlayPageInner() {
     if (gameFilter !== 'all') params.set('game', gameFilter)
     const res = await fetch(`/api/matches?${params}`)
     const data = await res.json()
-    if (!res.ok) console.error('[play] /api/matches error:', data)
     setMatches(Array.isArray(data) ? data : [])
     setLoading(false)
   }, [gameFilter])
