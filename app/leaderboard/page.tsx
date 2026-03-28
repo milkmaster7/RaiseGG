@@ -111,8 +111,8 @@ export default async function LeaderboardPage({
         </h1>
 
         {/* Season 1 banner */}
-        <div className="flex items-center gap-3 mb-6 p-3 bg-space-800 border border-accent-purple/30 rounded">
-          <span className="badge-purple text-xs">SEASON 1</span>
+        <div className="flex items-center gap-3 mb-6 p-3 bg-space-800 border border-accent-cyan/30 rounded">
+          <span className="badge-cyan text-xs">SEASON 1</span>
           <span className="text-sm text-muted">Current season · Ends when Season 2 is announced · Top 3 earn reduced rake</span>
         </div>
 
@@ -128,7 +128,7 @@ export default async function LeaderboardPage({
               href={`/leaderboard?game=${activeGame}&period=${p}`}
               className={`px-4 py-2 rounded text-sm font-semibold transition-all ${
                 activePeriod === p
-                  ? 'bg-accent-purple text-white'
+                  ? 'bg-accent-cyan text-space-900'
                   : 'text-muted hover:text-white'
               }`}
             >
@@ -147,7 +147,7 @@ export default async function LeaderboardPage({
               href={`/leaderboard?game=${g.value}&period=${activePeriod}`}
               className={`px-4 py-2 rounded text-sm font-semibold transition-all ${
                 activeGame === g.value
-                  ? 'bg-accent-purple text-white'
+                  ? 'bg-accent-cyan text-space-900'
                   : 'text-muted hover:text-white'
               }`}
             >

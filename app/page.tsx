@@ -80,7 +80,7 @@ export default async function HomePage() {
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent-cyan/8 rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 text-center">
-          <div className="inline-flex items-center gap-2 badge-purple mb-6 text-sm">
+          <div className="inline-flex items-center gap-2 badge-cyan mb-6 text-sm">
             <span className="live-dot" /> 44 Countries — No Competition
           </div>
           <h1 className="font-orbitron text-5xl md:text-7xl font-black mb-6 leading-tight">
@@ -103,9 +103,9 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {STATS.map((stat) => (
               <div key={stat.label} className="flex items-center gap-3">
-                <stat.icon className="w-5 h-5 text-accent-purple flex-shrink-0" />
+                <stat.icon className="w-5 h-5 text-accent-cyan flex-shrink-0" />
                 <div>
-                  <div className="font-orbitron font-bold text-xl text-white">{stat.value}</div>
+                  <div className="font-orbitron font-bold text-xl text-accent-cyan">{stat.value}</div>
                   <div className="text-xs text-muted uppercase tracking-wider">
                     {stat.label === 'Active Players' ? <ActiveCounter /> : stat.label}
                   </div>
@@ -122,7 +122,7 @@ export default async function HomePage() {
           <h2 className="section-title flex items-center gap-3">
             <span className="live-dot" /> Live Matches
           </h2>
-          <Link href="/play" className="text-sm text-accent-purple hover:text-accent-purple-glow transition-colors">
+          <Link href="/play" className="text-sm text-accent-cyan hover:text-accent-cyan-glow transition-colors">
             View all →
           </Link>
         </div>
@@ -139,12 +139,12 @@ export default async function HomePage() {
               <Link key={game.name} href={game.href} className="card-hover group block">
                 <div className="flex items-start justify-between mb-4">
                   <h3 className="font-orbitron text-2xl font-bold text-white group-hover:text-gradient transition-all">{game.name}</h3>
-                  <span className="badge-purple text-xs">{game.badge}</span>
+                  <span className="badge-cyan text-xs">{game.badge}</span>
                 </div>
                 <p className="text-muted text-sm mb-4 leading-relaxed">{game.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-muted">Global players</span>
-                  <span className="font-orbitron font-bold text-accent-purple">{game.players}</span>
+                  <span className="font-orbitron font-bold text-accent-cyan">{game.players}</span>
                 </div>
               </Link>
             ))}
@@ -159,10 +159,10 @@ export default async function HomePage() {
         <div className="grid md:grid-cols-3 gap-8">
           {HOW_IT_WORKS.map((step) => (
             <div key={step.step} className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded bg-accent-purple/10 border border-accent-purple/30 mb-6">
-                <step.icon className="w-7 h-7 text-accent-purple" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded bg-accent-cyan/10 border border-accent-cyan/30 mb-6">
+                <step.icon className="w-7 h-7 text-accent-cyan" />
               </div>
-              <div className="font-orbitron text-xs text-accent-purple tracking-widest mb-2">STEP {step.step}</div>
+              <div className="font-orbitron text-xs text-accent-cyan tracking-widest mb-2">STEP {step.step}</div>
               <h3 className="font-orbitron text-lg font-bold text-white mb-3">{step.title}</h3>
               <p className="text-muted text-sm leading-relaxed">{step.description}</p>
             </div>
@@ -186,7 +186,7 @@ export default async function HomePage() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/faq" className="text-accent-purple hover:text-accent-purple-glow text-sm transition-colors">View all FAQs →</Link>
+            <Link href="/faq" className="text-accent-cyan hover:text-accent-cyan-glow text-sm transition-colors">View all FAQs →</Link>
           </div>
         </div>
       </section>
@@ -205,7 +205,7 @@ export default async function HomePage() {
                   <span className="text-lg">{t.flag}</span>
                   <span className="font-orbitron text-sm text-white">{t.name}</span>
                 </div>
-                <span className="badge-purple text-xs">{t.game}</span>
+                <span className="badge-cyan text-xs">{t.game}</span>
               </div>
             </div>
           ))}

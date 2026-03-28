@@ -70,7 +70,7 @@ export default function Sidebar() {
                 flex items-center gap-3 px-3 py-2.5 rounded transition-all duration-200 group
                 ${
                   active
-                    ? 'bg-accent-purple/15 text-white shadow-glow-sm border border-accent-purple/30'
+                    ? 'bg-accent-cyan/10 text-white shadow-[0_0_10px_rgba(0,230,255,0.15)] border border-accent-cyan/30'
                     : 'text-muted hover:text-white hover:bg-space-800'
                 }
               `}
@@ -78,12 +78,12 @@ export default function Sidebar() {
               <Icon
                 className={`
                   w-4 h-4 flex-shrink-0 transition-colors duration-200
-                  ${active ? 'text-accent-purple' : 'text-muted group-hover:text-accent-purple-glow'}
+                  ${active ? 'text-accent-cyan' : 'text-muted group-hover:text-accent-cyan'}
                 `}
               />
               <span className="text-sm font-medium">{label}</span>
               {active && (
-                <span className="ml-auto w-1 h-4 rounded-full bg-accent-purple shadow-glow-sm" />
+                <span className="ml-auto w-1 h-4 rounded-full bg-accent-cyan shadow-glow-sm" />
               )}
             </Link>
           )
@@ -105,7 +105,7 @@ export default function Sidebar() {
                 flex items-center px-3 py-2 rounded text-xs font-medium transition-all duration-200
                 ${
                   active
-                    ? 'text-accent-purple-glow bg-accent-purple/10'
+                    ? 'text-accent-cyan bg-accent-cyan/10'
                     : 'text-muted hover:text-white hover:bg-space-800'
                 }
               `}
@@ -121,7 +121,7 @@ export default function Sidebar() {
             href="https://t.me/raisegg"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-muted hover:text-accent-purple transition-colors font-semibold"
+            className="text-xs text-muted hover:text-accent-cyan transition-colors font-semibold"
           >
             Telegram
           </a>
@@ -129,7 +129,7 @@ export default function Sidebar() {
             href="https://twitter.com/RaiseGG"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-muted hover:text-accent-purple transition-colors"
+            className="text-xs text-muted hover:text-accent-cyan transition-colors"
           >
             Twitter/X
           </a>

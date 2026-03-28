@@ -132,7 +132,7 @@ export default function PlayPage() {
                 onClick={() => setGameFilter(g.value as Game | 'all')}
                 className={`px-3 py-1.5 rounded text-xs font-semibold transition-all ${
                   gameFilter === g.value
-                    ? 'bg-accent-purple text-white'
+                    ? 'bg-accent-cyan text-space-900'
                     : 'text-muted hover:text-white'
                 }`}
               >
@@ -149,7 +149,7 @@ export default function PlayPage() {
                 onClick={() => setStakeFilter(s.value)}
                 className={`px-3 py-1.5 rounded text-xs font-semibold transition-all ${
                   stakeFilter === s.value
-                    ? 'bg-accent-purple text-white'
+                    ? 'bg-accent-cyan text-space-900'
                     : 'text-muted hover:text-white'
                 }`}
               >
@@ -183,7 +183,7 @@ export default function PlayPage() {
                 <div
                   key={match.id}
                   ref={isTarget ? highlightRef : undefined}
-                  className={isTarget ? 'ring-2 ring-accent-purple rounded' : undefined}
+                  className={isTarget ? 'ring-2 ring-accent-cyan rounded' : undefined}
                 >
                   <MatchCard match={match} showJoin onJoin={setJoinMatch} currentPlayerId={playerId} />
                 </div>

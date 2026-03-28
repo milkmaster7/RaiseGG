@@ -41,7 +41,7 @@ export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: 
       {/* Game + format */}
       <div className="flex items-center gap-3 min-w-0">
         <div className="flex-shrink-0">
-          <Badge variant="purple">{GAME_LABELS[match.game]}</Badge>
+          <Badge variant="cyan">{GAME_LABELS[match.game]}</Badge>
         </div>
         <Badge variant="gray">{match.format}</Badge>
       </div>
@@ -61,7 +61,7 @@ export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: 
             )}
             <Link
               href={`/profile/${match.player_a.username}`}
-              className="text-sm text-white hover:text-accent-purple transition-colors truncate"
+              className="text-sm text-white hover:text-accent-cyan transition-colors truncate"
             >
               {match.player_a.username}
             </Link>
@@ -84,7 +84,7 @@ export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: 
               )}
               <Link
                 href={`/profile/${match.player_b.username}`}
-                className="text-sm text-white hover:text-accent-purple transition-colors truncate"
+                className="text-sm text-white hover:text-accent-cyan transition-colors truncate"
               >
                 {match.player_b.username}
               </Link>
