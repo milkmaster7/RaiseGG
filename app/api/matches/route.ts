@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const supabase = createServiceClient()
   let query = supabase
     .from('matches')
-    .select('*, currency, player_a:players!player_a_id(id,username,avatar_url,cs2_elo,dota2_elo,deadlock_elo,country)')
+    .select('*, player_a:players!player_a_id(id,username,avatar_url,cs2_elo,dota2_elo,deadlock_elo,country)')
     .eq('status', status)
     .order('created_at', { ascending: false })
     .limit(limit)
