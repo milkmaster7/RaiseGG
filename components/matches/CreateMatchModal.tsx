@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useRouter } from 'next/navigation'
-import { X, Zap, Loader2, Copy, CheckCircle } from 'lucide-react'
+import { X, Zap, Loader2, Copy, CheckCircle, Lock } from 'lucide-react'
 import { solanaCreateMatch, type StakeCurrency } from '@/lib/escrow'
 import type { Game, MatchFormat } from '@/types'
 
@@ -19,6 +19,14 @@ const FORMATS: { value: MatchFormat; label: string }[] = [
   { value: '5v5', label: '5v5' },
 ]
 
+const REGIONS = [
+  { value: 'EU',  label: 'EU',  flag: '🇪🇺' },
+  { value: 'TR',  label: 'TR',  flag: '🇹🇷' },
+  { value: 'GE',  label: 'GE',  flag: '🇬🇪' },
+  { value: 'KZ',  label: 'KZ',  flag: '🇰🇿' },
+  { value: 'RU',  label: 'RU',  flag: '🇷🇺' },
+]
+
 const STAKE_PRESETS = [5, 10, 25, 50, 100]
 
 interface Props {
@@ -31,14 +39,17 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
   const { connection } = useConnection()
   const { connected, publicKey, signTransaction, signAllTransactions } = useWallet()
 
-  const [game, setGame]         = useState<Game>('cs2')
-  const [format, setFormat]     = useState<MatchFormat>('1v1')
-  const [stake, setStake]       = useState('')
-  const [currency, setCurrency] = useState<StakeCurrency>('usdc')
-  const [step, setStep]         = useState<'form' | 'confirm' | 'submitting' | 'done'>('form')
-  const [error, setError]       = useState<string | null>(null)
+  const [game, setGame]           = useState<Game>('cs2')
+  const [format, setFormat]       = useState<MatchFormat>('1v1')
+  const [region, setRegion]       = useState('EU')
+  const [stake, setStake]         = useState('')
+  const [currency, setCurrency]   = useState<StakeCurrency>('usdc')
+  const [password, setPassword]   = useState('')
+  const [usePassword, setUsePassword] = useState(false)
+  const [step, setStep]           = useState<'form' | 'confirm' | 'submitting' | 'done'>('form')
+  const [error, setError]         = useState<string | null>(null)
   const [createdId, setCreatedId] = useState<string | null>(null)
-  const [copied, setCopied]     = useState(false)
+  const [copied, setCopied]       = useState(false)
 
   const stakeNum = parseFloat(stake)
   const valid = connected && stakeNum > 0 && game !== 'deadlock'
@@ -62,19 +73,20 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
         currency
       )
 
-      // Register match in DB — use same UUID so Solana PDA matches DB primary key
       const res = await fetch('/api/matches', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           matchId,
-          playerAId:   playerId,
+          playerAId:     playerId,
           game,
           format,
-          stakeAmount: stakeNum,
+          stakeAmount:   stakeNum,
           currency,
           vaultPda,
-          createTx:    txSignature,
+          createTx:      txSignature,
+          region,
+          invitePassword: usePassword && password ? password : undefined,
         }),
       })
 
@@ -94,7 +106,7 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-      <div className="card w-full max-w-md">
+      <div className="card w-full max-w-md max-h-[90vh] overflow-y-auto">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -117,11 +129,14 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
                 setCopied(true)
                 setTimeout(() => setCopied(false), 2000)
               }}
-              className="flex items-center gap-2 mx-auto text-sm px-4 py-2 rounded border border-accent-purple/40 bg-accent-purple/10 text-accent-purple hover:bg-accent-purple/20 transition-all"
+              className="flex items-center gap-2 mx-auto text-sm px-4 py-2 rounded border border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan hover:bg-accent-cyan/20 transition-all"
             >
               {copied ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
               {copied ? 'Copied!' : 'Copy invite link'}
             </button>
+            {usePassword && password && (
+              <p className="text-xs text-muted mt-3">Password: <span className="text-white font-mono">{password}</span></p>
+            )}
             <button
               onClick={() => { onClose(); router.push(`/play?join=${createdId}`); router.refresh() }}
               className="mt-3 text-xs text-muted hover:text-white transition-colors"
@@ -142,13 +157,13 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
                     onClick={() => setGame(g.value)}
                     className={`relative py-2 px-3 rounded border text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                       game === g.value
-                        ? 'border-accent-purple bg-accent-purple/10 text-white'
-                        : 'border-border text-muted hover:border-accent-purple/50'
+                        ? 'border-accent-cyan bg-accent-cyan/10 text-white'
+                        : 'border-border text-muted hover:border-accent-cyan/50'
                     }`}
                   >
                     {g.label}
                     {g.badge && (
-                      <span className="absolute -top-2 -right-2 text-[9px] bg-accent-purple text-white px-1 rounded leading-tight">
+                      <span className="absolute -top-2 -right-2 text-[9px] bg-accent-cyan text-space-900 px-1 rounded leading-tight font-bold">
                         {g.badge}
                       </span>
                     )}
@@ -167,11 +182,31 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
                     onClick={() => setFormat(f.value)}
                     className={`flex-1 py-2 rounded border text-sm font-semibold transition-all ${
                       format === f.value
-                        ? 'border-accent-purple bg-accent-purple/10 text-white'
-                        : 'border-border text-muted hover:border-accent-purple/50'
+                        ? 'border-accent-cyan bg-accent-cyan/10 text-white'
+                        : 'border-border text-muted hover:border-accent-cyan/50'
                     }`}
                   >
                     {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Region */}
+            <div className="mb-5">
+              <label className="text-xs text-muted uppercase tracking-wider mb-2 block">Server Region</label>
+              <div className="flex gap-2 flex-wrap">
+                {REGIONS.map((r) => (
+                  <button
+                    key={r.value}
+                    onClick={() => setRegion(r.value)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded border text-sm font-semibold transition-all ${
+                      region === r.value
+                        ? 'border-accent-cyan bg-accent-cyan/10 text-white'
+                        : 'border-border text-muted hover:border-accent-cyan/50'
+                    }`}
+                  >
+                    <span>{r.flag}</span> {r.label}
                   </button>
                 ))}
               </div>
@@ -198,7 +233,7 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
             </div>
 
             {/* Stake */}
-            <div className="mb-6">
+            <div className="mb-5">
               <label className="text-xs text-muted uppercase tracking-wider mb-2 block">Stake ({currency.toUpperCase()})</label>
               <div className="flex gap-2 mb-2 flex-wrap">
                 {STAKE_PRESETS.map((p) => (
@@ -222,12 +257,32 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
                 value={stake}
                 onChange={(e) => setStake(e.target.value)}
                 placeholder="Custom amount…"
-                className="w-full bg-space-800 border border-border rounded px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-purple"
+                className="w-full bg-space-800 border border-border rounded px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-cyan"
               />
               {stakeNum > 0 && (
                 <p className="text-xs text-muted mt-1.5">
                   You stake <span className="text-white">${stakeNum.toFixed(2)}</span> · Winner takes <span className="text-green-400">${(stakeNum * 2 * 0.9).toFixed(2)}</span> · Rake <span className="text-muted">${(stakeNum * 2 * 0.1).toFixed(2)}</span>
                 </p>
+              )}
+            </div>
+
+            {/* Password (optional) */}
+            <div className="mb-6">
+              <button
+                onClick={() => { setUsePassword(!usePassword); setPassword('') }}
+                className="flex items-center gap-2 text-xs text-muted hover:text-accent-cyan transition-colors mb-2"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                {usePassword ? 'Remove password (make public)' : 'Add match password (private lobby)'}
+              </button>
+              {usePassword && (
+                <input
+                  type="text"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Set password for this match…"
+                  className="w-full bg-space-800 border border-accent-cyan/30 rounded px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-cyan"
+                />
               )}
             </div>
 
@@ -240,7 +295,7 @@ export function CreateMatchModal({ playerId, onClose }: Props) {
             {!connected ? (
               <div className="flex flex-col items-center gap-2">
                 <p className="text-muted text-sm mb-1">Connect your Solana wallet to stake</p>
-                <WalletMultiButton className="!bg-accent-purple hover:!bg-accent-purple/80 !rounded !text-sm !font-semibold" />
+                <WalletMultiButton className="!bg-accent-cyan hover:!bg-accent-cyan/80 !text-space-900 !rounded !text-sm !font-semibold" />
               </div>
             ) : (
               <button

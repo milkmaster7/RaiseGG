@@ -21,6 +21,8 @@ export async function createMatch(params: {
   currency: StakeCurrency
   vaultPda: string
   createTx: string
+  region?: string
+  invitePassword?: string
 }) {
   const supabase = createServiceClient()
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000) // 30 min to join
@@ -28,16 +30,19 @@ export async function createMatch(params: {
   const { data, error } = await supabase
     .from('matches')
     .insert({
-      id:           params.matchId,
-      player_a_id:  params.playerAId,
-      game:         params.game,
-      format:       params.format,
-      stake_amount: params.stakeAmount,
-      currency:     params.currency,
-      vault_pda:    params.vaultPda,
-      create_tx:    params.createTx,
-      status:       'open',
-      expires_at:   expiresAt.toISOString(),
+      id:              params.matchId,
+      player_a_id:     params.playerAId,
+      game:            params.game,
+      format:          params.format,
+      stake_amount:    params.stakeAmount,
+      currency:        params.currency,
+      vault_pda:       params.vaultPda,
+      create_tx:       params.createTx,
+      status:          'open',
+      expires_at:      expiresAt.toISOString(),
+      region:          params.region ?? 'EU',
+      invite_password: params.invitePassword ?? null,
+      has_password:    !!params.invitePassword,
     })
     .select()
     .single()

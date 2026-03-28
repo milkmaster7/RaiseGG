@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { matchId, playerBId, joinTx } = await req.json()
+  const { matchId, playerBId, joinTx, password } = await req.json()
 
   if (!matchId || !playerBId || !joinTx) {
     return NextResponse.json({ error: 'matchId, playerBId, and joinTx are required' }, { status: 400 })
@@ -22,6 +22,17 @@ export async function POST(req: NextRequest) {
 
   // Check player is eligible and not banned
   const supabase = createServiceClient()
+
+  // Validate password if match is password-protected
+  const { data: matchData } = await supabase
+    .from('matches')
+    .select('invite_password, has_password')
+    .eq('id', matchId)
+    .single()
+  if (matchData?.has_password && matchData.invite_password !== password) {
+    return NextResponse.json({ error: 'Incorrect match password.' }, { status: 403 })
+  }
+
   const { data: player } = await supabase
     .from('players')
     .select('eligible, banned')

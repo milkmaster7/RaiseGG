@@ -372,3 +372,75 @@ export function getBlogPost(slug: string): BlogPost | undefined {
 export function getBlogPostSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug)
 }
+
+// ─── Supabase AI posts (server-only) ─────────────────────────────────────────
+
+type AIRow = {
+  slug: string
+  title: string
+  description: string
+  tag: string
+  published_at: string
+  read_time: number
+  content: string
+  related_links: { href: string; label: string }[] | null
+}
+
+function rowToPost(r: AIRow): BlogPost {
+  return {
+    slug:         r.slug,
+    title:        r.title,
+    description:  r.description,
+    tag:          r.tag,
+    publishedAt:  r.published_at,
+    readTime:     r.read_time,
+    content:      r.content,
+    relatedLinks: r.related_links ?? [],
+  }
+}
+
+export async function getAIBlogPosts(): Promise<BlogPost[]> {
+  try {
+    const { createServiceClient } = await import('@/lib/supabase')
+    const supabase = createServiceClient()
+    const { data } = await supabase
+      .from('ai_blog_posts')
+      .select('slug,title,description,tag,published_at,read_time,content,related_links')
+      .order('published_at', { ascending: false })
+    return (data ?? []).map(rowToPost)
+  } catch {
+    return []
+  }
+}
+
+export async function getAllBlogPosts(): Promise<BlogPost[]> {
+  const ai = await getAIBlogPosts()
+  const all = [...BLOG_POSTS, ...ai]
+  // Deduplicate by slug, static posts win
+  const seen = new Set<string>()
+  const deduped: BlogPost[] = []
+  for (const post of all) {
+    if (!seen.has(post.slug)) {
+      seen.add(post.slug)
+      deduped.push(post)
+    }
+  }
+  return deduped.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+}
+
+export async function getBlogPostWithAI(slug: string): Promise<BlogPost | undefined> {
+  const static_ = getBlogPost(slug)
+  if (static_) return static_
+  try {
+    const { createServiceClient } = await import('@/lib/supabase')
+    const supabase = createServiceClient()
+    const { data } = await supabase
+      .from('ai_blog_posts')
+      .select('slug,title,description,tag,published_at,read_time,content,related_links')
+      .eq('slug', slug)
+      .single()
+    return data ? rowToPost(data) : undefined
+  } catch {
+    return undefined
+  }
+}

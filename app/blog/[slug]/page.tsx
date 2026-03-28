@@ -2,18 +2,21 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { articleSchema, breadcrumbSchema } from '@/lib/schemas'
-import { getBlogPost, getBlogPostSlugs } from '@/lib/blog'
+import { getBlogPostSlugs, getBlogPostWithAI } from '@/lib/blog'
 import { Clock, ArrowLeft } from 'lucide-react'
 
 type Props = { params: Promise<{ slug: string }> }
 
+// Pre-render static posts at build; AI slugs resolved on first request then cached
 export async function generateStaticParams() {
   return getBlogPostSlugs().map((slug) => ({ slug }))
 }
+export const dynamicParams = true
+export const revalidate = 3600
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const post = getBlogPost(slug)
+  const post = await getBlogPostWithAI(slug)
   if (!post) return { title: 'Post Not Found' }
 
   return {
@@ -39,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
-  const post = getBlogPost(slug)
+  const post = await getBlogPostWithAI(slug)
   if (!post) notFound()
 
   const aSchema = articleSchema({
@@ -70,7 +73,7 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <span className="badge-purple text-xs">{post.tag}</span>
+            <span className="badge-cyan text-xs">{post.tag}</span>
             <span className="flex items-center gap-1 text-xs text-muted">
               <Clock className="w-3 h-3" />{post.readTime} min read
             </span>

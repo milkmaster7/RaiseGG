@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { breadcrumbSchema, blogListSchema } from '@/lib/schemas'
-import { BLOG_POSTS } from '@/lib/blog'
-import { Clock, Tag } from 'lucide-react'
+import { getAllBlogPosts } from '@/lib/blog'
+import { Clock } from 'lucide-react'
+
+export const revalidate = 3600 // re-check for new AI posts every hour
 
 export const metadata: Metadata = {
   title: 'Blog — CS2, Dota 2 & Deadlock Guides',
@@ -12,31 +14,30 @@ export const metadata: Metadata = {
     title: 'RaiseGG.gg – Blog',
     description: 'CS2, Dota 2 & Deadlock guides and staking strategies.',
     url: 'https://raisegg.gg/blog',
-    images: [{ url: '/api/og?title=Blog&sub=Guides+%26+Strategies&color=7b61ff', width: 1200, height: 630 }],
+    images: [{ url: '/api/og?title=Blog&sub=Guides+%26+Strategies&color=00e6ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'RaiseGG.gg – Blog',
-    images: ['/api/og?title=Blog&sub=Guides+%26+Strategies&color=7b61ff'],
+    images: ['/api/og?title=Blog&sub=Guides+%26+Strategies&color=00e6ff'],
   },
 }
 
 const TAG_COLORS: Record<string, string> = {
-  Guide:   'badge-purple',
-  CS2:     'bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/30 px-2 py-0.5 rounded text-xs font-semibold',
+  Guide:   'badge-cyan',
+  CS2:     'badge-cyan',
   'Dota 2':'badge-purple',
-  Deadlock:'badge-purple',
+  Deadlock:'badge-gold',
   Tech:    'bg-space-700 text-muted border border-border px-2 py-0.5 rounded text-xs font-semibold',
 }
 
-export default function BlogIndexPage() {
+export default async function BlogIndexPage() {
+  const sorted = await getAllBlogPosts()
+
   const crumbs = breadcrumbSchema([
     { name: 'Home', url: 'https://raisegg.gg' },
     { name: 'Blog', url: 'https://raisegg.gg/blog' },
   ])
-
-  const sorted = [...BLOG_POSTS].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-
   const blogList = blogListSchema(
     sorted.map((p) => ({
       title: p.title,
@@ -60,7 +61,7 @@ export default function BlogIndexPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={TAG_COLORS[post.tag] ?? 'badge-purple'}>{post.tag}</span>
+                    <span className={TAG_COLORS[post.tag] ?? 'badge-cyan'}>{post.tag}</span>
                     <span className="flex items-center gap-1 text-xs text-muted">
                       <Clock className="w-3 h-3" />{post.readTime} min read
                     </span>

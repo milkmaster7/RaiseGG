@@ -44,6 +44,8 @@ export interface Match {
   server_ip:    string | null
   server_port:  number | null
   connect_token: string | null
+  region: string | null
+  has_password: boolean | null
   created_at: string
   resolved_at: string | null
   player_a?: Player

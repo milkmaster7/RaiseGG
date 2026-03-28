@@ -1,6 +1,9 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
-import { Clock, Zap } from 'lucide-react'
+import { Clock, Zap, Link2, Lock } from 'lucide-react'
+import { useState } from 'react'
 import { TierBadge, Badge } from '@/components/ui/Badge'
 import { CancelMatchButton } from '@/components/matches/CancelMatchButton'
 import { getStakeRarity, RARITY_STYLES } from '@/lib/rarity'
@@ -27,6 +30,15 @@ export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: 
   const status = STATUS_CONFIG[match.status]
   const rarity = getStakeRarity(match.stake_amount)
   const rarityStyle = RARITY_STYLES[rarity]
+  const [copied, setCopied] = useState(false)
+
+  function copyInviteLink() {
+    const url = `${window.location.origin}/play?join=${match.id}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   return (
     <div className={`relative card-hover flex items-center justify-between gap-4 border-2 ${rarityStyle.border} shadow-lg ${rarityStyle.glow}`}>
@@ -38,12 +50,20 @@ export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: 
         {rarityStyle.label}
       </span>
 
-      {/* Game + format */}
-      <div className="flex items-center gap-3 min-w-0">
+      {/* Game + format + region */}
+      <div className="flex items-center gap-2 min-w-0">
         <div className="flex-shrink-0">
           <Badge variant="cyan">{GAME_LABELS[match.game]}</Badge>
         </div>
         <Badge variant="gray">{match.format}</Badge>
+        {match.region && (
+          <span className="text-[10px] font-mono text-muted border border-border rounded px-1.5 py-0.5 flex-shrink-0">
+            {match.region}
+          </span>
+        )}
+        {match.has_password && (
+          <Lock className="w-3 h-3 text-muted flex-shrink-0" title="Password protected" />
+        )}
       </div>
 
       {/* Players */}
@@ -108,16 +128,26 @@ export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: 
       <div className="flex items-center gap-2 flex-shrink-0">
         <Badge variant={status.variant}>{status.label}</Badge>
         {showJoin && match.status === 'open' && (
-          currentPlayerId === match.player_a_id ? (
-            <CancelMatchButton matchId={match.id} />
-          ) : (
+          <>
+            {currentPlayerId === match.player_a_id ? (
+              <CancelMatchButton matchId={match.id} />
+            ) : (
+              <button
+                onClick={() => onJoin?.(match)}
+                className="btn-primary text-xs py-1.5 px-3"
+              >
+                Join
+              </button>
+            )}
             <button
-              onClick={() => onJoin?.(match)}
-              className="btn-primary text-xs py-1.5 px-3"
+              onClick={copyInviteLink}
+              title="Copy invite link"
+              className="flex items-center gap-1 px-2 py-1.5 rounded border border-border bg-space-800 hover:border-accent-cyan/50 text-muted hover:text-accent-cyan transition-all text-xs"
             >
-              Join
+              <Link2 className="w-3 h-3" />
+              {copied ? 'Copied!' : 'Invite'}
             </button>
-          )
+          </>
         )}
       </div>
     </div>

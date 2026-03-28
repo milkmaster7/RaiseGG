@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useRouter } from 'next/navigation'
-import { X, Zap, Loader2 } from 'lucide-react'
+import { X, Zap, Loader2, Lock } from 'lucide-react'
 import { solanaJoinMatch } from '@/lib/escrow'
 import type { StakeCurrency } from '@/lib/escrow'
 import type { Match } from '@/types'
@@ -20,14 +20,19 @@ export function JoinMatchModal({ match, playerId, onClose }: Props) {
   const { connection } = useConnection()
   const { connected, publicKey, signTransaction, signAllTransactions } = useWallet()
 
-  const [step, setStep]   = useState<'confirm' | 'submitting' | 'done'>('confirm')
-  const [error, setError] = useState<string | null>(null)
+  const [step, setStep]       = useState<'confirm' | 'submitting' | 'done'>('confirm')
+  const [error, setError]     = useState<string | null>(null)
+  const [password, setPassword] = useState('')
 
   const payout = match.stake_amount * 2 * 0.9
   const rake   = match.stake_amount * 2 * 0.1
 
   async function handleJoin() {
     if (!connected || !publicKey || !signTransaction || !signAllTransactions) return
+    if (match.has_password && !password) {
+      setError('This match is password-protected. Enter the password to join.')
+      return
+    }
     setStep('submitting')
     setError(null)
 
@@ -38,7 +43,7 @@ export function JoinMatchModal({ match, playerId, onClose }: Props) {
       const res = await fetch('/api/matches/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ matchId: match.id, playerBId: playerId, joinTx: txSignature }),
+        body: JSON.stringify({ matchId: match.id, playerBId: playerId, joinTx: txSignature, password }),
       })
 
       if (!res.ok) {
@@ -87,6 +92,12 @@ export function JoinMatchModal({ match, playerId, onClose }: Props) {
                 <span className="text-muted">Format</span>
                 <span className="text-white font-semibold">{match.format}</span>
               </div>
+              {match.region && (
+                <div className="flex justify-between">
+                  <span className="text-muted">Region</span>
+                  <span className="text-white font-semibold">{match.region}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-muted">Opponent</span>
                 <span className="text-white font-semibold">{match.player_a?.username ?? '—'}</span>
@@ -109,6 +120,22 @@ export function JoinMatchModal({ match, playerId, onClose }: Props) {
               </div>
             </div>
 
+            {/* Password field if match is protected */}
+            {match.has_password && (
+              <div className="mb-4">
+                <label className="flex items-center gap-1.5 text-xs text-muted uppercase tracking-wider mb-2">
+                  <Lock className="w-3 h-3" /> Match Password
+                </label>
+                <input
+                  type="text"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter match password…"
+                  className="w-full bg-space-800 border border-accent-cyan/30 rounded px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-cyan"
+                />
+              </div>
+            )}
+
             {error && (
               <div className="mb-4 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded px-3 py-2">
                 {error}
@@ -118,7 +145,7 @@ export function JoinMatchModal({ match, playerId, onClose }: Props) {
             {!connected ? (
               <div className="flex flex-col items-center gap-2">
                 <p className="text-muted text-sm mb-1">Connect your Solana wallet to stake</p>
-                <WalletMultiButton className="!bg-accent-purple hover:!bg-accent-purple/80 !rounded !text-sm !font-semibold" />
+                <WalletMultiButton className="!bg-accent-cyan hover:!bg-accent-cyan/80 !text-space-900 !rounded !text-sm !font-semibold" />
               </div>
             ) : (
               <button
