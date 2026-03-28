@@ -26,4 +26,18 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
+# Keys & secrets
+*keypair*.json
+deployer-keypair.json
+*.secret
+
+# Anchor / Solana build artifacts
+anchor/target/
+
+# Hardhat / EVM build artifacts
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+
+# Package locks inside sub-packages (keep root only)
+contracts/package-lock.json
