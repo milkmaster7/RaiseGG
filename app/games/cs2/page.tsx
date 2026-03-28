@@ -110,7 +110,7 @@ export default async function CS2Page() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex items-center justify-between mb-6">
           <h2 className="section-title">Top CS2 Players</h2>
-          <Link href="/leaderboard" className="text-sm text-accent-purple hover:underline">Full leaderboard →</Link>
+          <Link href="/leaderboard" className="text-sm text-accent-cyan hover:underline">Full leaderboard →</Link>
         </div>
         <LeaderboardTable players={(topPlayers ?? []) as any} game="cs2" limit={10} />
       </section>

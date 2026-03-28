@@ -23,7 +23,7 @@ const STATUS_STYLE: Record<string, string> = {
   disputed:   'text-yellow-400',
   open:       'text-blue-400',
   locked:     'text-purple-400',
-  live:       'text-accent-purple',
+  live:       'text-accent-cyan',
 }
 
 export default async function MyMatchesPage() {
@@ -59,7 +59,7 @@ export default async function MyMatchesPage() {
         <p className="text-muted mb-8">Last 50 matches</p>
 
         {!matches || matches.length === 0 ? (
-          <div className="card text-center py-16 text-muted">No matches yet. <a href="/play" className="text-accent-purple hover:underline">Find a match</a>.</div>
+          <div className="card text-center py-16 text-muted">No matches yet. <a href="/play" className="text-accent-cyan hover:underline">Find a match</a>.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

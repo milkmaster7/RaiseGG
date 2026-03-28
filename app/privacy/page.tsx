@@ -47,7 +47,7 @@ export default function PrivacyPage() {
             <p>
               RaiseGG.gg is operated by RaiseGG ("we", "us", "our"). We run a skill-based competitive
               stake platform for CS2, Dota 2 and Deadlock. Questions? Contact us at{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:underline">hello@raisegg.gg</a>.
+              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>.
             </p>
           </Section>
 
@@ -128,14 +128,14 @@ export default function PrivacyPage() {
             </ul>
             <p>
               To exercise any of these rights, email{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:underline">hello@raisegg.gg</a>{' '}
+              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>{' '}
               with the subject line "Data Request".
             </p>
           </Section>
 
           <Section title="8. Cookies">
             <p>
-              We use a single first-party session cookie (<code className="text-accent-purple bg-space-800 px-1 rounded text-xs">rgg_session</code>)
+              We use a single first-party session cookie (<code className="text-accent-cyan bg-space-800 px-1 rounded text-xs">rgg_session</code>)
               that is strictly necessary for authentication. We do not use advertising cookies, tracking pixels, or third-party analytics cookies.
             </p>
           </Section>
@@ -144,7 +144,7 @@ export default function PrivacyPage() {
             <p>
               RaiseGG.gg is strictly for users aged 18 and over. We do not knowingly collect data from
               anyone under 18. If you believe a minor has registered, contact us immediately at{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:underline">hello@raisegg.gg</a>.
+              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>.
             </p>
           </Section>
 
@@ -158,7 +158,7 @@ export default function PrivacyPage() {
           <Section title="11. Contact">
             <p>
               For privacy questions or data requests:{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:underline">hello@raisegg.gg</a>
+              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>
             </p>
           </Section>
 

@@ -99,7 +99,7 @@ export default function AdminPlayersPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search by username…"
-          className="w-full bg-space-800 border border-border rounded px-4 py-2 pl-9 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-purple"
+          className="w-full bg-space-800 border border-border rounded px-4 py-2 pl-9 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-cyan"
         />
         {loading && (
           <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted animate-spin" />
@@ -139,7 +139,7 @@ export default function AdminPlayersPage() {
                       )}
                       <div>
                         <Link href={`/profile/${p.username}`} target="_blank"
-                          className="text-white hover:text-accent-purple font-semibold text-xs transition-colors">
+                          className="text-white hover:text-accent-cyan font-semibold text-xs transition-colors">
                           {p.username}
                         </Link>
                         {p.ban_reason && (
@@ -148,7 +148,7 @@ export default function AdminPlayersPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-right font-orbitron text-xs text-accent-purple">
+                  <td className="px-4 py-3 text-right font-orbitron text-xs text-accent-cyan">
                     ${Number(p.usdc_balance).toFixed(2)}
                   </td>
                   <td className="px-4 py-3 text-right font-orbitron text-xs text-white">{p.cs2_elo}</td>
@@ -219,7 +219,7 @@ export default function AdminPlayersPage() {
                   value={banReason}
                   onChange={(e) => setBanReason(e.target.value)}
                   placeholder="e.g. Cheating — VAC ban detected"
-                  className="w-full bg-space-800 border border-border rounded px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-purple"
+                  className="w-full bg-space-800 border border-border rounded px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-cyan"
                 />
               </div>
             )}

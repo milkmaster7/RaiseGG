@@ -94,7 +94,7 @@ export default async function DashboardPage() {
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
           {QUICK_LINKS.map((link) => (
             <Link key={link.href} href={link.href} className="card-hover group block">
-              <link.icon className="w-6 h-6 text-accent-purple mb-3 group-hover:text-accent-purple-glow transition-colors" />
+              <link.icon className="w-6 h-6 text-accent-cyan mb-3 group-hover:text-accent-cyan-glow transition-colors" />
               <div className="font-orbitron font-bold text-white text-sm mb-1">{link.label}</div>
               <div className="text-muted text-xs leading-relaxed">{link.desc}</div>
             </Link>

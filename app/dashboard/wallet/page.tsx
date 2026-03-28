@@ -186,7 +186,7 @@ export default function WalletPage() {
                 key={c}
                 onClick={() => { setCurrency(c); setDepositAmount(''); setWithdrawAmount('') }}
                 className={`px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all ${
-                  currency === c ? 'bg-accent-purple text-white' : 'text-muted hover:text-white'
+                  currency === c ? 'bg-accent-cyan text-space-900' : 'text-muted hover:text-white'
                 }`}
               >
                 {c}
@@ -234,7 +234,7 @@ export default function WalletPage() {
                   key={t}
                   onClick={() => setTab(t)}
                   className={`flex-1 py-2 rounded text-sm font-semibold capitalize transition-all ${
-                    tab === t ? 'bg-accent-purple text-white' : 'text-muted hover:text-white'
+                    tab === t ? 'bg-accent-cyan text-space-900' : 'text-muted hover:text-white'
                   }`}
                 >
                   {t}
@@ -267,7 +267,7 @@ export default function WalletPage() {
                     <button
                       key={amt}
                       onClick={() => setDepositAmount(String(amt))}
-                      className="px-3 py-1.5 text-xs bg-space-700 border border-border hover:border-accent-purple text-muted hover:text-white rounded transition-all"
+                      className="px-3 py-1.5 text-xs bg-space-700 border border-border hover:border-accent-cyan text-muted hover:text-white rounded transition-all"
                     >
                       ${amt}
                     </button>
@@ -289,7 +289,7 @@ export default function WalletPage() {
             {tab === 'withdraw' && (
               <div className="card space-y-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <ArrowUpFromLine className="w-5 h-5 text-accent-purple" />
+                  <ArrowUpFromLine className="w-5 h-5 text-accent-cyan" />
                   <h2 className="font-orbitron font-bold text-white">Withdraw {currency.toUpperCase()}</h2>
                 </div>
                 <p className="text-muted text-sm">Withdraw {currency.toUpperCase()} from your platform balance back to your wallet. Arrives in seconds.</p>
@@ -313,7 +313,7 @@ export default function WalletPage() {
                 {activeBalance !== null && (
                   <button
                     onClick={() => setWithdrawAmount(activeBalance.toFixed(2))}
-                    className="text-xs text-accent-purple hover:text-accent-purple-glow"
+                    className="text-xs text-accent-cyan hover:text-accent-cyan-glow"
                   >
                     Withdraw all
                   </button>
@@ -351,7 +351,7 @@ export default function WalletPage() {
                                 href={`https://solscan.io/address/${publicKey.toString()}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-xs text-muted hover:text-accent-purple transition-colors"
+                                className="text-xs text-muted hover:text-accent-cyan transition-colors"
                                 title="View on Solscan"
                               >
                                 ↗

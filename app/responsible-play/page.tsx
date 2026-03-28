@@ -78,7 +78,7 @@ export default function ResponsiblePlayPage() {
           </p>
           <p className="text-sm text-muted mb-4">
             To request self-exclusion, email:{' '}
-            <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:text-accent-cyan transition-colors">
+            <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:text-accent-cyan transition-colors">
               hello@raisegg.gg
             </a>{' '}
             with the subject line <strong className="text-white">"Self-Exclusion Request"</strong>.
@@ -96,19 +96,19 @@ export default function ResponsiblePlayPage() {
           </p>
           <ul className="space-y-2 text-sm text-muted list-disc list-inside leading-relaxed">
             <li>
-              <a href="https://www.gamblingtherapy.org" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:text-accent-cyan transition-colors">
+              <a href="https://www.gamblingtherapy.org" target="_blank" rel="noopener noreferrer" className="text-accent-cyan hover:text-accent-cyan transition-colors">
                 GamblingTherapy.org
               </a>{' '}
               — free, confidential support available in multiple languages
             </li>
             <li>
-              <a href="https://www.gamblersanonymous.org" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:text-accent-cyan transition-colors">
+              <a href="https://www.gamblersanonymous.org" target="_blank" rel="noopener noreferrer" className="text-accent-cyan hover:text-accent-cyan transition-colors">
                 GamblersAnonymous.org
               </a>{' '}
               — peer support groups worldwide
             </li>
             <li>
-              <a href="https://www.begambleaware.org" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:text-accent-cyan transition-colors">
+              <a href="https://www.begambleaware.org" target="_blank" rel="noopener noreferrer" className="text-accent-cyan hover:text-accent-cyan transition-colors">
                 BeGambleAware.org
               </a>{' '}
               — practical advice and tools for managing risk
@@ -118,7 +118,7 @@ export default function ResponsiblePlayPage() {
 
         <p className="text-xs text-muted text-center">
           RaiseGG.gg — questions about responsible play? Contact us at{' '}
-          <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:text-accent-cyan transition-colors">
+          <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:text-accent-cyan transition-colors">
             hello@raisegg.gg
           </a>
         </p>

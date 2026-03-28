@@ -75,7 +75,7 @@ export default function HowItWorksPage() {
         <div className="space-y-6">
           {STEPS.map((step, i) => (
             <div key={step.name} id={`step-${i + 1}`} className="card flex gap-6">
-              <div className="font-orbitron text-3xl font-black text-accent-purple/30 flex-shrink-0 w-12">
+              <div className="font-orbitron text-3xl font-black text-accent-cyan/20 flex-shrink-0 w-12">
                 {String(i + 1).padStart(2, '0')}
               </div>
               <div>

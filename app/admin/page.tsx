@@ -50,7 +50,7 @@ async function getAdminData() {
 
 const STATUS_COLORS: Record<string, string> = {
   open:      'text-accent-cyan',
-  locked:    'text-accent-purple',
+  locked:    'text-accent-cyan',
   live:      'text-green-400',
   completed: 'text-muted',
   cancelled: 'text-red-400',
@@ -68,7 +68,7 @@ export default async function AdminPage() {
   const STATS = [
     { label: 'Total Rake',     value: `$${totalRake.toFixed(2)}`,  icon: DollarSign,    color: 'text-green-400' },
     { label: 'Active Matches', value: String(activeMatches ?? 0),   icon: Activity,      color: 'text-accent-cyan' },
-    { label: 'Total Players',  value: String(totalPlayers ?? 0),    icon: Users,         color: 'text-accent-purple' },
+    { label: 'Total Players',  value: String(totalPlayers ?? 0),    icon: Users,         color: 'text-accent-cyan' },
     { label: 'Open Disputes',  value: String(openDisputes ?? 0),    icon: AlertTriangle, color: 'text-yellow-400' },
   ]
 
@@ -154,7 +154,7 @@ export default async function AdminPage() {
                     <td className="px-4 py-2 text-muted text-xs">
                       {m.player_a?.username ?? '?'} vs {m.player_b?.username ?? 'waiting'}
                     </td>
-                    <td className="px-4 py-2 text-right text-accent-purple font-orbitron text-xs">${m.stake_amount}</td>
+                    <td className="px-4 py-2 text-right text-accent-cyan font-orbitron text-xs">${m.stake_amount}</td>
                     <td className={`px-4 py-2 text-right text-xs font-semibold ${STATUS_COLORS[m.status] ?? 'text-muted'}`}>
                       {m.status}
                     </td>
@@ -169,7 +169,7 @@ export default async function AdminPage() {
         <section className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-orbitron text-lg font-bold text-white flex items-center gap-2">
-              <Users className="w-5 h-5 text-accent-purple" /> Recent Players
+              <Users className="w-5 h-5 text-accent-cyan" /> Recent Players
             </h2>
           </div>
           <div className="card overflow-hidden p-0">
@@ -187,11 +187,11 @@ export default async function AdminPage() {
                 {(recentPlayers ?? []).map((p: any) => (
                   <tr key={p.id} className="border-b border-border/50 last:border-0">
                     <td className="px-4 py-2">
-                      <Link href={`/profile/${p.username}`} className="text-white hover:text-accent-purple font-semibold text-xs">
+                      <Link href={`/profile/${p.username}`} className="text-white hover:text-accent-cyan font-semibold text-xs">
                         {p.username}
                       </Link>
                     </td>
-                    <td className="px-4 py-2 text-right font-orbitron text-xs text-accent-purple">{p.cs2_elo}</td>
+                    <td className="px-4 py-2 text-right font-orbitron text-xs text-accent-cyan">{p.cs2_elo}</td>
                     <td className="px-4 py-2 text-right">
                       {p.eligible
                         ? <CheckCircle className="w-4 h-4 text-green-400 ml-auto" />

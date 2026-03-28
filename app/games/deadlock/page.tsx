@@ -74,7 +74,7 @@ export default function DeadlockPage() {
             { icon: Zap,    label: 'Instant Payout', sub: 'On Win' },
           ].map((s) => (
             <div key={s.label} className="card text-center">
-              <s.icon className="w-8 h-8 text-accent-purple mx-auto mb-2" />
+              <s.icon className="w-8 h-8 text-accent-cyan mx-auto mb-2" />
               <div className="font-orbitron text-2xl font-black text-white mb-1">{s.label}</div>
               <div className="text-xs text-muted">{s.sub}</div>
             </div>
@@ -90,7 +90,7 @@ export default function DeadlockPage() {
             The moment Valve releases public match history for Deadlock, we flip the switch. Players registered before launch get priority lobby access, lower minimum stakes, and first-mover ELO rankings — the equivalent of starting a new season with an empty leaderboard.
           </p>
           <div className="card flex items-start gap-4 text-left">
-            <Bell className="w-6 h-6 text-accent-purple flex-shrink-0 mt-1" />
+            <Bell className="w-6 h-6 text-accent-cyan flex-shrink-0 mt-1" />
             <div>
               <div className="font-orbitron font-bold text-white mb-1">Get Notified at Launch</div>
               <div className="text-muted text-sm">Connect your Steam account now. We'll alert you the moment Deadlock staking goes live — so you can stake before the competition catches up.</div>

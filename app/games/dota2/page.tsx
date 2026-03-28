@@ -74,7 +74,7 @@ export default async function Dota2Page() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {FEATURES.map((f) => (
             <div key={f.title} className="card text-center">
-              <f.icon className="w-8 h-8 text-accent-purple mx-auto mb-3" />
+              <f.icon className="w-8 h-8 text-accent-cyan mx-auto mb-3" />
               <h3 className="font-orbitron font-bold text-white mb-2">{f.title}</h3>
               <p className="text-muted text-sm leading-relaxed">{f.desc}</p>
             </div>
@@ -95,7 +95,7 @@ export default async function Dota2Page() {
               ['05', 'Payout',                       'Verified winner receives 90% of the pot. Funds hit your balance instantly.'],
             ].map(([step, title, desc]) => (
               <div key={step} className="card flex items-start gap-6">
-                <div className="font-orbitron text-3xl font-black text-accent-purple/30 flex-shrink-0">{step}</div>
+                <div className="font-orbitron text-3xl font-black text-accent-cyan/30 flex-shrink-0">{step}</div>
                 <div>
                   <div className="font-orbitron font-bold text-white mb-1">{title}</div>
                   <div className="text-muted text-sm">{desc}</div>
@@ -104,7 +104,7 @@ export default async function Dota2Page() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/blog/dota2-how-to-submit-match-id" className="text-accent-purple hover:underline text-sm">
+            <Link href="/blog/dota2-how-to-submit-match-id" className="text-accent-cyan hover:underline text-sm">
               Full guide: How to submit your match ID →
             </Link>
           </div>
@@ -115,7 +115,7 @@ export default async function Dota2Page() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex items-center justify-between mb-6">
           <h2 className="section-title">Top Dota 2 Players</h2>
-          <Link href="/leaderboard" className="text-sm text-accent-purple hover:underline">Full leaderboard →</Link>
+          <Link href="/leaderboard" className="text-sm text-accent-cyan hover:underline">Full leaderboard →</Link>
         </div>
         <LeaderboardTable players={(topPlayers ?? []) as any} game="dota2" limit={10} />
       </section>

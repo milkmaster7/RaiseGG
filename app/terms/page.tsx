@@ -73,7 +73,7 @@ export default function TermsPage() {
             <p>
               You are responsible for all activity under your account. If you believe your account has been
               compromised, contact us immediately at{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:underline">hello@raisegg.gg</a>.
+              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>.
             </p>
           </Section>
 
@@ -137,7 +137,7 @@ export default function TermsPage() {
               <li>Match fixing or collusion with opponents</li>
               <li>Creating multiple accounts (smurfing) to manipulate ELO</li>
               <li>Attempting to manipulate the smart contract, platform API, or match resolution system</li>
-              <li>Exploiting bugs — report them to <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:underline">hello@raisegg.gg</a> instead</li>
+              <li>Exploiting bugs — report them to <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a> instead</li>
             </ul>
             <p>
               Players with active VAC bans or Game Bans on CS2 are ineligible to play on the platform.
@@ -165,7 +165,7 @@ export default function TermsPage() {
             </p>
             <p>
               To appeal a ban, email{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:underline">hello@raisegg.gg</a>{' '}
+              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>{' '}
               with your Steam ID and reason for appeal.
             </p>
           </Section>
@@ -210,7 +210,7 @@ export default function TermsPage() {
           <Section title="14. Contact">
             <p>
               Questions about these terms?{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:underline">hello@raisegg.gg</a>
+              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>
             </p>
           </Section>
 

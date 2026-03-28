@@ -107,7 +107,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="text-xs text-muted uppercase tracking-wider mb-3">Read Next</div>
             <div className="flex flex-wrap gap-3">
               {post.relatedLinks.map(link => (
-                <Link key={link.href} href={link.href} className="text-accent-purple hover:text-white text-sm font-semibold transition-colors">
+                <Link key={link.href} href={link.href} className="text-accent-cyan hover:text-white text-sm font-semibold transition-colors">
                   {link.label} →
                 </Link>
               ))}

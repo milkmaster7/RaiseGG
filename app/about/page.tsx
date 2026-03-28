@@ -68,7 +68,7 @@ export default function AboutPage() {
         <div className="grid sm:grid-cols-2 gap-4 mb-16">
           {VALUES.map((v) => (
             <div key={v.title} className="card flex gap-4">
-              <v.icon className="w-6 h-6 text-accent-purple flex-shrink-0 mt-0.5" />
+              <v.icon className="w-6 h-6 text-accent-cyan flex-shrink-0 mt-0.5" />
               <div>
                 <h2 className="font-semibold text-white mb-1">{v.title}</h2>
                 <p className="text-muted text-sm leading-relaxed">{v.body}</p>
@@ -112,8 +112,8 @@ export default function AboutPage() {
         <div className="mb-16">
           <h2 className="font-orbitron text-2xl font-bold text-white mb-6">The Team</h2>
           <div className="card flex gap-5 items-start">
-            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-accent-purple/20 border-2 border-accent-purple/40 flex items-center justify-center">
-              <span className="font-orbitron font-black text-accent-purple text-lg">RG</span>
+            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-accent-cyan/10 border-2 border-accent-cyan/30 flex items-center justify-center">
+              <span className="font-orbitron font-black text-accent-cyan text-lg">RG</span>
             </div>
             <div>
               <div className="font-orbitron font-bold text-white text-base mb-1">The RaiseGG Team</div>
@@ -137,7 +137,7 @@ export default function AboutPage() {
                 href="https://solscan.io/account/BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-xs text-accent-purple hover:text-accent-cyan transition-colors break-all"
+                className="font-mono text-xs text-accent-cyan hover:text-accent-cyan-glow transition-colors break-all"
               >
                 BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv ↗
               </a>
@@ -148,7 +148,7 @@ export default function AboutPage() {
                 href="https://solscan.io/account/CT7qFYnCwDgDquTxAL8eBQqBvDBqUJemSz3KEZvqc2HW"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-xs text-accent-purple hover:text-accent-cyan transition-colors break-all"
+                className="font-mono text-xs text-accent-cyan hover:text-accent-cyan-glow transition-colors break-all"
               >
                 CT7qFYnCwDgDquTxAL8eBQqBvDBqUJemSz3KEZvqc2HW ↗
               </a>
@@ -167,7 +167,7 @@ export default function AboutPage() {
               href="https://t.me/raisegg"
               target="_blank"
               rel="noopener noreferrer"
-              className="card flex items-center gap-4 hover:border-accent-purple/50 transition-colors group"
+              className="card flex items-center gap-4 hover:border-accent-cyan/40 transition-colors group"
             >
               <span className="text-2xl">✈️</span>
               <div>
@@ -179,7 +179,7 @@ export default function AboutPage() {
               href="https://twitter.com/RaiseGG"
               target="_blank"
               rel="noopener noreferrer"
-              className="card flex items-center gap-4 hover:border-accent-purple/50 transition-colors group"
+              className="card flex items-center gap-4 hover:border-accent-cyan/40 transition-colors group"
             >
               <span className="text-2xl">𝕏</span>
               <div>
@@ -190,7 +190,7 @@ export default function AboutPage() {
           </div>
           <p className="text-xs text-muted">
             Press &amp; partnerships:{' '}
-            <a href="mailto:hello@raisegg.gg" className="text-accent-purple hover:text-accent-cyan transition-colors">
+            <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:text-accent-cyan-glow transition-colors">
               hello@raisegg.gg
             </a>
           </p>

@@ -105,7 +105,7 @@ export default async function TournamentDetailPage({ params }: Props) {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="card text-center">
-            <DollarSign className="w-6 h-6 text-accent-purple mx-auto mb-2" />
+            <DollarSign className="w-6 h-6 text-accent-cyan mx-auto mb-2" />
             <div className="font-orbitron text-xl font-black text-white">${tournament.prize_pool}</div>
             <div className="text-xs text-muted">Prize Pool</div>
           </div>
@@ -183,7 +183,7 @@ export default async function TournamentDetailPage({ params }: Props) {
                   <tr key={r.player_id} className="border-b border-border/50 last:border-0">
                     <td className="px-4 py-3 text-muted text-xs">{i + 1}</td>
                     <td className="px-4 py-3 font-semibold text-white text-sm">{r.player?.username ?? '—'}</td>
-                    <td className="px-4 py-3 text-right font-orbitron text-xs text-accent-purple">
+                    <td className="px-4 py-3 text-right font-orbitron text-xs text-accent-cyan">
                       {r.player?.[eloKey] ?? 1000}
                     </td>
                     <td className="px-4 py-3 text-right">

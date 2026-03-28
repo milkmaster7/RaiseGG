@@ -35,8 +35,8 @@ const GAMES = [
     name:    'Dota 2',
     full:    'Dota 2',
     badge:   'Fast Payout',
-    color:   'text-accent-purple',
-    border:  'border-accent-purple/30 hover:border-accent-purple/60',
+    color:   'text-accent-cyan',
+    border:  'border-accent-cyan/30 hover:border-accent-cyan/60',
     desc:    'Verified via Steam API. Submit your match ID and get paid in seconds.',
   },
   {
@@ -44,8 +44,8 @@ const GAMES = [
     name:    'Deadlock',
     full:    'Deadlock',
     badge:   'Coming Soon',
-    color:   'text-accent-purple',
-    border:  'border-accent-purple/20 hover:border-accent-purple/40',
+    color:   'text-accent-cyan',
+    border:  'border-accent-cyan/20 hover:border-accent-cyan/40',
     desc:    "Valve's newest game. Stake matches coming once the match API is available.",
   },
 ]

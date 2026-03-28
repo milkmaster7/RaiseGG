@@ -94,7 +94,7 @@ export default async function TournamentsPage() {
                       <div className="text-xs text-muted mt-1 uppercase tracking-wider">{GAME_LABELS[t.game] ?? t.game} · {t.format}</div>
                     </div>
                     {t.entry_fee > 0
-                      ? <span className="text-xs font-orbitron text-accent-purple">${t.entry_fee} entry</span>
+                      ? <span className="text-xs font-orbitron text-accent-cyan">${t.entry_fee} entry</span>
                       : <span className="text-xs text-green-400 font-semibold">FREE</span>}
                   </div>
 
@@ -104,7 +104,7 @@ export default async function TournamentsPage() {
 
                   <div className="grid grid-cols-3 gap-3 text-center mb-4">
                     <div>
-                      <DollarSign className="w-4 h-4 text-accent-purple mx-auto mb-1" />
+                      <DollarSign className="w-4 h-4 text-accent-cyan mx-auto mb-1" />
                       <div className="font-orbitron text-sm font-bold text-white">${t.prize_pool}</div>
                       <div className="text-xs text-muted">Prize</div>
                     </div>
@@ -143,7 +143,7 @@ export default async function TournamentsPage() {
                     <span className="text-xs text-muted ml-3">{GAME_LABELS[t.game] ?? t.game} · {t.format}</span>
                   </div>
                   <div className="flex items-center gap-4 text-xs flex-shrink-0">
-                    <span className="text-accent-purple font-orbitron">${t.prize_pool} prize</span>
+                    <span className="text-accent-cyan font-orbitron">${t.prize_pool} prize</span>
                     <span className="text-muted">{new Date(t.starts_at).toLocaleDateString()}</span>
                     <span className={STATUS_BADGE['completed']}>completed</span>
                   </div>

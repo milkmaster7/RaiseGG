@@ -79,7 +79,7 @@ export default async function FeedPage() {
               <div
                 key={i}
                 className={`card py-3 flex items-start gap-3 border-l-2 ${
-                  item.type === 'match_won' ? 'border-green-500' : 'border-accent-purple'
+                  item.type === 'match_won' ? 'border-green-500' : 'border-accent-cyan'
                 }`}
               >
                 {item.type === 'match_won' ? (
@@ -103,7 +103,7 @@ export default async function FeedPage() {
                     <div className="w-2 h-2 rounded-full bg-accent-purple mt-1.5 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-white">
-                        <span className="font-orbitron font-bold text-accent-purple">{item.username}</span>
+                        <span className="font-orbitron font-bold text-accent-cyan">{item.username}</span>
                         <span className="text-muted"> from </span>
                         <span className="text-white">{item.country ?? 'unknown'}</span>
                         <span className="text-muted"> joined</span>

@@ -132,7 +132,7 @@ export default async function ProfilePage({ params }: Props) {
               alt={player.username}
               width={80}
               height={80}
-              className="rounded-full border-2 border-accent-purple/30"
+              className="rounded-full border-2 border-accent-cyan/30"
             />
           )}
           <div className="flex-1">
