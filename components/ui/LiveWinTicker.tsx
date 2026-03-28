@@ -68,7 +68,7 @@ export default function LiveWinTicker() {
             className="inline-block w-2 h-2 rounded-full bg-red-500"
             style={{ animation: 'pulse 1.5s ease-in-out infinite' }}
           />
-          <span className="font-orbitron text-xs font-bold text-accent-purple whitespace-nowrap">
+          <span className="font-orbitron text-xs font-bold text-accent-cyan whitespace-nowrap">
             LIVE WINS
           </span>
         </div>
@@ -92,7 +92,7 @@ export default function LiveWinTicker() {
         <div className="shrink-0 px-3 border-l border-border h-full flex items-center">
           <Link
             href="/feed"
-            className="text-xs text-muted hover:text-accent-purple transition-colors duration-150 whitespace-nowrap font-sans"
+            className="text-xs text-muted hover:text-accent-cyan transition-colors duration-150 whitespace-nowrap font-sans"
           >
             View All →
           </Link>

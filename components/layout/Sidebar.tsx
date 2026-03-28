@@ -94,7 +94,7 @@ export default function Sidebar() {
       <div className="mx-5 my-4 border-t border-border" />
 
       {/* ── Secondary nav ───────────────────────────────────────────────── */}
-      <div className="px-3 pb-6 space-y-0.5">
+      <div className="px-3 pb-14 space-y-0.5">
         {SECONDARY_NAV.map(({ href, label }) => {
           const active = isActive(href)
           return (
