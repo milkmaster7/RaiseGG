@@ -5,10 +5,11 @@ use anchor_spl::token::Mint;
 
 declare_id!("BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv");
 
-// Replace after `anchor build && solana-keygen grind --starts-with RGG:1`
-
 pub const PLATFORM_FEE_BPS: u64 = 1000; // 10%
 pub const BPS_DENOMINATOR:   u64 = 10_000;
+
+/// Platform treasury wallet — rake is sent here on every resolved match.
+pub const TREASURY: &str = "CT7qFYnCwDgDquTxAL8eBQqBvDBqUJemSz3KEZvqc2HW";
 
 // ─── Program ─────────────────────────────────────────────────────────────────
 
@@ -92,7 +93,7 @@ pub mod raise_gg {
     }
 
     /// Step 3 — Authority (backend) resolves the match.
-    /// Pays winner 90%, treasury 10%, closes accounts.
+    /// Pays winner 90%, treasury 10%, closes vault + match_state.
     pub fn resolve_match(
         ctx: Context<ResolveMatch>,
         match_id: [u8; 16],
@@ -108,6 +109,11 @@ pub mod raise_gg {
         require!(
             ctx.accounts.winner_ata.owner == winner,
             RaiseError::WrongWinnerAta,
+        );
+        // Verify winner_ata mint matches the staked mint
+        require!(
+            ctx.accounts.winner_ata.mint == state.usdc_mint,
+            RaiseError::WrongMint,
         );
 
         let total_pot = state.stake.checked_mul(2).ok_or(RaiseError::Overflow)?;
@@ -164,6 +170,7 @@ pub mod raise_gg {
 
         emit!(MatchResolved { match_id, winner, payout, rake });
         Ok(())
+        // match_state closed via `close = authority` in ResolveMatch accounts
     }
 
     /// Cancel — Open: refund player A only.  Locked: refund both players.
@@ -310,16 +317,19 @@ pub struct JoinMatch<'info> {
 #[derive(Accounts)]
 #[instruction(match_id: [u8; 16])]
 pub struct ResolveMatch<'info> {
-    /// Backend authority signer
+    /// Backend authority signer — receives rent from closed accounts
     #[account(mut)]
     pub authority: Signer<'info>,
 
-    /// Winner's USDC token account (frontend passes the right one)
+    /// Winner's USDC token account
     #[account(mut)]
     pub winner_ata: Account<'info, TokenAccount>,
 
-    /// Platform treasury USDC token account
-    #[account(mut)]
+    /// Platform treasury USDC token account — must be owned by hardcoded treasury wallet
+    #[account(
+        mut,
+        constraint = treasury_ata.owner == TREASURY.parse::<Pubkey>().unwrap() @ RaiseError::WrongTreasury,
+    )]
     pub treasury_ata: Account<'info, TokenAccount>,
 
     #[account(
@@ -327,6 +337,7 @@ pub struct ResolveMatch<'info> {
         seeds  = [b"match", match_id.as_ref()],
         bump   = match_state.bump,
         constraint = *authority.key == match_state.authority @ RaiseError::NotAuthority,
+        close  = authority,
     )]
     pub match_state: Account<'info, MatchState>,
 
@@ -467,4 +478,8 @@ pub enum RaiseError {
     NotAuthority,
     #[msg("Arithmetic overflow")]
     Overflow,
+    #[msg("treasury_ata does not belong to the platform treasury")]
+    WrongTreasury,
+    #[msg("winner_ata mint does not match the staked token")]
+    WrongMint,
 }
