@@ -136,6 +136,14 @@ const websiteSchema = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-BSDK3JMC7Y" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-BSDK3JMC7Y');`,
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-space-900 flex">
         <script
           type="application/ld+json"
