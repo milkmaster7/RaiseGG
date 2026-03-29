@@ -6,6 +6,8 @@ import { Shield, Zap, Trophy, Users, TrendingUp, Globe } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase'
 import { faqSchema, softwareAppSchema } from '@/lib/schemas'
 import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
+
+export const revalidate = 60
 import { ActiveCounter } from '@/components/ui/ActiveCounter'
 import { readSessionFromCookies } from '@/lib/session'
 

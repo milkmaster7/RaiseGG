@@ -122,7 +122,7 @@ type Props = { params: Promise<{ 'seo-page': string }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = (await params)['seo-page']
   const parsed = parseSlug(slug)
-  if (!parsed) return {}
+  if (!parsed) notFound()
 
   const { game, country } = parsed
   const gameName = GAME_NAMES[game]

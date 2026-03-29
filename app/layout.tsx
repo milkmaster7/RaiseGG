@@ -79,8 +79,10 @@ export const metadata: Metadata = {
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
     shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    apple: '/icon-192.png',
   },
+
+  manifest: '/manifest.webmanifest',
 }
 
 // ─── Site-wide JSON-LD ────────────────────────────────────────────────────────

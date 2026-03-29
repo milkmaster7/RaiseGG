@@ -1,12 +1,14 @@
 {
-  "name": "RaiseGG.gg",
+  "name": "RaiseGG",
   "short_name": "RaiseGG",
-  "description": "Competitive CS2, Dota 2 & Deadlock stake platform for the Caucasus, Turkey and Balkans",
+  "description": "Competitive CS2, Dota 2 & Deadlock stake platform — win real USDC/USDT",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0d0d1a",
   "theme_color": "#7b61ff",
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
