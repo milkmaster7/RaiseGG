@@ -3,6 +3,7 @@ import { jwtVerify } from 'jose'
 import { createServiceClient } from '@/lib/supabase'
 import { checkPlayerEligibility } from '@/lib/steam'
 import { signSession } from '@/lib/session'
+import { sendWelcome } from '@/lib/email'
 
 const STEAM_OPENID_URL = 'https://steamcommunity.com/openid/login'
 const SITE_URL = process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://raisegg.vercel.app'
@@ -90,6 +91,11 @@ export async function GET(req: NextRequest) {
 
   if (error || !player) {
     return NextResponse.redirect(`${SITE_URL}?error=db_error`)
+  }
+
+  // Send welcome email for new registrations (non-blocking)
+  if (!existing && player.email) {
+    sendWelcome(player.email, player.username).catch(() => {})
   }
 
   // Sign a JWT and set as session cookie

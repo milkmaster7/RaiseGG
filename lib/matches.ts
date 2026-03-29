@@ -6,6 +6,7 @@ import { calculateElo } from './elo'
 import { solanaResolveMatch, solanaCancelMatch } from './escrow'
 import { Connection } from '@solana/web3.js'
 import type { Game, MatchFormat, StakeCurrency } from '@/types'
+import { sendMatchResult, sendMatchCancelled } from '@/lib/email'
 
 function getSolanaConnection() {
   return new Connection(process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? 'https://api.mainnet-beta.solana.com', 'confirmed')
@@ -185,6 +186,12 @@ export async function resolveDota2Match(matchId: string, externalMatchId: string
     { player_id: loserId,  type: 'loss', amount: match.stake_amount, match_id: matchId, note: currency.toUpperCase() },
   ])
 
+  // Email notifications (non-blocking)
+  const winner = winnerId === match.player_a_id ? match.player_a : match.player_b
+  const loser  = winnerId === match.player_a_id ? match.player_b : match.player_a
+  if (winner.email) sendMatchResult(winner.email, winner.username, true, payout, match.game, loser.username).catch(() => {})
+  if (loser.email)  sendMatchResult(loser.email, loser.username, false, 0, match.game, winner.username).catch(() => {})
+
   return { winnerId, payout, rake, eloResult, currency }
 }
 
@@ -302,6 +309,12 @@ export async function resolveCS2Match(params: {
     { player_id: loserId,  type: 'loss', amount: match.stake_amount,  match_id: match.id, note: currency.toUpperCase() },
   ])
 
+  // Notify both players via email (non-blocking)
+  const winner = winnerId === match.player_a_id ? match.player_a : match.player_b
+  const loser  = winnerId === match.player_a_id ? match.player_b : match.player_a
+  if (winner.email) sendMatchResult(winner.email, winner.username, true, payout, match.game, loser.username).catch(() => {})
+  if (loser.email)  sendMatchResult(loser.email, loser.username, false, 0, match.game, winner.username).catch(() => {})
+
   return { winnerId, payout, rake, eloResult, currency }
 }
 
@@ -314,7 +327,7 @@ export async function cancelExpiredMatches() {
   // Cancel unjoined open matches past expires_at — refund player A only
   const { data: expiredOpen } = await supabase
     .from('matches')
-    .select('id, player_a_id, stake_amount, vault_pda, player_a:players!player_a_id(wallet_address)')
+    .select('id, player_a_id, stake_amount, vault_pda, player_a:players!player_a_id(wallet_address,email,username)')
     .eq('status', 'open')
     .lt('expires_at', now)
 
@@ -332,12 +345,14 @@ export async function cancelExpiredMatches() {
       player_id: m.player_a_id, type: 'refund', amount: m.stake_amount,
       match_id: m.id, note: 'Match expired — no opponent joined',
     })
+    const pA = m.player_a as any
+    if (pA?.email) sendMatchCancelled(pA.email, pA.username, m.stake_amount, 'No opponent joined before the match expired.').catch(() => {})
   }
 
   // Cancel locked matches past resolve_deadline — refund both players
   const { data: expiredLocked } = await supabase
     .from('matches')
-    .select('id, player_a_id, player_b_id, stake_amount, vault_pda, player_a:players!player_a_id(wallet_address), player_b:players!player_b_id(wallet_address)')
+    .select('id, player_a_id, player_b_id, stake_amount, vault_pda, player_a:players!player_a_id(wallet_address,email,username), player_b:players!player_b_id(wallet_address,email,username)')
     .eq('status', 'locked')
     .lt('resolve_deadline', now)
 
@@ -355,5 +370,9 @@ export async function cancelExpiredMatches() {
       { player_id: m.player_a_id, type: 'refund', amount: m.stake_amount, match_id: m.id, note: 'Match unresolved — deadline passed' },
       { player_id: m.player_b_id, type: 'refund', amount: m.stake_amount, match_id: m.id, note: 'Match unresolved — deadline passed' },
     ])
+    const pAL = m.player_a as any
+    const pBL = m.player_b as any
+    if (pAL?.email) sendMatchCancelled(pAL.email, pAL.username, m.stake_amount, 'Match was not resolved before the deadline.').catch(() => {})
+    if (pBL?.email) sendMatchCancelled(pBL.email, pBL.username, m.stake_amount, 'Match was not resolved before the deadline.').catch(() => {})
   }
 }
