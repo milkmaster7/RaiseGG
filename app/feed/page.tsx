@@ -4,7 +4,7 @@ import { breadcrumbSchema } from '@/lib/schemas'
 export const revalidate = 30
 
 export const metadata: Metadata = {
-  title: 'Activity Feed — RaiseGG.gg',
+  title: 'Activity Feed',
   robots: { index: false, follow: false },
 }
 

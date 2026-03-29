@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to update balance' }, { status: 500 })
     }
   } else {
-    // USDT — update balance and insert transaction record
+    // USDT — update balance with optimistic locking to prevent race conditions
     const { data: player } = await supabase
       .from('players')
       .select('usdt_balance')
@@ -98,12 +98,17 @@ export async function POST(req: NextRequest) {
 
     if (!player) return NextResponse.json({ error: 'Player not found' }, { status: 404 })
 
-    const { error: updateErr } = await supabase
-      .from('players')
-      .update({ usdt_balance: Number(player.usdt_balance ?? 0) + amount })
-      .eq('id', playerId)
+    const currentBalance = Number(player.usdt_balance ?? 0)
 
-    if (updateErr) return NextResponse.json({ error: 'Failed to update balance' }, { status: 500 })
+    const { error: updateErr, count } = await supabase
+      .from('players')
+      .update({ usdt_balance: currentBalance + amount })
+      .eq('id', playerId)
+      .eq('usdt_balance', currentBalance) // optimistic lock — fails if balance changed concurrently
+
+    if (updateErr || count === 0) {
+      return NextResponse.json({ error: 'Balance update conflict, please retry' }, { status: 409 })
+    }
 
     await supabase.from('transactions').insert({
       player_id:    playerId,

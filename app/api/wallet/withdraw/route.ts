@@ -12,6 +12,7 @@ import {
 import { readSession } from '@/lib/session'
 import { createServiceClient } from '@/lib/supabase'
 import { getMintForCurrency, type StakeCurrency } from '@/lib/escrow'
+import { sendWithdrawal } from '@/lib/email'
 
 const MIN_WITHDRAW = 1   // $1 minimum
 const MAX_WITHDRAW = 10_000
@@ -108,6 +109,16 @@ export async function POST(req: NextRequest) {
     tx_signature: txSignature,
     note:         `${currency.toUpperCase()} withdrew to ${player.wallet_address.slice(0, 8)}…`,
   })
+
+  // Send withdrawal email notification (non-blocking)
+  const { data: playerInfo } = await supabase
+    .from('players')
+    .select('email, username')
+    .eq('id', playerId)
+    .single()
+  if (playerInfo?.email) {
+    sendWithdrawal(playerInfo.email, playerInfo.username, amount, currency, txSignature).catch(() => {})
+  }
 
   return NextResponse.json({ success: true, amount, txSignature })
 }

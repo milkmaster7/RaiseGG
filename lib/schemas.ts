@@ -193,7 +193,6 @@ export function softwareAppSchema() {
     operatingSystem: 'Web',
     url: 'https://raisegg.gg',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'Free to join. 10% platform fee on winnings.' },
-    aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '127', bestRating: '5' },
   }
 }
 

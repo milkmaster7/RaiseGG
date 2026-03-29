@@ -21,13 +21,6 @@ export async function isAdmin(
     return configured.includes(playerId)
   }
 
-  // No IDs configured — first registered player is admin
-  const { data } = await supabase
-    .from('players')
-    .select('id')
-    .order('created_at', { ascending: true })
-    .limit(1)
-    .single()
-
-  return data?.id === playerId
+  // No admin IDs configured — deny access (set ADMIN_PLAYER_IDS env var to grant admin)
+  return false
 }

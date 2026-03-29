@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { breadcrumbSchema } from '@/lib/schemas'
 import { createServiceClient } from '@/lib/supabase'
 import { readSessionFromCookies } from '@/lib/session'
-import { Zap, Trophy, Wallet, Clock } from 'lucide-react'
+import { Zap, Trophy, Wallet, Clock, Settings } from 'lucide-react'
 import { EloTrendWidget } from '@/components/ui/EloTrendWidget'
 import { OnboardingWrapper } from '@/components/ui/OnboardingWrapper'
 import { ChallengesWidget } from '@/components/ui/ChallengesWidget'
@@ -22,6 +22,7 @@ const QUICK_LINKS = [
   { href: '/dashboard/wallet',  label: 'Wallet',        icon: Wallet, desc: 'Deposit or withdraw USDC/USDT.' },
   { href: '/dashboard/matches', label: 'Match History', icon: Clock,  desc: 'View your past matches and results.' },
   { href: '/leaderboard',       label: 'Leaderboard',   icon: Trophy, desc: 'See how you rank against other players.' },
+  { href: '/dashboard/settings', label: 'Settings',     icon: Settings, desc: 'Update your profile, email and account.' },
 ]
 
 export default async function DashboardPage() {

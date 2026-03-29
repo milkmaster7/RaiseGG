@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { Shield, Zap, Trophy, Users, TrendingUp, Globe } from 'lucide-react'
+import { createServiceClient } from '@/lib/supabase'
 import { faqSchema, softwareAppSchema } from '@/lib/schemas'
 import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
 import { ActiveCounter } from '@/components/ui/ActiveCounter'
@@ -39,17 +40,12 @@ const HOW_IT_WORKS = [
   { step: '03', title: 'Play & Win',       description: 'Play the match. Winner gets 90% of the pot instantly. No waiting.', icon: Trophy },
 ]
 
-const STATS = [
-  { label: 'Countries',      value: '44',     icon: Globe },
-  { label: 'Active Players', value: '2,400+', icon: Users },
-  { label: 'Matches Played', value: '18,500+',icon: Trophy },
-  { label: 'Paid Out',  value: '$240K+', icon: TrendingUp },
-]
+// Stats fetched from real DB in the component below
 
-const TESTIMONIALS = [
-  { name: 'kerim_tr',     country: 'Turkey',  flag: '🇹🇷', quote: 'Finally a platform that works for us. Won $45 on my second match, payout hit my wallet in 30 seconds.', game: 'CS2' },
-  { name: 'tbilisi_pro',  country: 'Georgia', flag: '🇬🇪', quote: 'No KYC, no bullshit. Connect Steam, deposit, play. Exactly what we needed in the Caucasus.', game: 'Dota 2' },
-  { name: 'danube_aim',   country: 'Serbia',  flag: '🇷🇸', quote: 'I use FACEIT for ranked and RaiseGG when I want real money on the line. Different tool, different purpose.', game: 'CS2' },
+const TRUST_POINTS = [
+  { title: 'Trustless Escrow',      description: 'Your stake goes into a Solana smart contract. Nobody — not even us — can touch it until the match resolves.', icon: Shield },
+  { title: 'Instant Payouts',       description: 'Winner gets 90% of the pot in seconds. USDC or USDT, straight to your wallet. No waiting, no approval.', icon: Zap },
+  { title: 'Built for Your Region', description: 'Optimised servers and low-latency infrastructure for the Caucasus, Turkey, Balkans and Central Asia.', icon: Globe },
 ]
 
 const FAQS = [
@@ -59,12 +55,24 @@ const FAQS = [
   { question: 'What is the platform fee?',            answer: 'We take 10% of the pot from each resolved match. The winner receives 90%. No subscriptions, no hidden fees.' },
 ]
 
+async function getRealStats() {
+  const supabase = createServiceClient()
+  const [{ count: playerCount }, { count: matchCount }, { data: payouts }] = await Promise.all([
+    supabase.from('players').select('*', { count: 'exact', head: true }).eq('eligible', true),
+    supabase.from('matches').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+    supabase.from('transactions').select('amount').eq('type', 'win'),
+  ])
+  const totalPaid = (payouts ?? []).reduce((sum: number, t: any) => sum + Number(t.amount ?? 0), 0)
+  return { players: playerCount ?? 0, matches: matchCount ?? 0, totalPaid }
+}
+
 export default async function HomePage() {
   // Logged-in users skip the marketing page and go straight to live matches
   const cookieStore = await cookies()
   const playerId = await readSessionFromCookies(cookieStore)
   if (playerId) redirect('/play')
 
+  const stats = await getRealStats()
   const faqJsonLd = faqSchema(FAQS)
   const appJsonLd = softwareAppSchema()
 
@@ -101,17 +109,34 @@ export default async function HomePage() {
       <section className="border-y border-border bg-space-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {STATS.map((stat) => (
-              <div key={stat.label} className="flex items-center gap-3">
-                <stat.icon className="w-5 h-5 text-accent-cyan flex-shrink-0" />
-                <div>
-                  <div className="font-orbitron font-bold text-xl text-accent-cyan">{stat.value}</div>
-                  <div className="text-xs text-muted uppercase tracking-wider">
-                    {stat.label === 'Active Players' ? <ActiveCounter /> : stat.label}
-                  </div>
-                </div>
+            <div className="flex items-center gap-3">
+              <Globe className="w-5 h-5 text-accent-cyan flex-shrink-0" />
+              <div>
+                <div className="font-orbitron font-bold text-xl text-accent-cyan">44</div>
+                <div className="text-xs text-muted uppercase tracking-wider">Countries</div>
               </div>
-            ))}
+            </div>
+            <div className="flex items-center gap-3">
+              <Users className="w-5 h-5 text-accent-cyan flex-shrink-0" />
+              <div>
+                <div className="font-orbitron font-bold text-xl text-accent-cyan">{stats.players.toLocaleString()}</div>
+                <div className="text-xs text-muted uppercase tracking-wider"><ActiveCounter /></div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Trophy className="w-5 h-5 text-accent-cyan flex-shrink-0" />
+              <div>
+                <div className="font-orbitron font-bold text-xl text-accent-cyan">{stats.matches.toLocaleString()}</div>
+                <div className="text-xs text-muted uppercase tracking-wider">Matches Played</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <TrendingUp className="w-5 h-5 text-accent-cyan flex-shrink-0" />
+              <div>
+                <div className="font-orbitron font-bold text-xl text-accent-cyan">${stats.totalPaid.toLocaleString()}</div>
+                <div className="text-xs text-muted uppercase tracking-wider">Paid Out</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -191,22 +216,20 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
+      {/* ── Why RaiseGG ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <h2 className="font-orbitron text-3xl font-black text-center mb-10">
-          <span className="text-gradient">What Players Say</span>
+        <h2 className="font-orbitron text-3xl font-black text-center mb-4">
+          <span className="text-gradient">Why RaiseGG</span>
         </h2>
+        <p className="text-muted text-center mb-10">No PayPal middlemen. No Discord scams. Just code.</p>
         <div className="grid md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t) => (
-            <div key={t.name} className="card flex flex-col justify-between gap-6">
-              <p className="text-muted text-sm leading-relaxed italic">&ldquo;{t.quote}&rdquo;</p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{t.flag}</span>
-                  <span className="font-orbitron text-sm text-white">{t.name}</span>
-                </div>
-                <span className="badge-cyan text-xs">{t.game}</span>
+          {TRUST_POINTS.map((t) => (
+            <div key={t.title} className="card text-center py-8">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded bg-accent-cyan/10 border border-accent-cyan/30 mb-5">
+                <t.icon className="w-6 h-6 text-accent-cyan" />
               </div>
+              <h3 className="font-orbitron text-lg font-bold text-white mb-3">{t.title}</h3>
+              <p className="text-muted text-sm leading-relaxed">{t.description}</p>
             </div>
           ))}
         </div>

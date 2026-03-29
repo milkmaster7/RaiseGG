@@ -29,6 +29,7 @@ const SECONDARY_NAV = [
   { href: '/about',         label: 'About'        },
   { href: '/faq',           label: 'FAQ'           },
   { href: '/how-it-works',  label: 'How It Works'  },
+  { href: '/support',       label: 'Support'       },
 ]
 
 export default function Sidebar() {

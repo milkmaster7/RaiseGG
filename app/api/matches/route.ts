@@ -43,6 +43,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid currency' }, { status: 400 })
   }
 
+  if (game === 'deadlock') {
+    return NextResponse.json({ error: 'Deadlock matches are coming soon. Stay tuned!' }, { status: 400 })
+  }
+
   if (sessionPlayerId !== playerAId) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
@@ -58,6 +62,11 @@ export async function POST(req: NextRequest) {
   if (!player) return NextResponse.json({ error: 'Player not found' }, { status: 404 })
   if (player.banned) return NextResponse.json({ error: 'Your account has been suspended.' }, { status: 403 })
   if (!player.eligible) return NextResponse.json({ error: 'Your account does not meet eligibility requirements (account age, VAC status, or hours played).' }, { status: 403 })
+
+  const MAX_STAKE = 5000
+  if (stakeAmount > MAX_STAKE) {
+    return NextResponse.json({ error: `Maximum stake is $${MAX_STAKE}` }, { status: 400 })
+  }
 
   const eloKey = `${game}_elo` as keyof typeof player
   const playerElo = (player[eloKey] as number) ?? 1000

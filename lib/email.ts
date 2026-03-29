@@ -112,6 +112,25 @@ export async function sendMatchResult(to: string, username: string, won: boolean
   })
 }
 
+export async function sendWithdrawal(to: string, username: string, amount: number, currency: string, txSignature: string) {
+  return transporter.sendMail({
+    from: FROM,
+    to,
+    subject: `Withdrawal confirmed — $${amount.toFixed(2)} ${currency.toUpperCase()} sent`,
+    html: baseTemplate(`
+      <h2 style="color:white;margin:0 0 16px;">Withdrawal Confirmed</h2>
+      <p>Your withdrawal has been processed and sent to your wallet.</p>
+      <table style="width:100%;margin:16px 0;font-size:14px;">
+        <tr><td style="color:#888;padding:4px 0;">Amount</td><td style="color:#00e6ff;text-align:right;font-weight:700;">$${amount.toFixed(2)}</td></tr>
+        <tr><td style="color:#888;padding:4px 0;">Currency</td><td style="color:white;text-align:right;">${currency.toUpperCase()}</td></tr>
+        <tr><td style="color:#888;padding:4px 0;">Transaction</td><td style="color:white;text-align:right;font-size:12px;">${txSignature.slice(0, 16)}...</td></tr>
+      </table>
+      ${btn('View Balance', 'https://raisegg.com/dashboard/wallet')}
+      <p style="color:#888;font-size:13px;margin-top:16px;">If you did not initiate this withdrawal, please contact support immediately.</p>
+    `),
+  })
+}
+
 export async function sendMatchCancelled(to: string, username: string, stake: number, reason: string) {
   return transporter.sendMail({
     from: FROM,

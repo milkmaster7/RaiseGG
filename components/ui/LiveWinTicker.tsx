@@ -11,13 +11,7 @@ interface TickerItem {
   username: string
 }
 
-const SEED_MESSAGES: TickerItem[] = [
-  { id: 's1', message: 'kerim_tr just won $45 on CS2',       game: 'CS2',    amount: 45,  username: 'kerim_tr' },
-  { id: 's2', message: 'tbilisi_pro took $120 in Dota 2',    game: 'Dota 2', amount: 120, username: 'tbilisi_pro' },
-  { id: 's3', message: 'danube_aim cleaned up $30 CS2',       game: 'CS2',    amount: 30,  username: 'danube_aim' },
-  { id: 's4', message: 'baku_sniper won $55 on CS2',          game: 'CS2',    amount: 55,  username: 'baku_sniper' },
-  { id: 's5', message: 'sofia_carry took $80 in Dota 2',      game: 'Dota 2', amount: 80,  username: 'sofia_carry' },
-]
+// No seed messages — ticker only shows real wins from the API
 
 const TICKER_STYLE = `
 @keyframes ticker {
@@ -27,8 +21,8 @@ const TICKER_STYLE = `
 `
 
 export default function LiveWinTicker() {
-  const [items, setItems] = useState<TickerItem[]>(SEED_MESSAGES)
-  const [usingSeed, setUsingSeed] = useState(true)
+  const [items, setItems] = useState<TickerItem[]>([])
+  const [usingSeed, setUsingSeed] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const fetchWins = async () => {
@@ -52,6 +46,9 @@ export default function LiveWinTicker() {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
   }, [])
+
+  // Don't render ticker if there are no real wins
+  if (items.length === 0) return null
 
   const tickerText = items.map((item) => item.message).join('  ·  ')
 
