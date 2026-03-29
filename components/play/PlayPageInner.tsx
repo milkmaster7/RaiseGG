@@ -9,6 +9,7 @@ import { JoinMatchModal } from '@/components/matches/JoinMatchModal'
 import { Button } from '@/components/ui/Button'
 import { ActiveCounter } from '@/components/ui/ActiveCounter'
 import { Plus } from 'lucide-react'
+import { FindMatchButton } from '@/components/matchmaking/FindMatchButton'
 import { supabase } from '@/lib/supabase'
 import type { Match, Game } from '@/types'
 
@@ -125,9 +126,12 @@ export function PlayPageInner({ initialMatches }: PlayPageInnerProps) {
             </h1>
             <p className="text-muted text-sm">{filtered.length} lobbies available</p>
           </div>
-          <Button variant="primary" className="flex items-center gap-2" onClick={() => playerId ? setShowCreate(true) : (window.location.href = '/api/auth/steam')}>
-            <Plus className="w-4 h-4" /> Create Match
-          </Button>
+          <div className="flex gap-3">
+            <FindMatchButton />
+            <Button variant="primary" className="flex items-center gap-2" onClick={() => playerId ? setShowCreate(true) : (window.location.href = '/api/auth/steam')}>
+              <Plus className="w-4 h-4" /> Create Match
+            </Button>
+          </div>
         </div>
 
         {/* Filters */}

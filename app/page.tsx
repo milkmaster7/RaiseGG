@@ -6,9 +6,10 @@ import { Shield, Zap, Trophy, Users, TrendingUp, Globe } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase'
 import { faqSchema, softwareAppSchema } from '@/lib/schemas'
 import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
+import { Accordion } from '@/components/ui/Accordion'
+import { PayoutTicker } from '@/components/home/PayoutTicker'
 
 export const revalidate = 60
-import { ActiveCounter } from '@/components/ui/ActiveCounter'
 import { readSessionFromCookies } from '@/lib/session'
 
 export const metadata: Metadata = {
@@ -31,9 +32,9 @@ export const metadata: Metadata = {
 }
 
 const GAMES = [
-  { name: 'CS2',      href: '/games/cs2',      players: '1.27M', description: 'Dedicated servers, 1v1 stake matches.',     badge: 'Most Popular', color: 'cyan'   },
-  { name: 'Dota 2',  href: '/games/dota2',     players: '608K',  description: 'Auto-verified results via Steam API.',               badge: 'Fast Payout',  color: 'purple' },
-  { name: 'Deadlock', href: '/games/deadlock', players: '218K',  description: 'The only stake platform for Valve\'s newest game.',  badge: 'First & Only', color: 'purple' },
+  { name: 'CS2',      href: '/games/cs2',      players: '1.27M', description: 'Dedicated servers, 1v1 stake matches.',     badge: 'Most Popular', color: 'cyan',   art: 'https://cdn.akamai.steamstatic.com/steam/apps/730/library_hero.jpg' },
+  { name: 'Dota 2',  href: '/games/dota2',     players: '608K',  description: 'Auto-verified results via Steam API.',               badge: 'Fast Payout',  color: 'purple', art: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/videos/dota_react/heroes/renders/juggernaut.png' },
+  { name: 'Deadlock', href: '/games/deadlock', players: '218K',  description: 'The only stake platform for Valve\'s newest game.',  badge: 'First & Only', color: 'purple', art: 'https://cdn.akamai.steamstatic.com/steam/apps/1422450/library_hero.jpg' },
 ]
 
 const HOW_IT_WORKS = [
@@ -68,6 +69,31 @@ async function getRealStats() {
   return { players: playerCount ?? 0, matches: matchCount ?? 0, totalPaid }
 }
 
+// Only show stats that have meaningful values — hide zeros
+function buildStatItems(stats: { players: number; matches: number; totalPaid: number }) {
+  const items: { icon: typeof Globe; value: string; label: string }[] = [
+    { icon: Globe, value: '44', label: 'Countries' },
+    { icon: Zap, value: '3 Games', label: 'CS2 · Dota 2 · Deadlock' },
+  ]
+  if (stats.players > 0) {
+    items.push({ icon: Users, value: stats.players.toLocaleString(), label: 'Players' })
+  }
+  if (stats.matches > 0) {
+    items.push({ icon: Trophy, value: stats.matches.toLocaleString(), label: 'Matches Played' })
+  }
+  if (stats.totalPaid > 0) {
+    items.push({ icon: TrendingUp, value: `$${stats.totalPaid.toLocaleString()}`, label: 'Paid Out' })
+  }
+  // Always show 4 items — fill remaining slots with platform highlights
+  if (items.length < 4) {
+    items.push({ icon: Shield, value: '10%', label: 'Rake — No Hidden Fees' })
+  }
+  if (items.length < 4) {
+    items.push({ icon: TrendingUp, value: 'Instant', label: 'USDC/USDT Payouts' })
+  }
+  return items.slice(0, 4)
+}
+
 export default async function HomePage() {
   // Logged-in users skip the marketing page and go straight to live matches
   const cookieStore = await cookies()
@@ -91,14 +117,17 @@ export default async function HomePage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 text-center">
           <div className="inline-flex items-center gap-2 badge-cyan mb-6 text-sm">
-            <span className="live-dot" /> 44 Countries — No Competition
+            <span className="live-dot" /> Live in 44 Countries
           </div>
           <h1 className="font-orbitron text-5xl md:text-7xl font-black mb-6 leading-tight">
-            <span className="text-gradient">STAKE.</span>{' '}<span className="text-white">PLAY.</span>{' '}<span className="text-gradient">WIN.</span>
+            <span className="text-white">No Discord Scams.</span><br />
+            <span className="text-gradient">Real Stakes. Verified Payouts.</span>
           </h1>
           <p className="text-xl text-muted max-w-2xl mx-auto mb-10 leading-relaxed">
-            The first competitive stake platform for <strong className="text-white">CS2</strong>,{' '}
-            <strong className="text-white">Dota 2</strong> and <strong className="text-white">Deadlock</strong> built for the Caucasus, Turkey and Balkans. Instant USDC/USDT payouts. Zero trust required.
+            Stake <strong className="text-white">USDC/USDT</strong> on{' '}
+            <strong className="text-white">CS2</strong>,{' '}
+            <strong className="text-white">Dota 2</strong> and{' '}
+            <strong className="text-white">Deadlock</strong> matches. Funds held in a Solana smart contract — no PayPal middlemen, no trust required. Winner gets paid in seconds.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/api/auth/steam" className="btn-primary text-base px-8 py-4">Connect Steam & Play</Link>
@@ -111,37 +140,21 @@ export default async function HomePage() {
       <section className="border-y border-border bg-space-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="flex items-center gap-3">
-              <Globe className="w-5 h-5 text-accent-cyan flex-shrink-0" />
-              <div>
-                <div className="font-orbitron font-bold text-xl text-accent-cyan">44</div>
-                <div className="text-xs text-muted uppercase tracking-wider">Countries</div>
+            {buildStatItems(stats).map((item) => (
+              <div key={item.label} className="flex items-center gap-3">
+                <item.icon className="w-5 h-5 text-accent-cyan flex-shrink-0" />
+                <div>
+                  <div className="font-orbitron font-bold text-xl text-accent-cyan">{item.value}</div>
+                  <div className="text-xs text-muted uppercase tracking-wider">{item.label}</div>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Users className="w-5 h-5 text-accent-cyan flex-shrink-0" />
-              <div>
-                <div className="font-orbitron font-bold text-xl text-accent-cyan">{stats.players.toLocaleString()}</div>
-                <div className="text-xs text-muted uppercase tracking-wider"><ActiveCounter /></div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Trophy className="w-5 h-5 text-accent-cyan flex-shrink-0" />
-              <div>
-                <div className="font-orbitron font-bold text-xl text-accent-cyan">{stats.matches.toLocaleString()}</div>
-                <div className="text-xs text-muted uppercase tracking-wider">Matches Played</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <TrendingUp className="w-5 h-5 text-accent-cyan flex-shrink-0" />
-              <div>
-                <div className="font-orbitron font-bold text-xl text-accent-cyan">${stats.totalPaid.toLocaleString()}</div>
-                <div className="text-xs text-muted uppercase tracking-wider">Paid Out</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* ── Payout Ticker ── */}
+      <PayoutTicker />
 
       {/* ── Live Matches ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -163,15 +176,22 @@ export default async function HomePage() {
           <p className="text-muted text-center mb-10">Three games. One platform. Real money on the line.</p>
           <div className="grid md:grid-cols-3 gap-6">
             {GAMES.map((game) => (
-              <Link key={game.name} href={game.href} className="card-hover group block">
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="font-orbitron text-2xl font-bold text-white group-hover:text-gradient transition-all">{game.name}</h3>
-                  <span className="badge-cyan text-xs">{game.badge}</span>
+              <Link key={game.name} href={game.href} className="card-hover group block relative overflow-hidden">
+                {/* Background artwork */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <img src={game.art} alt="" className="absolute right-0 top-0 h-full w-2/3 object-cover object-center opacity-10 group-hover:opacity-15 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-space-800 via-space-800/90 to-transparent" />
                 </div>
-                <p className="text-muted text-sm mb-4 leading-relaxed">{game.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted">Global players</span>
-                  <span className="font-orbitron font-bold text-accent-cyan">{game.players}</span>
+                <div className="relative">
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="font-orbitron text-2xl font-bold text-white group-hover:text-gradient transition-all">{game.name}</h3>
+                    <span className="badge-cyan text-xs">{game.badge}</span>
+                  </div>
+                  <p className="text-muted text-sm mb-4 leading-relaxed">{game.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted">Global players</span>
+                    <span className="font-orbitron font-bold text-accent-cyan">{game.players}</span>
+                  </div>
                 </div>
               </Link>
             ))}
@@ -204,14 +224,7 @@ export default async function HomePage() {
       <section className="bg-space-800 border-y border-border py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="section-title text-center mb-10">Common Questions</h2>
-          <div className="space-y-4">
-            {FAQS.map((faq) => (
-              <div key={faq.question} className="card">
-                <h3 className="font-semibold text-white mb-2">{faq.question}</h3>
-                <p className="text-muted text-sm leading-relaxed">{faq.answer}</p>
-              </div>
-            ))}
-          </div>
+          <Accordion items={FAQS} />
           <div className="text-center mt-8">
             <Link href="/faq" className="text-accent-cyan hover:text-accent-cyan-glow text-sm transition-colors">View all FAQs →</Link>
           </div>

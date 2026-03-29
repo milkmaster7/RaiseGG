@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { readSession } from '@/lib/session'
 import { createServiceClient } from '@/lib/supabase'
 import { isAdmin } from '@/lib/admin'
+import { calculatePrizePool, PLATFORM_RAKE } from '@/lib/tournaments'
 
 export async function GET(req: NextRequest) {
   const supabase = createServiceClient()
@@ -31,22 +32,25 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json()
-  const { name, game, format, prizePool, entryFee, maxPlayers, startsAt } = body
+  const { name, game, entryFee, maxPlayers, startsAt } = body
 
-  if (!name || !game || !format || !maxPlayers || !startsAt) {
-    return NextResponse.json({ error: 'name, game, format, maxPlayers, startsAt are required' }, { status: 400 })
+  if (!name || !game || !maxPlayers || !startsAt) {
+    return NextResponse.json({ error: 'name, game, maxPlayers, startsAt are required' }, { status: 400 })
   }
+
+  const fee = Number(entryFee) || 0
+  const prizePool = calculatePrizePool(fee, maxPlayers)
 
   const { data, error } = await supabase
     .from('tournaments')
     .insert({
       name,
       game,
-      format,
-      prize_pool:  prizePool  ?? 0,
-      entry_fee:   entryFee   ?? 0,
+      format: 'single_elimination',
+      prize_pool:  prizePool,
+      entry_fee:   fee,
       max_players: maxPlayers,
-      status:      'upcoming',
+      status:      'registration',
       starts_at:   startsAt,
     })
     .select()

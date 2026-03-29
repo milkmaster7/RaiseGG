@@ -1,3 +1,5 @@
+import { getHeroName } from './dota-heroes'
+
 const STEAM_API_KEY = process.env.STEAM_API_KEY!
 const BASE = 'https://api.steampowered.com'
 
@@ -28,13 +30,29 @@ export async function getHoursPlayed(steamId: string, appId: number): Promise<nu
   return game ? Math.floor(game.playtime_forever / 60) : 0
 }
 
-// Dota 2 match verification
+// Dota 2 match verification — try Valve API first, fall back to OpenDota
 export async function getDota2MatchDetails(matchId: string) {
-  const url = `${BASE}/IDOTA2Match_570/GetMatchDetails/v1/?key=${STEAM_API_KEY}&match_id=${matchId}`
-  const res = await fetch(url, { cache: 'no-store' })
-  if (!res.ok) return null
-  const data = await res.json()
-  return data?.result ?? null
+  // Try Valve Steam API first
+  try {
+    const url = `${BASE}/IDOTA2Match_570/GetMatchDetails/v1/?key=${STEAM_API_KEY}&match_id=${matchId}`
+    const res = await fetch(url, { cache: 'no-store' })
+    if (res.ok) {
+      const data = await res.json()
+      const result = data?.result
+      if (result?.players?.length) return result
+    }
+  } catch {}
+
+  // Fallback: OpenDota API (free, no key needed)
+  try {
+    const res = await fetch(`https://api.opendota.com/api/matches/${matchId}`, { cache: 'no-store' })
+    if (res.ok) {
+      const data = await res.json()
+      if (data?.players?.length) return data
+    }
+  } catch {}
+
+  return null
 }
 
 // Verify a Dota 2 match between two players
@@ -43,7 +61,7 @@ export async function verifyDota2Match(
   playerASteam64: string,
   playerBSteam64: string,
   wagerCreatedAt: Date
-): Promise<{ winner: 'a' | 'b' | null; error?: string }> {
+): Promise<{ winner: 'a' | 'b' | null; error?: string; heroA?: string; heroB?: string }> {
   const match = await getDota2MatchDetails(matchId)
 
   if (!match) return { winner: null, error: 'Match not found. Try again in a few minutes.' }
@@ -75,7 +93,10 @@ export async function verifyDota2Match(
 
   const aWon = aIsRadiant ? match.radiant_win : !match.radiant_win
 
-  return { winner: aWon ? 'a' : 'b' }
+  const heroA = getHeroName(playerAData.hero_id)
+  const heroB = getHeroName(playerBData.hero_id)
+
+  return { winner: aWon ? 'a' : 'b', heroA, heroB }
 }
 
 // Check player eligibility — returns summary and bans so callers don't re-fetch

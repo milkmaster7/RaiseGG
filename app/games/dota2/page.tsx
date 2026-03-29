@@ -55,6 +55,15 @@ export default async function Dota2Page() {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/3 w-96 h-96 bg-accent-purple/10 rounded-full blur-3xl" />
         </div>
+        {/* Game artwork */}
+        <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none hidden lg:block">
+          <img
+            src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/juggernaut.png"
+            alt=""
+            className="absolute right-12 bottom-0 h-[110%] object-contain opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-space-900 via-space-900/80 to-transparent" />
+        </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <span className="badge-purple mb-4 inline-block text-xs">Dota 2 — Fast Payout</span>
           <h1 className="font-orbitron text-5xl md:text-6xl font-black mb-4">

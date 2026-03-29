@@ -4,6 +4,12 @@ import { PlayPageInner } from '@/components/play/PlayPageInner'
 import { breadcrumbSchema, lobbyListSchema } from '@/lib/schemas'
 import type { Match } from '@/types'
 import Link from 'next/link'
+import { AutoQueue } from '@/components/matchmaking/AutoQueue'
+import DailyReward from '@/components/dashboard/DailyReward'
+import FriendsPlaying from '@/components/dashboard/FriendsPlaying'
+import { SeasonInfo } from '@/components/dashboard/SeasonInfo'
+import { ActiveEvents } from '@/components/events/ActiveEvents'
+import { PayoutTicker } from '@/components/home/PayoutTicker'
 
 export const metadata: Metadata = {
   title: 'Play — Open Lobbies | RaiseGG',
@@ -98,6 +104,22 @@ export default async function PlayPage() {
           <li><Link href="/play?game=deadlock">Deadlock Lobbies ({deadlockCount})</Link></li>
           <li><Link href="/how-it-works">How It Works</Link></li>
         </ul>
+      </div>
+
+      {/* Dashboard widgets */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+        <ActiveEvents />
+        <PayoutTicker />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <AutoQueue />
+          </div>
+          <div className="space-y-6">
+            <DailyReward />
+            <SeasonInfo />
+            <FriendsPlaying />
+          </div>
+        </div>
       </div>
 
       <PlayPageInner initialMatches={initialMatches} />

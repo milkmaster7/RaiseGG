@@ -1,5 +1,6 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { faqSchema, breadcrumbSchema } from '@/lib/schemas'
+import { Accordion } from '@/components/ui/Accordion'
 
 export const metadata: Metadata = {
   title: 'FAQ — Frequently Asked Questions',
@@ -36,7 +37,7 @@ const FAQS = [
   { question: 'What if I don\'t have a Phantom wallet yet?', answer: 'Install Phantom from phantom.app. It\'s a free browser extension. Create a wallet, write down your seed phrase (keep it safe offline), then buy USDC or USDT on any major exchange and send it to your Phantom address on the Solana network.' },
   { question: 'How are ELO ratings calculated?', answer: 'We use a modified Elo formula where K (points per match) scales by tier. Each game (CS2, Dota 2) has its own separate ELO. New players start at 1000 ELO (Silver tier). Beating higher-ranked opponents earns more ELO than beating equals.' },
   { question: 'What happens to my funds if RaiseGG shuts down?', answer: 'Funds locked in active match vaults remain in the smart contract — they can be returned via the cancel instruction. Your RaiseGG platform balance (unlocked funds) would need to be withdrawn manually if we ever gave notice of closure. We commit to providing at least 30 days notice for any shutdown.' },
-  { question: 'Can I verify the smart contract on-chain?', answer: 'Yes. The RaiseGG escrow program is deployed at BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv on Solana mainnet. You can verify all vaults and transactions at https://solscan.io/account/BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv — every match vault, deposit and payout is publicly visible on-chain.' },
+  { question: 'Can I verify the smart contract on-chain?', answer: 'Yes. The RaiseGG escrow program is deployed at BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv on Solana mainnet. You can verify all vaults and transactions at solscan.io — every match vault, deposit and payout is publicly visible on-chain.' },
 ]
 
 export default function FAQPage() {
@@ -55,14 +56,7 @@ export default function FAQPage() {
         <h1 className="font-orbitron text-4xl font-black mb-4 text-gradient">FAQ</h1>
         <p className="text-muted mb-12">Everything you need to know about RaiseGG.</p>
 
-        <div className="space-y-4">
-          {FAQS.map((faq) => (
-            <div key={faq.question} className="card">
-              <h2 className="font-semibold text-white mb-2">{faq.question}</h2>
-              <p className="text-muted text-sm leading-relaxed">{faq.answer}</p>
-            </div>
-          ))}
-        </div>
+        <Accordion items={FAQS} />
       </div>
     </>
   )

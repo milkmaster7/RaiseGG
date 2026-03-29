@@ -108,19 +108,25 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Team */}
+        {/* Mission */}
         <div className="mb-16">
-          <h2 className="font-orbitron text-2xl font-bold text-white mb-6">The Team</h2>
-          <div className="card flex gap-5 items-start">
-            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-accent-cyan/10 border-2 border-accent-cyan/30 flex items-center justify-center">
-              <span className="font-orbitron font-black text-accent-cyan text-lg">RG</span>
-            </div>
-            <div>
-              <div className="font-orbitron font-bold text-white text-base mb-1">The RaiseGG Team</div>
-              <p className="text-muted text-sm leading-relaxed">
-                Building RaiseGG to give Caucasus, Turkey and Balkans players a platform that rewards skill with real money. More details coming soon.
-              </p>
-            </div>
+          <h2 className="font-orbitron text-2xl font-bold text-white mb-6">Who Builds This</h2>
+          <div className="card">
+            <p className="text-muted text-sm leading-relaxed mb-4">
+              RaiseGG is built by a small, independent team of competitive gamers and engineers
+              who grew up playing CS and Dota in the Caucasus and Turkey — and got tired of
+              being ignored by Western platforms.
+            </p>
+            <p className="text-muted text-sm leading-relaxed mb-4">
+              No venture capital. No corporate parent. Just builders who play the same games
+              you do, on the same servers, in the same region.
+            </p>
+            <p className="text-muted text-sm leading-relaxed">
+              Questions? Reach us at{' '}
+              <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:text-accent-cyan-glow transition-colors">hello@raisegg.com</a>{' '}
+              or in our{' '}
+              <a href="https://t.me/raisegg" target="_blank" rel="noopener noreferrer" className="text-accent-cyan hover:text-accent-cyan-glow transition-colors">Telegram</a>.
+            </p>
           </div>
         </div>
 

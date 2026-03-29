@@ -11,24 +11,49 @@ import {
   Gamepad2,
   Activity,
   BookOpen,
+  Users,
+  Gift,
+  Target,
+  Film,
+  MessageSquare,
+  Star,
+  Palette,
+  Crown,
+  Megaphone,
+  Shield,
+  Award,
 } from 'lucide-react'
 
 // ─── Primary nav ─────────────────────────────────────────────────────────────
 const PRIMARY_NAV = [
-  { href: '/',             label: 'Home',        icon: House     },
-  { href: '/play',         label: 'Play',         icon: Swords    },
-  { href: '/tournaments',  label: 'Tournaments',  icon: Trophy    },
-  { href: '/leaderboard',  label: 'Leaderboard',  icon: BarChart2 },
-  { href: '/games',        label: 'Games',        icon: Gamepad2  },
-  { href: '/feed',         label: 'Feed',         icon: Activity  },
-  { href: '/blog',         label: 'Blog',         icon: BookOpen  },
+  { href: '/',             label: 'Home',        icon: House          },
+  { href: '/play',         label: 'Play',         icon: Swords         },
+  { href: '/tournaments',  label: 'Tournaments',  icon: Trophy         },
+  { href: '/teams',        label: 'Teams',        icon: Users          },
+  { href: '/clans',        label: 'Clans',        icon: Shield         },
+  { href: '/leaderboard',  label: 'Leaderboard',  icon: BarChart2      },
+  { href: '/challenges',   label: 'Challenges',   icon: Target         },
+  { href: '/friends',      label: 'Friends',      icon: Users          },
+  { href: '/demos',        label: 'Demos',        icon: Film           },
+  { href: '/forum',        label: 'Community',    icon: MessageSquare  },
+  { href: '/games',        label: 'Games',        icon: Gamepad2       },
+  { href: '/feed',         label: 'Feed',         icon: Activity       },
+  { href: '/blog',         label: 'Blog',         icon: BookOpen       },
+  { href: '/battle-pass',  label: 'Battle Pass',  icon: Star           },
+  { href: '/cosmetics',    label: 'Cosmetics',    icon: Palette        },
+  { href: '/premium',      label: 'Premium',      icon: Crown          },
+  { href: '/affiliate',    label: 'Affiliate',    icon: Megaphone      },
+  { href: '/achievements', label: 'Achievements', icon: Award          },
 ]
 
 // ─── Secondary nav (bottom) ───────────────────────────────────────────────────
 const SECONDARY_NAV = [
   { href: '/about',         label: 'About'        },
+  { href: '/integrity',     label: 'Integrity'    },
   { href: '/faq',           label: 'FAQ'           },
   { href: '/how-it-works',  label: 'How It Works'  },
+  { href: '/referral',      label: 'Referral'      },
+  { href: '/roadmap',       label: 'Roadmap'       },
   { href: '/support',       label: 'Support'       },
 ]
 

@@ -55,6 +55,15 @@ export default async function CS2Page() {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 right-1/4 w-80 h-80 bg-accent-cyan/8 rounded-full blur-3xl" />
         </div>
+        {/* Game artwork */}
+        <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none hidden lg:block">
+          <img
+            src="https://cdn.akamai.steamstatic.com/steam/apps/730/library_hero.jpg"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-15"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-space-900 to-transparent" />
+        </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <span className="badge-purple mb-4 inline-block text-xs">CS2 — Most Popular</span>
           <h1 className="font-orbitron text-5xl md:text-6xl font-black mb-4">

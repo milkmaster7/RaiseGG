@@ -12,6 +12,55 @@ function getSolanaConnection() {
   return new Connection(process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? 'https://api.mainnet-beta.solana.com', 'confirmed')
 }
 
+const REFERRAL_PERCENT = 0.05 // 5% of winner's payout goes to their referrer
+
+const CS2_MAPS: Record<string, string> = {
+  de_dust2: 'Dust II', de_mirage: 'Mirage', de_inferno: 'Inferno',
+  de_nuke: 'Nuke', de_overpass: 'Overpass', de_ancient: 'Ancient',
+  de_anubis: 'Anubis', de_vertigo: 'Vertigo', de_train: 'Train',
+  de_cache: 'Cache', de_cobblestone: 'Cobblestone',
+}
+
+function formatMapName(raw?: string): string | null {
+  if (!raw) return null
+  return CS2_MAPS[raw.toLowerCase()] ?? raw.replace(/^de_/i, '').replace(/^\w/, c => c.toUpperCase())
+}
+
+async function creditReferralBonus(supabase: any, winnerId: string, payout: number, matchId: string, currency: string) {
+  try {
+    // Check if the winner was referred by someone
+    const { data: winner } = await supabase
+      .from('players')
+      .select('referred_by')
+      .eq('id', winnerId)
+      .single()
+
+    if (!winner?.referred_by) return
+
+    const bonus = Math.round(payout * REFERRAL_PERCENT * 100) / 100 // round to 2 decimals
+    if (bonus <= 0) return
+
+    // Credit the referrer's balance
+    const balanceField = currency === 'usdt' ? 'usdt_balance' : 'usdc_balance'
+    await supabase.rpc('increment_balance', {
+      player_id: winner.referred_by,
+      field: balanceField,
+      amount: bonus,
+    })
+
+    // Log the referral bonus transaction
+    await supabase.from('transactions').insert({
+      player_id: winner.referred_by,
+      type: 'referral_bonus',
+      amount: bonus,
+      match_id: matchId,
+      note: `5% referral bonus from ${winnerId} win (${currency.toUpperCase()})`,
+    })
+  } catch {
+    // Non-critical — don't break match resolution if referral fails
+  }
+}
+
 // Create a new match (player A stakes)
 export async function createMatch(params: {
   matchId: string
@@ -105,6 +154,8 @@ export async function resolveDota2Match(matchId: string, externalMatchId: string
 
   const winnerId = result.winner === 'a' ? match.player_a_id : match.player_b_id
   const loserId  = result.winner === 'a' ? match.player_b_id : match.player_a_id
+  const winnerHero = result.winner === 'a' ? result.heroA : result.heroB
+  const loserHero  = result.winner === 'a' ? result.heroB : result.heroA
 
   const eloKey = `${match.game}_elo` as const
   const aWon = result.winner === 'a'
@@ -135,13 +186,15 @@ export async function resolveDota2Match(matchId: string, externalMatchId: string
     }
   }
 
-  // Update match
+  // Update match — store hero names for PnL cards
   await supabase.from('matches').update({
     status:             'completed',
     winner_id:          winnerId,
     match_id_external:  externalMatchId,
     used_match_ids:     [...(match.used_match_ids ?? []), externalMatchId],
     resolved_at:        new Date().toISOString(),
+    game_detail:        winnerHero ?? null,
+    game_detail_loser:  loserHero ?? null,
     ...(resolveTx ? { resolve_tx: resolveTx } : {}),
   }).eq('id', matchId)
 
@@ -186,13 +239,16 @@ export async function resolveDota2Match(matchId: string, externalMatchId: string
     { player_id: loserId,  type: 'loss', amount: match.stake_amount, match_id: matchId, note: currency.toUpperCase() },
   ])
 
+  // Referral bonus: referrer gets 5% of winner's payout
+  await creditReferralBonus(supabase, winnerId, payout, matchId, currency)
+
   // Email notifications (non-blocking)
   const winner = winnerId === match.player_a_id ? match.player_a : match.player_b
   const loser  = winnerId === match.player_a_id ? match.player_b : match.player_a
   if (winner.email) sendMatchResult(winner.email, winner.username, true, payout, match.game, loser.username).catch(() => {})
   if (loser.email)  sendMatchResult(loser.email, loser.username, false, 0, match.game, winner.username).catch(() => {})
 
-  return { winnerId, payout, rake, eloResult, currency }
+  return { winnerId, payout, rake, eloResult, currency, winnerHero, loserHero }
 }
 
 // Resolve a CS2 match from a MatchZy webhook payload
@@ -203,6 +259,7 @@ export async function resolveCS2Match(params: {
   team2SteamIds:  string[]
   team1Score:     number
   team2Score:     number
+  mapName?:       string   // e.g. "de_dust2", "de_mirage"
 }) {
   const supabase = createServiceClient()
 
@@ -233,6 +290,7 @@ export async function resolveCS2Match(params: {
   const winnerId = winnerIsA ? match.player_a_id : match.player_b_id
   const loserId  = winnerIsA ? match.player_b_id : match.player_a_id
   const aWon     = winnerIsA
+  const mapDisplay = formatMapName(params.mapName)
 
   const eloKey = `${match.game}_elo` as const
   const eloResult = calculateElo(match.player_a[eloKey], match.player_b[eloKey], aWon)
@@ -263,11 +321,12 @@ export async function resolveCS2Match(params: {
     }
   }
 
-  // Update match
+  // Update match — store map name for PnL cards
   await supabase.from('matches').update({
     status:            'completed',
     winner_id:         winnerId,
     resolved_at:       new Date().toISOString(),
+    game_detail:       mapDisplay,
     ...(resolveTx ? { resolve_tx: resolveTx } : {}),
   }).eq('id', match.id)
 
@@ -309,13 +368,16 @@ export async function resolveCS2Match(params: {
     { player_id: loserId,  type: 'loss', amount: match.stake_amount,  match_id: match.id, note: currency.toUpperCase() },
   ])
 
+  // Referral bonus: referrer gets 5% of winner's payout
+  await creditReferralBonus(supabase, winnerId, payout, match.id, currency)
+
   // Notify both players via email (non-blocking)
   const winner = winnerId === match.player_a_id ? match.player_a : match.player_b
   const loser  = winnerId === match.player_a_id ? match.player_b : match.player_a
   if (winner.email) sendMatchResult(winner.email, winner.username, true, payout, match.game, loser.username).catch(() => {})
   if (loser.email)  sendMatchResult(loser.email, loser.username, false, 0, match.game, winner.username).catch(() => {})
 
-  return { winnerId, payout, rake, eloResult, currency }
+  return { winnerId, payout, rake, eloResult, currency, mapName: mapDisplay }
 }
 
 // Auto-cancel expired matches (called by cron) — with refunds + on-chain cancellation
