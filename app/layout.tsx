@@ -1,4 +1,5 @@
 ﻿import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import './globals.css'
 import Sidebar from '@/components/layout/Sidebar'
 import MobileNav from '@/components/layout/MobileNav'
@@ -137,14 +138,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-BSDK3JMC7Y" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-BSDK3JMC7Y');`,
-          }}
-        />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://avatars.steamstatic.com" />
+        <link rel="alternate" type="application/rss+xml" title="RaiseGG Blog" href="/feed.xml" />
       </head>
       <body className="min-h-screen bg-space-900 flex">
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-BSDK3JMC7Y" strategy="afterInteractive" />
+        <Script id="ga" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-BSDK3JMC7Y');`}
+        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
