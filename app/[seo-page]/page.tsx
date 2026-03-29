@@ -132,24 +132,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${gameName} Stake Platform in ${countryName} — Win USDC/USDT`,
-    description: `The leading ${gameName} stake platform for players in ${countryName}. Join RaiseGG.gg, compete in ranked lobbies and win real USDC or USDT. ${countryName} players welcome.`,
+    description: `The leading ${gameName} stake platform for players in ${countryName}. Join RaiseGG, compete in ranked lobbies and win real USDC or USDT. ${countryName} players welcome.`,
     alternates: {
-      canonical: `https://raisegg.gg/${slug}`,
+      canonical: `https://raisegg.com/${slug}`,
       languages: {
-        [langCode]: `https://raisegg.gg/${slug}`,
-        'x-default': `https://raisegg.gg/games/${game}`,
+        [langCode]: `https://raisegg.com/${slug}`,
+        'x-default': `https://raisegg.com/games/${game}`,
       },
     },
     openGraph: {
-      title: `RaiseGG.gg – ${gameName} in ${countryName}`,
+      title: `RaiseGG – ${gameName} in ${countryName}`,
       description: `${gameName} stake matches for ${countryName} players. Win real USDC or USDT.`,
-      url: `https://raisegg.gg/${slug}`,
-      images: [{ url: `/api/og?title=${encodeURIComponent(gameName + ' in ' + countryName)}&sub=raisegg.gg&color=7b61ff`, width: 1200, height: 630 }],
+      url: `https://raisegg.com/${slug}`,
+      images: [{ url: `/api/og?title=${encodeURIComponent(gameName + ' in ' + countryName)}&sub=raisegg.com&color=7b61ff`, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `RaiseGG.gg – ${gameName} in ${countryName}`,
-      images: [`/api/og?title=${encodeURIComponent(gameName + ' in ' + countryName)}&sub=raisegg.gg&color=7b61ff`],
+      title: `RaiseGG – ${gameName} in ${countryName}`,
+      images: [`/api/og?title=${encodeURIComponent(gameName + ' in ' + countryName)}&sub=raisegg.com&color=7b61ff`],
     },
   }
 }
@@ -167,9 +167,9 @@ export default async function SeoLandingPage({ params }: Props) {
   const lpSchema = landingPageSchema(game, countryName)
   const vgSchema = videoGameSchema(game as 'cs2' | 'dota2' | 'deadlock')
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: gameName, url: `https://raisegg.gg/games/${game}` },
-    { name: countryName, url: `https://raisegg.gg/${slug}` },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: gameName, url: `https://raisegg.com/games/${game}` },
+    { name: countryName, url: `https://raisegg.com/${slug}` },
   ])
 
   return (
@@ -183,7 +183,7 @@ export default async function SeoLandingPage({ params }: Props) {
           <span className="text-gradient">{gameName}</span> Stake Platform in {countryName}
         </h1>
         <p className="text-muted text-lg mb-8 leading-relaxed">
-          RaiseGG.gg is the leading {gameName} stake platform for players in {countryName}.
+          RaiseGG is the leading {gameName} stake platform for players in {countryName}.
           Compete in ranked matches, stake USDC or USDT, and win instantly via Solana smart contract.
           No Western ping disadvantage — servers built for your region.
         </p>

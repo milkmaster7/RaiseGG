@@ -60,7 +60,7 @@ export async function GET(req: Request) {
   const topic = available[Math.floor(Math.random() * available.length)]
 
   // Call the generate endpoint
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://raisegg.gg'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://raisegg.com'
   const res = await fetch(`${baseUrl}/api/blog/generate`, {
     method: 'POST',
     headers: {

@@ -19,8 +19,8 @@ type PlayerResult = {
 
 export default function SearchPage() {
   const crumbs = breadcrumbSchema([
-    { name: 'Home',   url: 'https://raisegg.gg' },
-    { name: 'Search', url: 'https://raisegg.gg/search' },
+    { name: 'Home',   url: 'https://raisegg.com' },
+    { name: 'Search', url: 'https://raisegg.com/search' },
   ])
 
   const [query, setQuery]     = useState('')

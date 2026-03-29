@@ -48,9 +48,9 @@ export default function WalletPage() {
   const [toast, setToast]                       = useState<{ msg: string; ok: boolean } | null>(null)
 
   const crumbs = breadcrumbSchema([
-    { name: 'Home',      url: 'https://raisegg.gg' },
-    { name: 'Dashboard', url: 'https://raisegg.gg/dashboard' },
-    { name: 'Wallet',    url: 'https://raisegg.gg/dashboard/wallet' },
+    { name: 'Home',      url: 'https://raisegg.com' },
+    { name: 'Dashboard', url: 'https://raisegg.com/dashboard' },
+    { name: 'Wallet',    url: 'https://raisegg.com/dashboard/wallet' },
   ])
 
   const showToast = (msg: string, ok: boolean) => {

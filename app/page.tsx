@@ -13,18 +13,18 @@ export const metadata: Metadata = {
   title: 'CS2, Dota 2 & Deadlock Stake Matches — Win Real USDC/USDT',
   description:
     'Stake USDC or USDT on CS2, Dota 2 and Deadlock matches. The first competitive wagering platform for the Caucasus, Turkey and Balkans — fair play, instant payouts, no trust required.',
-  alternates: { canonical: 'https://raisegg.gg' },
+  alternates: { canonical: 'https://raisegg.com' },
   openGraph: {
-    title: 'RaiseGG.gg – CS2, Dota 2 & Deadlock Stake Matches',
+    title: 'RaiseGG – CS2, Dota 2 & Deadlock Stake Matches',
     description: 'Stake USDC or USDT on competitive matches. Instant payouts. 44 countries.',
-    url: 'https://raisegg.gg',
-    images: [{ url: '/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630, alt: 'RaiseGG.gg' }],
+    url: 'https://raisegg.com',
+    images: [{ url: '/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff', width: 1200, height: 630, alt: 'RaiseGG' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RaiseGG.gg – CS2, Dota 2 & Deadlock Stake Matches',
+    title: 'RaiseGG – CS2, Dota 2 & Deadlock Stake Matches',
     description: 'Stake USDC or USDT on competitive matches. Instant payouts. 44 countries.',
-    images: ['/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG.gg&color=7b61ff'],
+    images: ['/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff'],
   },
 }
 

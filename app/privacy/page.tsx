@@ -3,18 +3,18 @@ import { breadcrumbSchema } from '@/lib/schemas'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'RaiseGG.gg Privacy Policy. How we handle your data, Steam account information and wallet addresses.',
-  alternates: { canonical: 'https://raisegg.gg/privacy' },
+  description: 'RaiseGG Privacy Policy. How we handle your data, Steam account information and wallet addresses.',
+  alternates: { canonical: 'https://raisegg.com/privacy' },
   openGraph: {
-    title: 'Privacy Policy — RaiseGG.gg',
+    title: 'Privacy Policy — RaiseGG',
     description: 'How we handle your Steam account data, wallet addresses and match history.',
-    url: 'https://raisegg.gg/privacy',
-    images: [{ url: '/api/og?title=Privacy+Policy&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+    url: 'https://raisegg.com/privacy',
+    images: [{ url: '/api/og?title=Privacy+Policy&sub=RaiseGG&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Privacy Policy — RaiseGG.gg',
-    images: ['/api/og?title=Privacy+Policy&sub=RaiseGG.gg&color=7b61ff'],
+    title: 'Privacy Policy — RaiseGG',
+    images: ['/api/og?title=Privacy+Policy&sub=RaiseGG&color=7b61ff'],
   },
 }
 
@@ -29,8 +29,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export default function PrivacyPage() {
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Privacy Policy', url: 'https://raisegg.gg/privacy' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Privacy Policy', url: 'https://raisegg.com/privacy' },
   ])
 
   return (
@@ -45,9 +45,9 @@ export default function PrivacyPage() {
 
           <Section title="1. Who We Are">
             <p>
-              RaiseGG.gg is operated by RaiseGG ("we", "us", "our"). We run a skill-based competitive
+              RaiseGG is operated by RaiseGG ("we", "us", "our"). We run a skill-based competitive
               stake platform for CS2, Dota 2 and Deadlock. Questions? Contact us at{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>.
+              <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:underline">hello@raisegg.com</a>.
             </p>
           </Section>
 
@@ -128,7 +128,7 @@ export default function PrivacyPage() {
             </ul>
             <p>
               To exercise any of these rights, email{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>{' '}
+              <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:underline">hello@raisegg.com</a>{' '}
               with the subject line "Data Request".
             </p>
           </Section>
@@ -142,9 +142,9 @@ export default function PrivacyPage() {
 
           <Section title="9. Children">
             <p>
-              RaiseGG.gg is strictly for users aged 18 and over. We do not knowingly collect data from
+              RaiseGG is strictly for users aged 18 and over. We do not knowingly collect data from
               anyone under 18. If you believe a minor has registered, contact us immediately at{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>.
+              <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:underline">hello@raisegg.com</a>.
             </p>
           </Section>
 
@@ -158,7 +158,7 @@ export default function PrivacyPage() {
           <Section title="11. Contact">
             <p>
               For privacy questions or data requests:{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>
+              <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:underline">hello@raisegg.com</a>
             </p>
           </Section>
 

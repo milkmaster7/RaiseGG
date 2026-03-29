@@ -97,7 +97,7 @@ export default function Footer() {
 
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted">
-            © {new Date().getFullYear()} RaiseGG.gg — All rights reserved.
+            © {new Date().getFullYear()} RaiseGG — All rights reserved.
           </p>
           <p className="text-xs text-muted">
             Skill-based competition platform. Play responsibly.

@@ -34,7 +34,7 @@ function baseTemplate(content: string) {
       <!-- Footer -->
       <tr><td style="padding:20px 32px;border-top:1px solid #1e1e3a;text-align:center;">
         <span style="color:#666;font-size:12px;">
-          RaiseGG.gg — Competitive Stake Matches<br>
+          RaiseGG — Competitive Stake Matches<br>
           <a href="https://raisegg.com" style="color:#00e6ff;text-decoration:none;">raisegg.com</a> ·
           <a href="https://t.me/raisegg" style="color:#00e6ff;text-decoration:none;">Telegram</a>
         </span>
@@ -108,7 +108,7 @@ export async function sendMatchResult(to: string, username: string, won: boolean
         ${won ? `<tr><td style="color:#888;padding:4px 0;">Payout</td><td style="color:#22c55e;text-align:right;font-weight:700;">+$${payout.toFixed(2)}</td></tr>` : ''}
       </table>
       ${btn(won ? 'Play Again' : 'Rematch', 'https://raisegg.com/play')}
-      ${won ? `<p style="margin-top:16px;"><a href="https://raisegg.gg/api/pnl-card?username=${encodeURIComponent(username)}&opponent=${encodeURIComponent(opponentName)}&game=${encodeURIComponent(game)}&result=win&payout=${payout.toFixed(2)}&stake=${(payout / 1.8).toFixed(2)}" style="color:#00e6ff;text-decoration:none;font-size:13px;">📊 View & Share your PnL Card</a></p>` : ''}
+      ${won ? `<p style="margin-top:16px;"><a href="https://raisegg.com/api/pnl-card?username=${encodeURIComponent(username)}&opponent=${encodeURIComponent(opponentName)}&game=${encodeURIComponent(game)}&result=win&payout=${payout.toFixed(2)}&stake=${(payout / 1.8).toFixed(2)}" style="color:#00e6ff;text-decoration:none;font-size:13px;">📊 View & Share your PnL Card</a></p>` : ''}
     `),
   })
 }

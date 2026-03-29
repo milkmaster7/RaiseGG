@@ -2,7 +2,7 @@ import { getAllBlogPosts } from '@/lib/blog'
 
 export async function GET() {
   const posts = await getAllBlogPosts()
-  const BASE = 'https://raisegg.gg'
+  const BASE = 'https://raisegg.com'
 
   const items = posts
     .slice(0, 50)

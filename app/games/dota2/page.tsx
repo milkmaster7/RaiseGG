@@ -8,18 +8,18 @@ import { RegionLinks } from '@/components/layout/RegionLinks'
 
 export const metadata: Metadata = {
   title: 'Dota 2 Stake Matches — Compete & Win USDC/USDT',
-  description: 'Stake USDC or USDT on Dota 2 matches on RaiseGG.gg. Automatic result verification via Steam API. The competitive Dota 2 stake platform for the Caucasus, Turkey and Balkans.',
-  alternates: { canonical: 'https://raisegg.gg/games/dota2' },
+  description: 'Stake USDC or USDT on Dota 2 matches on RaiseGG. Automatic result verification via Steam API. The competitive Dota 2 stake platform for the Caucasus, Turkey and Balkans.',
+  alternates: { canonical: 'https://raisegg.com/games/dota2' },
   openGraph: {
-    title: 'RaiseGG.gg – Dota 2 Stake Matches',
+    title: 'RaiseGG – Dota 2 Stake Matches',
     description: 'Dota 2 competitive stake lobbies. Win real USDC/USDT.',
-    url: 'https://raisegg.gg/games/dota2',
-    images: [{ url: '/api/og?title=Dota+2+Stake+Matches&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+    url: 'https://raisegg.com/games/dota2',
+    images: [{ url: '/api/og?title=Dota+2+Stake+Matches&sub=RaiseGG&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RaiseGG.gg – Dota 2 Stake Matches',
-    images: ['/api/og?title=Dota+2+Stake+Matches&sub=RaiseGG.gg&color=7b61ff'],
+    title: 'RaiseGG – Dota 2 Stake Matches',
+    images: ['/api/og?title=Dota+2+Stake+Matches&sub=RaiseGG&color=7b61ff'],
   },
 }
 
@@ -33,9 +33,9 @@ const FEATURES = [
 export default async function Dota2Page() {
   const gameSchema = videoGameSchema('dota2')
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Games', url: 'https://raisegg.gg/games' },
-    { name: 'Dota 2', url: 'https://raisegg.gg/games/dota2' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Games', url: 'https://raisegg.com/games' },
+    { name: 'Dota 2', url: 'https://raisegg.com/games/dota2' },
   ])
 
   const supabase = createServiceClient()

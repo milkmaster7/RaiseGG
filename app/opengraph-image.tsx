@@ -1,6 +1,6 @@
 ﻿import { ImageResponse } from 'next/og'
 
-export const alt = 'RaiseGG.gg — Stake. Play. Win.'
+export const alt = 'RaiseGG — Stake. Play. Win.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -79,7 +79,7 @@ export default function Image() {
             letterSpacing: '0.1em',
           }}
         >
-          RaiseGG.gg
+          RaiseGG
         </div>
       </div>
     ),

@@ -20,10 +20,10 @@ export const viewport: Viewport = {
 
 // ─── Base Metadata ────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
-  metadataBase: new URL('https://raisegg.gg'),
+  metadataBase: new URL('https://raisegg.com'),
 
   title: {
-    template: '%s | RaiseGG.gg',
+    template: '%s | RaiseGG',
     default: 'CS2, Dota 2 & Deadlock Stake Matches — Win Real USDC/USDT',
   },
 
@@ -37,21 +37,21 @@ export const metadata: Metadata = {
     'cs2 bet', 'dota2 bet', 'esports stake platform',
   ],
 
-  alternates: { canonical: 'https://raisegg.gg' },
+  alternates: { canonical: 'https://raisegg.com' },
 
   openGraph: {
-    title: 'RaiseGG.gg – CS2, Dota 2 & Deadlock Stake Matches',
+    title: 'RaiseGG – CS2, Dota 2 & Deadlock Stake Matches',
     description: 'Stake USDC/USDT on competitive matches. Instant payouts. 44 countries.',
     type: 'website',
-    siteName: 'RaiseGG.gg',
+    siteName: 'RaiseGG',
     locale: 'en_US',
-    url: 'https://raisegg.gg',
+    url: 'https://raisegg.com',
     images: [
       {
-        url: '/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG.gg&color=7b61ff',
+        url: '/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff',
         width: 1200,
         height: 630,
-        alt: 'RaiseGG.gg — Competitive Stake Platform',
+        alt: 'RaiseGG — Competitive Stake Platform',
       },
     ],
   },
@@ -60,9 +60,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@RaiseGG',
     creator: '@RaiseGG',
-    title: 'RaiseGG.gg – CS2, Dota 2 & Deadlock Stake Matches',
+    title: 'RaiseGG – CS2, Dota 2 & Deadlock Stake Matches',
     description: 'Stake USDC/USDT on competitive matches. Instant payouts. 44 countries.',
-    images: ['/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG.gg&color=7b61ff'],
+    images: ['/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff'],
   },
 
   robots: {
@@ -88,15 +88,15 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'RaiseGG',
-  alternateName: 'RaiseGG.gg',
-  url: 'https://raisegg.gg',
+  alternateName: 'RaiseGG',
+  url: 'https://raisegg.com',
   logo: {
     '@type': 'ImageObject',
-    url: 'https://raisegg.gg/logo-horizontal.svg',
+    url: 'https://raisegg.com/logo-horizontal.svg',
     width: 600,
     height: 60,
   },
-  image: 'https://raisegg.gg/og-default.png',
+  image: 'https://raisegg.com/og-default.png',
   description: 'Competitive CS2, Dota 2 and Deadlock stake platform for the Caucasus, Turkey and Balkans. USDC/USDT payouts via trustless Solana smart contract.',
   areaServed: [
     'Georgia', 'Turkey', 'Armenia', 'Azerbaijan', 'Ukraine',
@@ -110,24 +110,24 @@ const organizationSchema = {
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer support',
-    email: 'hello@raisegg.gg',
+    email: 'hello@raisegg.com',
   },
 }
 
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'RaiseGG.gg',
+  name: 'RaiseGG',
   alternateName: 'RaiseGG',
-  url: 'https://raisegg.gg',
+  url: 'https://raisegg.com',
   description: 'Competitive CS2, Dota 2 and Deadlock stake matches. Win real USDC or USDT. Serving 44 countries across the Caucasus, Turkey and Balkans.',
   inLanguage: 'en-US',
-  creator: { '@type': 'Organization', name: 'RaiseGG', url: 'https://raisegg.gg' },
+  creator: { '@type': 'Organization', name: 'RaiseGG', url: 'https://raisegg.com' },
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://raisegg.gg/search?q={search_term_string}',
+      urlTemplate: 'https://raisegg.com/search?q={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },

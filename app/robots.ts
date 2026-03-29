@@ -6,9 +6,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/dashboard/', '/_next/', '/embed/'],
+        disallow: ['/api/', '/api', '/admin/', '/admin', '/dashboard/', '/dashboard', '/_next/', '/embed/'],
       },
     ],
-    sitemap: ['https://raisegg.gg/sitemap.xml'],
+    sitemap: ['https://raisegg.com/sitemap.xml'],
   }
 }

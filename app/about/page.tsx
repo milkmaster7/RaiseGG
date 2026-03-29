@@ -4,19 +4,19 @@ import { Shield, Zap, Globe, DollarSign } from 'lucide-react'
 import { breadcrumbSchema } from '@/lib/schemas'
 
 export const metadata: Metadata = {
-  title: 'About — RaiseGG.gg',
-  description: 'RaiseGG.gg is the first competitive CS2, Dota 2 and Deadlock stake platform built for the Caucasus, Turkey and Balkans region.',
-  alternates: { canonical: 'https://raisegg.gg/about' },
+  title: 'About — RaiseGG',
+  description: 'RaiseGG is the first competitive CS2, Dota 2 and Deadlock stake platform built for the Caucasus, Turkey and Balkans region.',
+  alternates: { canonical: 'https://raisegg.com/about' },
   openGraph: {
-    title: 'About RaiseGG.gg',
+    title: 'About RaiseGG',
     description: 'The first stake platform built for the Caucasus, Turkey and Balkans.',
-    url: 'https://raisegg.gg/about',
-    images: [{ url: '/api/og?title=About+RaiseGG&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+    url: 'https://raisegg.com/about',
+    images: [{ url: '/api/og?title=About+RaiseGG&sub=RaiseGG&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About RaiseGG.gg',
-    images: ['/api/og?title=About+RaiseGG&sub=RaiseGG.gg&color=7b61ff'],
+    title: 'About RaiseGG',
+    images: ['/api/og?title=About+RaiseGG&sub=RaiseGG&color=7b61ff'],
   },
 }
 
@@ -45,8 +45,8 @@ const VALUES = [
 
 export default function AboutPage() {
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'About', url: 'https://raisegg.gg/about' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'About', url: 'https://raisegg.com/about' },
   ])
 
   return (
@@ -59,7 +59,7 @@ export default function AboutPage() {
           Built for the Caucasus.<br />Built to be Fair.
         </h1>
         <p className="text-muted text-lg leading-relaxed max-w-2xl mb-12">
-          RaiseGG.gg is the first competitive stake platform for CS2, Dota 2 and Deadlock
+          RaiseGG is the first competitive stake platform for CS2, Dota 2 and Deadlock
           designed specifically for players in the Caucasus, Turkey and Balkans. 44 countries
           that Western platforms have ignored for years.
         </p>
@@ -190,8 +190,8 @@ export default function AboutPage() {
           </div>
           <p className="text-xs text-muted">
             Press &amp; partnerships:{' '}
-            <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:text-accent-cyan-glow transition-colors">
-              hello@raisegg.gg
+            <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:text-accent-cyan-glow transition-colors">
+              hello@raisegg.com
             </a>
           </p>
         </div>

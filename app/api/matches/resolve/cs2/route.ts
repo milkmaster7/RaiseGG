@@ -2,7 +2,7 @@
  * POST /api/matches/resolve/cs2
  *
  * MatchZy webhook — called automatically by the CS2 game server when a match ends.
- * MatchZy config: matchzy_remote_log_url "https://raisegg.gg/api/matches/resolve/cs2"
+ * MatchZy config: matchzy_remote_log_url "https://raisegg.com/api/matches/resolve/cs2"
  * MatchZy config: matchzy_remote_log_header_key "x-matchzy-secret"
  * MatchZy config: matchzy_remote_log_header_value "<MATCHZY_WEBHOOK_SECRET>"
  *

@@ -1,6 +1,6 @@
 ﻿// JSON-LD schema builders — used across all pages
 
-const BASE = 'https://raisegg.gg'
+const BASE = 'https://raisegg.com'
 
 export function videoGameSchema(game: 'cs2' | 'dota2' | 'deadlock') {
   const data = {
@@ -120,7 +120,7 @@ export function leaderboardSchema(players: { name: string; rank: number; url: st
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: 'RaiseGG Leaderboard',
-    description: 'Top CS2, Dota 2 and Deadlock stake players on RaiseGG.gg',
+    description: 'Top CS2, Dota 2 and Deadlock stake players on RaiseGG',
     url: `${BASE}/leaderboard`,
     datePublished: new Date().toISOString(),
     itemListElement: players.map((p) => ({
@@ -136,8 +136,8 @@ export function howToSchema(steps: { name: string; text: string; image?: string;
   return {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    name: 'How RaiseGG.gg Works',
-    description: 'Learn how to stake USDC or USDT on CS2, Dota 2 and Deadlock matches on RaiseGG.gg.',
+    name: 'How RaiseGG Works',
+    description: 'Learn how to stake USDC or USDT on CS2, Dota 2 and Deadlock matches on RaiseGG.',
     totalTime: 'PT2M',
     supply: [
       { '@type': 'HowToSupply', name: 'Steam Account' },
@@ -177,7 +177,7 @@ export function lobbyListSchema(count: number) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Open Stake Lobbies — RaiseGG.gg',
+    name: 'Open Stake Lobbies — RaiseGG',
     description: `Browse ${count} open CS2, Dota 2 and Deadlock stake lobbies. Join and play now.`,
     url: `${BASE}/play`,
     numberOfItems: count,
@@ -187,11 +187,11 @@ export function lobbyListSchema(count: number) {
 export function softwareAppSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'RaiseGG.gg',
+    '@type': 'WebApplication',
+    name: 'RaiseGG',
     applicationCategory: 'GameApplication',
     operatingSystem: 'Web',
-    url: 'https://raisegg.gg',
+    url: 'https://raisegg.com',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'Free to join. 10% platform fee on winnings.' },
   }
 }
@@ -218,7 +218,7 @@ export function blogListSchema(posts: { title: string; url: string; description:
     '@type': 'ItemList',
     name: 'RaiseGG Blog — CS2, Dota 2 & Deadlock Guides',
     description: 'Guides, staking strategies and competitive tips for CS2, Dota 2 and Deadlock players.',
-    url: 'https://raisegg.gg/blog',
+    url: 'https://raisegg.com/blog',
     numberOfItems: posts.length,
     itemListElement: posts.map((p, i) => ({
       '@type': 'ListItem',
@@ -248,9 +248,9 @@ export function landingPageSchema(game: string, country: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: `${gameName} Stake Platform in ${country} | RaiseGG.gg`,
+    name: `${gameName} Stake Platform in ${country} | RaiseGG`,
     url: `${BASE}/${game}-platform-${country.toLowerCase()}`,
-    description: `The leading ${gameName} stake platform for players in ${country}. Join RaiseGG.gg, compete in ranked lobbies and win real USDC or USDT.`,
+    description: `The leading ${gameName} stake platform for players in ${country}. Join RaiseGG, compete in ranked lobbies and win real USDC or USDT.`,
     inLanguage: 'en-US',
     about: {
       '@type': 'VideoGame',

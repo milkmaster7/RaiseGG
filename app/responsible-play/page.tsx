@@ -2,15 +2,16 @@ import type { Metadata } from 'next'
 import { breadcrumbSchema } from '@/lib/schemas'
 
 export const metadata: Metadata = {
-  title: 'Responsible Play — RaiseGG.gg',
+  title: 'Responsible Play — RaiseGG',
   description: 'RaiseGG is committed to responsible play. Learn about setting limits, recognising warning signs, and self-exclusion.',
+  alternates: { canonical: 'https://raisegg.com/responsible-play' },
   robots: { index: false, follow: false },
 }
 
 export default function ResponsiblePlayPage() {
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Responsible Play', url: 'https://raisegg.gg/responsible-play' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Responsible Play', url: 'https://raisegg.com/responsible-play' },
   ])
 
   return (
@@ -78,8 +79,8 @@ export default function ResponsiblePlayPage() {
           </p>
           <p className="text-sm text-muted mb-4">
             To request self-exclusion, email:{' '}
-            <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:text-accent-cyan transition-colors">
-              hello@raisegg.gg
+            <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:text-accent-cyan transition-colors">
+              hello@raisegg.com
             </a>{' '}
             with the subject line <strong className="text-white">"Self-Exclusion Request"</strong>.
           </p>
@@ -117,9 +118,9 @@ export default function ResponsiblePlayPage() {
         </div>
 
         <p className="text-xs text-muted text-center">
-          RaiseGG.gg — questions about responsible play? Contact us at{' '}
-          <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:text-accent-cyan transition-colors">
-            hello@raisegg.gg
+          RaiseGG — questions about responsible play? Contact us at{' '}
+          <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:text-accent-cyan transition-colors">
+            hello@raisegg.com
           </a>
         </p>
       </div>

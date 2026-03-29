@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { createServiceClient } from '@/lib/supabase'
 import { PlayPageInner } from '@/components/play/PlayPageInner'
+import { breadcrumbSchema, lobbyListSchema } from '@/lib/schemas'
 import type { Match } from '@/types'
 import Link from 'next/link'
 
@@ -8,11 +9,12 @@ export const metadata: Metadata = {
   title: 'Play — Open Lobbies | RaiseGG',
   description:
     'Browse open CS2, Dota 2, and Deadlock lobbies on RaiseGG. Wager USDC/USDT on 1v1 or 5v5 matches with verified players.',
+  alternates: { canonical: 'https://raisegg.com/play' },
   openGraph: {
     title: 'Play — Open Lobbies | RaiseGG',
     description:
       'Browse open CS2, Dota 2, and Deadlock lobbies. Wager USDC/USDT on skill-based matches.',
-    url: 'https://raisegg.gg/play',
+    url: 'https://raisegg.com/play',
     type: 'website',
   },
 }
@@ -41,8 +43,17 @@ export default async function PlayPage() {
   const dota2Count = initialMatches.filter((m) => m.game === 'dota2').length
   const deadlockCount = initialMatches.filter((m) => m.game === 'deadlock').length
 
+  const crumbs = breadcrumbSchema([
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Play', url: 'https://raisegg.com/play' },
+  ])
+  const lobbyList = lobbyListSchema(initialMatches.length)
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs).replace(/</g, '\\u003c') }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(lobbyList).replace(/</g, '\\u003c') }} />
+
       {/* SEO shell — visible before hydration, replaced by client component */}
       <noscript>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

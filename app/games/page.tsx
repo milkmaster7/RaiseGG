@@ -5,18 +5,18 @@ import { Zap } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Games — CS2, Dota 2 & Deadlock Stake Matches',
-  description: 'Choose your game. RaiseGG.gg supports CS2, Dota 2 and Deadlock stake matches with instant USDC/USDT payouts.',
-  alternates: { canonical: 'https://raisegg.gg/games' },
+  description: 'Choose your game. RaiseGG supports CS2, Dota 2 and Deadlock stake matches with instant USDC/USDT payouts.',
+  alternates: { canonical: 'https://raisegg.com/games' },
   openGraph: {
-    title: 'Games — RaiseGG.gg',
+    title: 'Games — RaiseGG',
     description: 'CS2, Dota 2 and Deadlock stake matches. Pick your game.',
-    url: 'https://raisegg.gg/games',
-    images: [{ url: '/api/og?title=Games&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+    url: 'https://raisegg.com/games',
+    images: [{ url: '/api/og?title=Games&sub=RaiseGG&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Games — RaiseGG.gg',
-    images: ['/api/og?title=Games&sub=RaiseGG.gg&color=7b61ff'],
+    title: 'Games — RaiseGG',
+    images: ['/api/og?title=Games&sub=RaiseGG&color=7b61ff'],
   },
 }
 
@@ -52,8 +52,8 @@ const GAMES = [
 
 export default function GamesPage() {
   const crumbs = breadcrumbSchema([
-    { name: 'Home',  url: 'https://raisegg.gg' },
-    { name: 'Games', url: 'https://raisegg.gg/games' },
+    { name: 'Home',  url: 'https://raisegg.com' },
+    { name: 'Games', url: 'https://raisegg.com/games' },
   ])
 
   return (

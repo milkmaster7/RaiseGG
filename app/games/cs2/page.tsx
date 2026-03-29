@@ -8,18 +8,18 @@ import { RegionLinks } from '@/components/layout/RegionLinks'
 
 export const metadata: Metadata = {
   title: 'CS2 Stake Matches — Compete & Win USDC/USDT',
-  description: 'Compete in CS2 stake matches on RaiseGG.gg. Browse open lobbies, join ranked 1v1 games and win real USDC or USDT. The competitive CS2 stake platform for the Caucasus, Turkey and Balkans.',
-  alternates: { canonical: 'https://raisegg.gg/games/cs2' },
+  description: 'Compete in CS2 stake matches on RaiseGG. Browse open lobbies, join ranked 1v1 games and win real USDC or USDT. The competitive CS2 stake platform for the Caucasus, Turkey and Balkans.',
+  alternates: { canonical: 'https://raisegg.com/games/cs2' },
   openGraph: {
-    title: 'RaiseGG.gg – CS2 Stake Matches',
+    title: 'RaiseGG – CS2 Stake Matches',
     description: 'CS2 competitive stake lobbies. Win real USDC/USDT.',
-    url: 'https://raisegg.gg/games/cs2',
-    images: [{ url: '/api/og?title=CS2+Stake+Matches&sub=RaiseGG.gg&color=00d4ff', width: 1200, height: 630 }],
+    url: 'https://raisegg.com/games/cs2',
+    images: [{ url: '/api/og?title=CS2+Stake+Matches&sub=RaiseGG&color=00d4ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RaiseGG.gg – CS2 Stake Matches',
-    images: ['/api/og?title=CS2+Stake+Matches&sub=RaiseGG.gg&color=00d4ff'],
+    title: 'RaiseGG – CS2 Stake Matches',
+    images: ['/api/og?title=CS2+Stake+Matches&sub=RaiseGG&color=00d4ff'],
   },
 }
 
@@ -33,9 +33,9 @@ const FEATURES = [
 export default async function CS2Page() {
   const gameSchema = videoGameSchema('cs2')
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Games', url: 'https://raisegg.gg/games' },
-    { name: 'CS2', url: 'https://raisegg.gg/games/cs2' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Games', url: 'https://raisegg.com/games' },
+    { name: 'CS2', url: 'https://raisegg.com/games/cs2' },
   ])
 
   const supabase = createServiceClient()

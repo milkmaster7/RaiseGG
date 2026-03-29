@@ -12,8 +12,8 @@ import { ChallengesWidget } from '@/components/ui/ChallengesWidget'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
-  description: 'Your RaiseGG.gg dashboard.',
-  alternates: { canonical: 'https://raisegg.gg/dashboard' },
+  description: 'Your RaiseGG dashboard.',
+  alternates: { canonical: 'https://raisegg.com/dashboard' },
   robots: { index: false, follow: false },
 }
 
@@ -45,8 +45,8 @@ export default async function DashboardPage() {
   const currentStreak = player?.current_streak ?? 0
 
   const crumbs = breadcrumbSchema([
-    { name: 'Home',      url: 'https://raisegg.gg' },
-    { name: 'Dashboard', url: 'https://raisegg.gg/dashboard' },
+    { name: 'Home',      url: 'https://raisegg.com' },
+    { name: 'Dashboard', url: 'https://raisegg.com/dashboard' },
   ])
 
   return (

@@ -6,17 +6,17 @@ import type { Game, Player } from '@/types'
 
 export const metadata: Metadata = {
   title: 'Leaderboard — Top Stake Players',
-  description: 'See the top CS2, Dota 2 and Deadlock stake players on RaiseGG.gg. Updated live leaderboard with win rates, earnings and rank. Where do you stand?',
-  alternates: { canonical: 'https://raisegg.gg/leaderboard' },
+  description: 'See the top CS2, Dota 2 and Deadlock stake players on RaiseGG. Updated live leaderboard with win rates, earnings and rank. Where do you stand?',
+  alternates: { canonical: 'https://raisegg.com/leaderboard' },
   openGraph: {
-    title: 'RaiseGG.gg – Leaderboard',
+    title: 'RaiseGG – Leaderboard',
     description: 'Top CS2, Dota 2 & Deadlock stake players. Updated live.',
-    url: 'https://raisegg.gg/leaderboard',
+    url: 'https://raisegg.com/leaderboard',
     images: [{ url: '/api/og?title=Leaderboard&sub=Top+Stake+Players&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RaiseGG.gg – Leaderboard',
+    title: 'RaiseGG – Leaderboard',
     images: ['/api/og?title=Leaderboard&sub=Top+Stake+Players&color=7b61ff'],
   },
 }
@@ -92,12 +92,12 @@ export default async function LeaderboardPage({
     players.slice(0, 10).map((p, i) => ({
       name: p.username,
       rank: i + 1,
-      url: `https://raisegg.gg/profile/${p.username}`,
+      url: `https://raisegg.com/profile/${p.username}`,
     }))
   )
   const crumbs = breadcrumbSchema([
-    { name: 'Home',        url: 'https://raisegg.gg' },
-    { name: 'Leaderboard', url: 'https://raisegg.gg/leaderboard' },
+    { name: 'Home',        url: 'https://raisegg.com' },
+    { name: 'Leaderboard', url: 'https://raisegg.com/leaderboard' },
   ])
 
   return (

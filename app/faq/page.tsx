@@ -3,18 +3,18 @@ import { faqSchema, breadcrumbSchema } from '@/lib/schemas'
 
 export const metadata: Metadata = {
   title: 'FAQ — Frequently Asked Questions',
-  description: 'Answers to the most common questions about RaiseGG.gg. Stakes, payouts, game eligibility, account security and more. Get started in seconds.',
-  alternates: { canonical: 'https://raisegg.gg/faq' },
+  description: 'Answers to the most common questions about RaiseGG. Stakes, payouts, game eligibility, account security and more. Get started in seconds.',
+  alternates: { canonical: 'https://raisegg.com/faq' },
   openGraph: {
-    title: 'RaiseGG.gg – FAQ',
+    title: 'RaiseGG – FAQ',
     description: 'Everything you need to know about stake matches, payouts and account setup.',
-    url: 'https://raisegg.gg/faq',
-    images: [{ url: '/api/og?title=Frequently+Asked+Questions&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+    url: 'https://raisegg.com/faq',
+    images: [{ url: '/api/og?title=Frequently+Asked+Questions&sub=RaiseGG&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RaiseGG.gg – FAQ',
-    images: ['/api/og?title=Frequently+Asked+Questions&sub=RaiseGG.gg&color=7b61ff'],
+    title: 'RaiseGG – FAQ',
+    images: ['/api/og?title=Frequently+Asked+Questions&sub=RaiseGG&color=7b61ff'],
   },
 }
 
@@ -42,8 +42,8 @@ const FAQS = [
 export default function FAQPage() {
   const faq = faqSchema(FAQS)
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'FAQ', url: 'https://raisegg.gg/faq' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'FAQ', url: 'https://raisegg.com/faq' },
   ])
 
   return (
@@ -53,7 +53,7 @@ export default function FAQPage() {
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h1 className="font-orbitron text-4xl font-black mb-4 text-gradient">FAQ</h1>
-        <p className="text-muted mb-12">Everything you need to know about RaiseGG.gg.</p>
+        <p className="text-muted mb-12">Everything you need to know about RaiseGG.</p>
 
         <div className="space-y-4">
           {FAQS.map((faq) => (

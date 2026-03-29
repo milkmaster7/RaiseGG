@@ -29,9 +29,9 @@ export default function SettingsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState('')
 
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Dashboard', url: 'https://raisegg.gg/dashboard' },
-    { name: 'Settings', url: 'https://raisegg.gg/dashboard/settings' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Dashboard', url: 'https://raisegg.com/dashboard' },
+    { name: 'Settings', url: 'https://raisegg.com/dashboard/settings' },
   ])
 
   const fetchPlayer = useCallback(async () => {

@@ -20,14 +20,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: 'Post Not Found' }
 
   return {
-    title: `${post.title} — RaiseGG.gg`,
+    title: `${post.title} — RaiseGG`,
     description: post.description,
-    alternates: { canonical: `https://raisegg.gg/blog/${slug}` },
+    alternates: { canonical: `https://raisegg.com/blog/${slug}` },
     openGraph: {
       type: 'article',
       title: post.title,
       description: post.description,
-      url: `https://raisegg.gg/blog/${slug}`,
+      url: `https://raisegg.com/blog/${slug}`,
       publishedTime: post.publishedAt,
       images: [{ url: `/api/og?title=${encodeURIComponent(post.title)}&sub=RaiseGG+Blog&color=7b61ff`, width: 1200, height: 630 }],
     },
@@ -48,14 +48,14 @@ export default async function BlogPostPage({ params }: Props) {
   const aSchema = articleSchema({
     title:       post.title,
     description: post.description,
-    image:       `https://raisegg.gg/api/og?title=${encodeURIComponent(post.title)}&sub=RaiseGG+Blog&color=7b61ff`,
+    image:       `https://raisegg.com/api/og?title=${encodeURIComponent(post.title)}&sub=RaiseGG+Blog&color=7b61ff`,
     publishedAt: post.publishedAt,
     slug:        post.slug,
   })
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Blog', url: 'https://raisegg.gg/blog' },
-    { name: post.title, url: `https://raisegg.gg/blog/${slug}` },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Blog', url: 'https://raisegg.com/blog' },
+    { name: post.title, url: `https://raisegg.com/blog/${slug}` },
   ])
 
   return (

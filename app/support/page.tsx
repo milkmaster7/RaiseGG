@@ -29,8 +29,8 @@ export default function SupportPage() {
   const [errorMsg, setErrorMsg] = useState('')
 
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Support', url: 'https://raisegg.gg/support' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Support', url: 'https://raisegg.com/support' },
   ])
 
   async function handleSubmit(e: FormEvent) {

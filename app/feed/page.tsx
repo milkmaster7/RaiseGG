@@ -40,7 +40,7 @@ function timeAgo(dateStr: string): string {
 
 async function getFeed(): Promise<FeedItem[]> {
   try {
-    const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://raisegg.gg'
+    const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://raisegg.com'
     const res = await fetch(`${base}/api/feed`, { next: { revalidate: 30 } })
     if (!res.ok) return []
     const data = await res.json()
@@ -56,8 +56,8 @@ export default async function FeedPage() {
   const feed = await getFeed()
 
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Activity Feed', url: 'https://raisegg.gg/feed' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Activity Feed', url: 'https://raisegg.com/feed' },
   ])
 
   return (

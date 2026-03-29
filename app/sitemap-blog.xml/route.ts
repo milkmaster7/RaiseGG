@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server'
 import { BLOG_POSTS } from '@/lib/blog'
 
-const BASE = 'https://raisegg.gg'
+const BASE = 'https://raisegg.com'
 
 export async function GET() {
   const posts = BLOG_POSTS.map((p) => ({ slug: p.slug, updatedAt: p.publishedAt }))

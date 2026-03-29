@@ -13,8 +13,8 @@ import { PnlShareButton } from '@/components/matches/PnlShareButton'
 
 export const metadata: Metadata = {
   title: 'My Matches — Match History',
-  description: 'Your RaiseGG.gg match history. View results, stakes and earnings.',
-  alternates: { canonical: 'https://raisegg.gg/dashboard/matches' },
+  description: 'Your RaiseGG match history. View results, stakes and earnings.',
+  alternates: { canonical: 'https://raisegg.com/dashboard/matches' },
   robots: { index: false, follow: false },
 }
 
@@ -50,9 +50,9 @@ export default async function MyMatchesPage() {
   const myUsername = me?.username ?? 'Player'
 
   const crumbs = breadcrumbSchema([
-    { name: 'Home',       url: 'https://raisegg.gg' },
-    { name: 'Dashboard',  url: 'https://raisegg.gg/dashboard' },
-    { name: 'My Matches', url: 'https://raisegg.gg/dashboard/matches' },
+    { name: 'Home',       url: 'https://raisegg.com' },
+    { name: 'Dashboard',  url: 'https://raisegg.com/dashboard' },
+    { name: 'My Matches', url: 'https://raisegg.com/dashboard/matches' },
   ])
 
   return (

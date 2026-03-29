@@ -16,7 +16,7 @@ interface Props {
 export function PnlShareButton({ username, opponent, game, result, payout, stake, eloDelta = '+0' }: Props) {
   const [open, setOpen] = useState(false)
 
-  const cardUrl = `https://raisegg.gg/api/pnl-card?username=${encodeURIComponent(username)}&opponent=${encodeURIComponent(opponent)}&game=${encodeURIComponent(game)}&result=${result}&payout=${payout.toFixed(2)}&stake=${stake.toFixed(2)}&elo=${encodeURIComponent(eloDelta)}`
+  const cardUrl = `https://raisegg.com/api/pnl-card?username=${encodeURIComponent(username)}&opponent=${encodeURIComponent(opponent)}&game=${encodeURIComponent(game)}&result=${result}&payout=${payout.toFixed(2)}&stake=${stake.toFixed(2)}&elo=${encodeURIComponent(eloDelta)}`
 
   const shareText = result === 'win'
     ? `Just won $${payout.toFixed(2)} on ${game} 🏆 @RaiseGG`

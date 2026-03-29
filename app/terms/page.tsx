@@ -3,19 +3,19 @@ import { breadcrumbSchema } from '@/lib/schemas'
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'RaiseGG.gg Terms of Service. Read our rules, eligibility requirements and platform policies.',
-  alternates: { canonical: 'https://raisegg.gg/terms' },
+  description: 'RaiseGG Terms of Service. Read our rules, eligibility requirements and platform policies.',
+  alternates: { canonical: 'https://raisegg.com/terms' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Terms of Service — RaiseGG.gg',
-    description: 'RaiseGG.gg rules, eligibility requirements and platform policies.',
-    url: 'https://raisegg.gg/terms',
-    images: [{ url: '/api/og?title=Terms+of+Service&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+    title: 'Terms of Service — RaiseGG',
+    description: 'RaiseGG rules, eligibility requirements and platform policies.',
+    url: 'https://raisegg.com/terms',
+    images: [{ url: '/api/og?title=Terms+of+Service&sub=RaiseGG&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Terms of Service — RaiseGG.gg',
-    images: ['/api/og?title=Terms+of+Service&sub=RaiseGG.gg&color=7b61ff'],
+    title: 'Terms of Service — RaiseGG',
+    images: ['/api/og?title=Terms+of+Service&sub=RaiseGG&color=7b61ff'],
   },
 }
 
@@ -30,8 +30,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export default function TermsPage() {
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Terms of Service', url: 'https://raisegg.gg/terms' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Terms of Service', url: 'https://raisegg.com/terms' },
   ])
 
   return (
@@ -45,12 +45,12 @@ export default function TermsPage() {
         <div className="space-y-10 text-muted leading-relaxed text-sm">
 
           <p className="text-white">
-            By accessing or using RaiseGG.gg you agree to be bound by these Terms of Service.
+            By accessing or using RaiseGG you agree to be bound by these Terms of Service.
             If you do not agree, do not use the platform.
           </p>
 
           <Section title="1. Eligibility">
-            <p>To use RaiseGG.gg you must:</p>
+            <p>To use RaiseGG you must:</p>
             <ul className="list-disc list-inside space-y-2 ml-2">
               <li>Be at least 18 years of age</li>
               <li>Have a valid Steam account in good standing</li>
@@ -73,13 +73,13 @@ export default function TermsPage() {
             <p>
               You are responsible for all activity under your account. If you believe your account has been
               compromised, contact us immediately at{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>.
+              <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:underline">hello@raisegg.com</a>.
             </p>
           </Section>
 
           <Section title="3. Stake Matches">
             <p>
-              RaiseGG.gg facilitates skill-based 1v1 and team competitions where players stake USDC against
+              RaiseGG facilitates skill-based 1v1 and team competitions where players stake USDC against
               each other. These are not gambling — outcomes are determined entirely by player skill within the
               game, with no element of chance introduced by the platform.
             </p>
@@ -96,7 +96,7 @@ export default function TermsPage() {
 
           <Section title="4. Platform Fee">
             <p>
-              RaiseGG.gg charges a <span className="text-white font-semibold">10% fee</span> on the total
+              RaiseGG charges a <span className="text-white font-semibold">10% fee</span> on the total
               stake pot of each completed match (5% from each side). This fee is deducted automatically at
               payout. The fee may change with 14 days notice posted on our Telegram channel.
             </p>
@@ -137,7 +137,7 @@ export default function TermsPage() {
               <li>Match fixing or collusion with opponents</li>
               <li>Creating multiple accounts (smurfing) to manipulate ELO</li>
               <li>Attempting to manipulate the smart contract, platform API, or match resolution system</li>
-              <li>Exploiting bugs — report them to <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a> instead</li>
+              <li>Exploiting bugs — report them to <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:underline">hello@raisegg.com</a> instead</li>
             </ul>
             <p>
               Players with active VAC bans or Game Bans on CS2 are ineligible to play on the platform.
@@ -165,14 +165,14 @@ export default function TermsPage() {
             </p>
             <p>
               To appeal a ban, email{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>{' '}
+              <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:underline">hello@raisegg.com</a>{' '}
               with your Steam ID and reason for appeal.
             </p>
           </Section>
 
           <Section title="10. Limitation of Liability">
             <p>
-              RaiseGG.gg is provided "as is". We are not liable for:
+              RaiseGG is provided "as is". We are not liable for:
             </p>
             <ul className="list-disc list-inside space-y-2 ml-2">
               <li>Loss of funds due to blockchain network failures or congestion</li>
@@ -210,7 +210,7 @@ export default function TermsPage() {
           <Section title="14. Contact">
             <p>
               Questions about these terms?{' '}
-              <a href="mailto:hello@raisegg.gg" className="text-accent-cyan hover:underline">hello@raisegg.gg</a>
+              <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:underline">hello@raisegg.com</a>
             </p>
           </Section>
 

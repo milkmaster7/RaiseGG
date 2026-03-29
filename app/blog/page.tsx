@@ -8,17 +8,17 @@ export const revalidate = 3600 // re-check for new AI posts every hour
 
 export const metadata: Metadata = {
   title: 'Blog — CS2, Dota 2 & Deadlock Guides',
-  description: 'CS2, Dota 2 and Deadlock guides, staking strategies and competitive tips from RaiseGG.gg. Level up your game and your earnings.',
-  alternates: { canonical: 'https://raisegg.gg/blog' },
+  description: 'CS2, Dota 2 and Deadlock guides, staking strategies and competitive tips from RaiseGG. Level up your game and your earnings.',
+  alternates: { canonical: 'https://raisegg.com/blog' },
   openGraph: {
-    title: 'RaiseGG.gg – Blog',
+    title: 'RaiseGG – Blog',
     description: 'CS2, Dota 2 & Deadlock guides and staking strategies.',
-    url: 'https://raisegg.gg/blog',
+    url: 'https://raisegg.com/blog',
     images: [{ url: '/api/og?title=Blog&sub=Guides+%26+Strategies&color=00e6ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RaiseGG.gg – Blog',
+    title: 'RaiseGG – Blog',
     images: ['/api/og?title=Blog&sub=Guides+%26+Strategies&color=00e6ff'],
   },
 }
@@ -35,13 +35,13 @@ export default async function BlogIndexPage() {
   const sorted = await getAllBlogPosts()
 
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Blog', url: 'https://raisegg.gg/blog' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Blog', url: 'https://raisegg.com/blog' },
   ])
   const blogList = blogListSchema(
     sorted.map((p) => ({
       title: p.title,
-      url: `https://raisegg.gg/blog/${p.slug}`,
+      url: `https://raisegg.com/blog/${p.slug}`,
       description: p.description,
     }))
   )

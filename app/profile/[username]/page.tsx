@@ -30,18 +30,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${player.username} — Player Profile`,
-    description: `${player.username}'s RaiseGG.gg profile. ${player.cs2_wins} wins, ${wr}% win rate${player.country ? `, ${player.country}` : ''}. View match history and rankings.`,
-    alternates: { canonical: `https://raisegg.gg/profile/${username}` },
+    description: `${player.username}'s RaiseGG profile. ${player.cs2_wins} wins, ${wr}% win rate${player.country ? `, ${player.country}` : ''}. View match history and rankings.`,
+    alternates: { canonical: `https://raisegg.com/profile/${username}` },
     robots: totalMatches === 0 ? { index: false, follow: true } : undefined,
     openGraph: {
-      title: `${player.username} | RaiseGG.gg`,
+      title: `${player.username} | RaiseGG`,
       description: `View ${player.username}'s stake match history and rankings.`,
-      url: `https://raisegg.gg/profile/${username}`,
+      url: `https://raisegg.com/profile/${username}`,
       images: [{ url: `/api/og?title=${encodeURIComponent(player.username)}&sub=RaiseGG+Profile&color=7b61ff`, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${player.username} | RaiseGG.gg`,
+      title: `${player.username} | RaiseGG`,
       images: [`/api/og?title=${encodeURIComponent(player.username)}&sub=RaiseGG+Profile&color=7b61ff`],
     },
   }
@@ -112,9 +112,9 @@ export default async function ProfilePage({ params }: Props) {
     games: ['Counter-Strike 2', 'Dota 2', 'Deadlock'],
   })
   const crumbs = breadcrumbSchema([
-    { name: 'Home',    url: 'https://raisegg.gg' },
-    { name: 'Players', url: 'https://raisegg.gg/leaderboard' },
-    { name: player.username, url: `https://raisegg.gg/profile/${username}` },
+    { name: 'Home',    url: 'https://raisegg.com' },
+    { name: 'Players', url: 'https://raisegg.com/leaderboard' },
+    { name: player.username, url: `https://raisegg.com/profile/${username}` },
   ])
 
   return (

@@ -6,7 +6,7 @@ export const runtime = 'edge'
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl
   const title = searchParams.get('title') ?? 'Stake. Play. Win.'
-  const sub = searchParams.get('sub') ?? 'RaiseGG.gg'
+  const sub = searchParams.get('sub') ?? 'RaiseGG'
   const color = searchParams.get('color') ?? '7b61ff'
 
   return new ImageResponse(
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
             marginBottom: 32,
           }}
         >
-          RaiseGG.gg
+          RaiseGG
         </div>
 
         {/* Title */}

@@ -3,18 +3,18 @@ import { howToSchema, faqSchema, breadcrumbSchema, priceSchema } from '@/lib/sch
 
 export const metadata: Metadata = {
   title: 'How It Works — Start Staking in 2 Minutes',
-  description: 'Learn how RaiseGG.gg works. Connect Steam, deposit USDC or USDT, find a match and compete. Winnings paid instantly via Solana smart contract. Takes 2 minutes to start.',
-  alternates: { canonical: 'https://raisegg.gg/how-it-works' },
+  description: 'Learn how RaiseGG works. Connect Steam, deposit USDC or USDT, find a match and compete. Winnings paid instantly via Solana smart contract. Takes 2 minutes to start.',
+  alternates: { canonical: 'https://raisegg.com/how-it-works' },
   openGraph: {
-    title: 'RaiseGG.gg – How It Works',
+    title: 'RaiseGG – How It Works',
     description: 'Connect Steam, stake USDC or USDT, play and win. Takes 2 minutes to start.',
-    url: 'https://raisegg.gg/how-it-works',
-    images: [{ url: '/api/og?title=How+It+Works&sub=RaiseGG.gg&color=7b61ff', width: 1200, height: 630 }],
+    url: 'https://raisegg.com/how-it-works',
+    images: [{ url: '/api/og?title=How+It+Works&sub=RaiseGG&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RaiseGG.gg – How It Works',
-    images: ['/api/og?title=How+It+Works&sub=RaiseGG.gg&color=7b61ff'],
+    title: 'RaiseGG – How It Works',
+    images: ['/api/og?title=How+It+Works&sub=RaiseGG&color=7b61ff'],
   },
 }
 
@@ -22,27 +22,27 @@ const STEPS = [
   {
     name: 'Connect your Steam account',
     text: 'Click "Connect Steam" and authorize via Steam OpenID. We verify your account age, VAC ban status, and hours played automatically. No passwords shared.',
-    url: 'https://raisegg.gg/how-it-works#step-1',
+    url: 'https://raisegg.com/how-it-works#step-1',
   },
   {
     name: 'Set up your wallet and deposit USDC or USDT',
     text: 'Connect a Phantom or Solflare wallet. Deposit USDC or USDT — your balance is held securely in a Solana smart contract. No middleman.',
-    url: 'https://raisegg.gg/how-it-works#step-2',
+    url: 'https://raisegg.com/how-it-works#step-2',
   },
   {
     name: 'Find or create a stake match',
     text: 'Browse open lobbies on the play page or create your own. Set your game (CS2, Dota 2, or Deadlock), format (1v1 or 5v5), and stake amount.',
-    url: 'https://raisegg.gg/how-it-works#step-3',
+    url: 'https://raisegg.com/how-it-works#step-3',
   },
   {
     name: 'Play the match',
     text: 'For Dota 2: play in your normal client. For CS2: connect to our dedicated server using the details sent after match creation.',
-    url: 'https://raisegg.gg/how-it-works#step-4',
+    url: 'https://raisegg.com/how-it-works#step-4',
   },
   {
     name: 'Result verified, payout instant',
     text: 'For Dota 2, submit your match ID — we verify via Steam API. For CS2, results are submitted automatically. Winner receives 90% of the pot instantly.',
-    url: 'https://raisegg.gg/how-it-works#step-5',
+    url: 'https://raisegg.com/how-it-works#step-5',
   },
 ]
 
@@ -56,8 +56,8 @@ export default function HowItWorksPage() {
   const howTo = howToSchema(STEPS)
   const faqs = faqSchema(FAQS)
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'How It Works', url: 'https://raisegg.gg/how-it-works' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'How It Works', url: 'https://raisegg.com/how-it-works' },
   ])
   const price = priceSchema()
 

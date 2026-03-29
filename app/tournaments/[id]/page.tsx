@@ -17,13 +17,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!t) return { title: 'Tournament Not Found' }
 
   return {
-    title: `${t.name} — RaiseGG.gg Tournament`,
+    title: `${t.name} — RaiseGG Tournament`,
     description: `${GAME_LABELS[t.game] ?? t.game} tournament with $${t.prize_pool} USDC/USDT prize pool. Starting ${new Date(t.starts_at).toLocaleDateString()}.`,
-    alternates: { canonical: `https://raisegg.gg/tournaments/${id}` },
+    alternates: { canonical: `https://raisegg.com/tournaments/${id}` },
     openGraph: {
-      title: `${t.name} | RaiseGG.gg`,
+      title: `${t.name} | RaiseGG`,
       description: `$${t.prize_pool} prize pool · ${GAME_LABELS[t.game] ?? t.game}`,
-      url: `https://raisegg.gg/tournaments/${id}`,
+      url: `https://raisegg.com/tournaments/${id}`,
       images: [{ url: `/api/og?title=${encodeURIComponent(t.name)}&sub=USDC%2FUSDT+Tournament&color=7b61ff`, width: 1200, height: 630 }],
     },
     twitter: {
@@ -73,9 +73,9 @@ export default async function TournamentDetailPage({ params }: Props) {
     startsAt: tournament.starts_at,
   })
   const crumbs = breadcrumbSchema([
-    { name: 'Home',        url: 'https://raisegg.gg' },
-    { name: 'Tournaments', url: 'https://raisegg.gg/tournaments' },
-    { name: tournament.name, url: `https://raisegg.gg/tournaments/${id}` },
+    { name: 'Home',        url: 'https://raisegg.com' },
+    { name: 'Tournaments', url: 'https://raisegg.com/tournaments' },
+    { name: tournament.name, url: `https://raisegg.com/tournaments/${id}` },
   ])
 
   const eloKey = `${tournament.game}_elo` as const

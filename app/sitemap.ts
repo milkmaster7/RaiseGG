@@ -1,7 +1,7 @@
 ﻿import type { MetadataRoute } from 'next'
 import { getBlogPostSlugs } from '@/lib/blog'
 
-const BASE = 'https://raisegg.gg'
+const BASE = 'https://raisegg.com'
 
 const COUNTRIES = [
   // Caucasus & surroundings

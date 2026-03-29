@@ -53,8 +53,8 @@ export function PlayPageInner({ initialMatches }: PlayPageInnerProps) {
 
   const lobbySchema = lobbyListSchema(matches.length)
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Play',  url: 'https://raisegg.gg/play' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Play',  url: 'https://raisegg.com/play' },
   ])
 
   const fetchLobbies = useCallback(async () => {

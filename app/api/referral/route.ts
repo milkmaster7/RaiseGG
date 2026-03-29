@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     referralCode: player.id,
-    referralLink: `https://raisegg.gg/?ref=${player.id}`,
+    referralLink: `https://raisegg.com/?ref=${player.id}`,
     referredBy: player.referred_by ?? null,
   })
 }

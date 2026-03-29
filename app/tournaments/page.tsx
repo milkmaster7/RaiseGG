@@ -6,17 +6,17 @@ import { Trophy, Users, Calendar, DollarSign } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Tournaments — Compete for Prize Pools',
-  description: 'Browse upcoming CS2, Dota 2 and Deadlock tournaments on RaiseGG.gg. Open registration, USDC/USDT prize pools. Filter by game, date and buy-in.',
-  alternates: { canonical: 'https://raisegg.gg/tournaments' },
+  description: 'Browse upcoming CS2, Dota 2 and Deadlock tournaments on RaiseGG. Open registration, USDC/USDT prize pools. Filter by game, date and buy-in.',
+  alternates: { canonical: 'https://raisegg.com/tournaments' },
   openGraph: {
-    title: 'RaiseGG.gg – Tournaments',
+    title: 'RaiseGG – Tournaments',
     description: 'CS2, Dota 2 & Deadlock tournaments. USDC/USDT prize pools.',
-    url: 'https://raisegg.gg/tournaments',
+    url: 'https://raisegg.com/tournaments',
     images: [{ url: '/api/og?title=Tournaments&sub=USDC%2FUSDT+Prize+Pools&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RaiseGG.gg – Tournaments',
+    title: 'RaiseGG – Tournaments',
     images: ['/api/og?title=Tournaments&sub=USDC%2FUSDT+Prize+Pools&color=7b61ff'],
   },
 }
@@ -53,8 +53,8 @@ async function getPastTournaments() {
 
 export default async function TournamentsPage() {
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Tournaments', url: 'https://raisegg.gg/tournaments' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Tournaments', url: 'https://raisegg.com/tournaments' },
   ])
 
   const [upcoming, past] = await Promise.all([getTournaments(), getPastTournaments()])

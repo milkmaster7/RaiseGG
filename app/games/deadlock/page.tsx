@@ -6,17 +6,17 @@ import { RegionLinks } from '@/components/layout/RegionLinks'
 
 export const metadata: Metadata = {
   title: 'Deadlock Stake Matches — The Only Platform',
-  description: 'RaiseGG.gg is the first and only competitive stake platform for Deadlock. Stake USDC or USDT, compete, win. Join the Caucasus, Turkey and Balkans Deadlock community.',
-  alternates: { canonical: 'https://raisegg.gg/games/deadlock' },
+  description: 'RaiseGG is the first and only competitive stake platform for Deadlock. Stake USDC or USDT, compete, win. Join the Caucasus, Turkey and Balkans Deadlock community.',
+  alternates: { canonical: 'https://raisegg.com/games/deadlock' },
   openGraph: {
-    title: 'RaiseGG.gg – Deadlock Stake Matches',
+    title: 'RaiseGG – Deadlock Stake Matches',
     description: 'The only Deadlock stake platform. Win real USDC/USDT.',
-    url: 'https://raisegg.gg/games/deadlock',
+    url: 'https://raisegg.com/games/deadlock',
     images: [{ url: '/api/og?title=Deadlock+Stake+Matches&sub=First+%26+Only&color=7b61ff', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RaiseGG.gg – Deadlock Stake Matches',
+    title: 'RaiseGG – Deadlock Stake Matches',
     images: ['/api/og?title=Deadlock+Stake+Matches&sub=First+%26+Only&color=7b61ff'],
   },
 }
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
 export default function DeadlockPage() {
   const gameSchema = videoGameSchema('deadlock')
   const crumbs = breadcrumbSchema([
-    { name: 'Home', url: 'https://raisegg.gg' },
-    { name: 'Games', url: 'https://raisegg.gg/games' },
-    { name: 'Deadlock', url: 'https://raisegg.gg/games/deadlock' },
+    { name: 'Home', url: 'https://raisegg.com' },
+    { name: 'Games', url: 'https://raisegg.com/games' },
+    { name: 'Deadlock', url: 'https://raisegg.com/games/deadlock' },
   ])
 
   return (
