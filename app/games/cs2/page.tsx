@@ -4,6 +4,7 @@ import { videoGameSchema, breadcrumbSchema } from '@/lib/schemas'
 import { createServiceClient } from '@/lib/supabase'
 import { LeaderboardTable } from '@/components/ui/LeaderboardTable'
 import { Server, Zap, Shield, Trophy } from 'lucide-react'
+import { RegionLinks } from '@/components/layout/RegionLinks'
 
 export const metadata: Metadata = {
   title: 'CS2 Stake Matches — Compete & Win USDC/USDT',
@@ -113,6 +114,11 @@ export default async function CS2Page() {
           <Link href="/leaderboard" className="text-sm text-accent-cyan hover:underline">Full leaderboard →</Link>
         </div>
         <LeaderboardTable players={(topPlayers ?? []) as any} game="cs2" limit={10} />
+      </section>
+
+      {/* Region Links */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <RegionLinks currentGame="cs2" />
       </section>
     </>
   )

@@ -112,12 +112,22 @@ export function MatchNotifications() {
           <div className="flex-shrink-0 mt-0.5">{ICONS[t.type]}</div>
           <div className="flex-1 min-w-0">
             <div className="text-sm text-white font-semibold leading-snug">{t.message}</div>
-            <Link
-              href={t.type === 'join' ? `/play?join=${t.matchId}` : '/dashboard/matches'}
-              className="text-xs text-accent-purple hover:underline mt-1 inline-block"
-            >
-              {t.type === 'join' ? 'View lobby →' : 'Match history →'}
-            </Link>
+            <div className="flex items-center gap-3 mt-1">
+              <Link
+                href={t.type === 'join' ? `/play?join=${t.matchId}` : '/dashboard/matches'}
+                className="text-xs text-accent-purple hover:underline"
+              >
+                {t.type === 'join' ? 'View lobby →' : 'Match history →'}
+              </Link>
+              {t.type === 'win' && (
+                <Link
+                  href="/dashboard/matches"
+                  className="text-xs text-accent-cyan hover:underline"
+                >
+                  Share PnL →
+                </Link>
+              )}
+            </div>
           </div>
           <button
             onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))}

@@ -108,6 +108,7 @@ export async function sendMatchResult(to: string, username: string, won: boolean
         ${won ? `<tr><td style="color:#888;padding:4px 0;">Payout</td><td style="color:#22c55e;text-align:right;font-weight:700;">+$${payout.toFixed(2)}</td></tr>` : ''}
       </table>
       ${btn(won ? 'Play Again' : 'Rematch', 'https://raisegg.com/play')}
+      ${won ? `<p style="margin-top:16px;"><a href="https://raisegg.gg/api/pnl-card?username=${encodeURIComponent(username)}&opponent=${encodeURIComponent(opponentName)}&game=${encodeURIComponent(game)}&result=win&payout=${payout.toFixed(2)}&stake=${(payout / 1.8).toFixed(2)}" style="color:#00e6ff;text-decoration:none;font-size:13px;">📊 View & Share your PnL Card</a></p>` : ''}
     `),
   })
 }

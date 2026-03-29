@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { landingPageSchema, videoGameSchema, breadcrumbSchema } from '@/lib/schemas'
+import { RegionLinks } from '@/components/layout/RegionLinks'
 
 // Valid games and countries
 const GAMES = ['cs2', 'dota2', 'deadlock'] as const
@@ -29,6 +30,21 @@ const COUNTRIES: Record<string, string> = {
   // Western Europe
   netherlands: 'Netherlands', belgium: 'Belgium', switzerland: 'Switzerland',
   italy: 'Italy', spain: 'Spain', portugal: 'Portugal',
+}
+
+const COUNTRY_LANGS: Record<string, string> = {
+  turkey: 'tr', georgia: 'ka', armenia: 'hy', azerbaijan: 'az', iran: 'fa',
+  kazakhstan: 'kk', uzbekistan: 'uz', kyrgyzstan: 'ky', tajikistan: 'tg', turkmenistan: 'tk',
+  ukraine: 'uk', russia: 'ru', belarus: 'be', moldova: 'ro', poland: 'pl',
+  czech: 'cs', slovakia: 'sk', hungary: 'hu', austria: 'de',
+  lithuania: 'lt', latvia: 'lv', estonia: 'et',
+  romania: 'ro', bulgaria: 'bg', serbia: 'sr', greece: 'el', croatia: 'hr',
+  slovenia: 'sl', bosnia: 'bs', montenegro: 'sr', albania: 'sq', kosovo: 'sq',
+  'north-macedonia': 'mk',
+  cyprus: 'el', israel: 'he', jordan: 'ar',
+  finland: 'fi', sweden: 'sv',
+  netherlands: 'nl', belgium: 'nl', switzerland: 'de', italy: 'it',
+  spain: 'es', portugal: 'pt',
 }
 
 const GAME_NAMES: Record<string, string> = {
@@ -112,10 +128,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const gameName = GAME_NAMES[game]
   const countryName = COUNTRIES[country]
 
+  const langCode = COUNTRY_LANGS[country] || 'en'
+
   return {
     title: `${gameName} Stake Platform in ${countryName} — Win USDC/USDT`,
     description: `The leading ${gameName} stake platform for players in ${countryName}. Join RaiseGG.gg, compete in ranked lobbies and win real USDC or USDT. ${countryName} players welcome.`,
-    alternates: { canonical: `https://raisegg.gg/${slug}` },
+    alternates: {
+      canonical: `https://raisegg.gg/${slug}`,
+      languages: {
+        [langCode]: `https://raisegg.gg/${slug}`,
+        'x-default': `https://raisegg.gg/games/${game}`,
+      },
+    },
     openGraph: {
       title: `RaiseGG.gg – ${gameName} in ${countryName}`,
       description: `${gameName} stake matches for ${countryName} players. Win real USDC or USDT.`,
@@ -261,6 +285,8 @@ export default async function SeoLandingPage({ params }: Props) {
             Start Playing — Connect Steam
           </a>
         </div>
+
+        <RegionLinks currentGame={game} currentCountry={country} />
       </div>
     </>
   )

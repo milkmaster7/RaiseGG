@@ -4,6 +4,7 @@ import { videoGameSchema, breadcrumbSchema } from '@/lib/schemas'
 import { createServiceClient } from '@/lib/supabase'
 import { LeaderboardTable } from '@/components/ui/LeaderboardTable'
 import { CheckCircle, Clock, Zap, Globe } from 'lucide-react'
+import { RegionLinks } from '@/components/layout/RegionLinks'
 
 export const metadata: Metadata = {
   title: 'Dota 2 Stake Matches — Compete & Win USDC/USDT',
@@ -118,6 +119,11 @@ export default async function Dota2Page() {
           <Link href="/leaderboard" className="text-sm text-accent-cyan hover:underline">Full leaderboard →</Link>
         </div>
         <LeaderboardTable players={(topPlayers ?? []) as any} game="dota2" limit={10} />
+      </section>
+
+      {/* Region Links */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <RegionLinks currentGame="dota2" />
       </section>
     </>
   )

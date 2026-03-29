@@ -9,6 +9,7 @@ import { RaiseDisputeButton } from '@/components/matches/RaiseDisputeButton'
 import { CS2ConnectInfo } from '@/components/matches/CS2ConnectInfo'
 import { CancelMatchButton } from '@/components/matches/CancelMatchButton'
 import { MatchChat } from '@/components/matches/MatchChat'
+import { PnlShareButton } from '@/components/matches/PnlShareButton'
 
 export const metadata: Metadata = {
   title: 'My Matches — Match History',
@@ -44,6 +45,9 @@ export default async function MyMatchesPage() {
     .or(`player_a_id.eq.${playerId},player_b_id.eq.${playerId}`)
     .order('created_at', { ascending: false })
     .limit(50)
+
+  const { data: me } = await db.from('players').select('username').eq('id', playerId).single()
+  const myUsername = me?.username ?? 'Player'
 
   const crumbs = breadcrumbSchema([
     { name: 'Home',       url: 'https://raisegg.gg' },
@@ -113,6 +117,16 @@ export default async function MyMatchesPage() {
                               matchId={m.id}
                               playerId={playerId}
                               opponentName={opponent ?? '?'}
+                            />
+                          )}
+                          {m.status === 'completed' && (
+                            <PnlShareButton
+                              username={myUsername}
+                              opponent={opponent ?? 'Unknown'}
+                              game={GAME_LABEL[m.game] ?? m.game}
+                              result={won ? 'win' : 'loss'}
+                              payout={won ? Number(m.stake_amount) * 2 * 0.9 : 0}
+                              stake={Number(m.stake_amount)}
                             />
                           )}
                         </div>

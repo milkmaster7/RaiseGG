@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { videoGameSchema, breadcrumbSchema } from '@/lib/schemas'
 import { Bell, Trophy, Users, Zap } from 'lucide-react'
+import { RegionLinks } from '@/components/layout/RegionLinks'
 
 export const metadata: Metadata = {
   title: 'Deadlock Stake Matches — The Only Platform',
@@ -110,6 +111,11 @@ export default function DeadlockPage() {
           <h3 className="font-orbitron font-bold text-white mb-1">What is Deadlock? Valve's New Hero Shooter Explained</h3>
           <p className="text-muted text-sm">A quick introduction to Deadlock and why RaiseGG is first to support it for competitive staking.</p>
         </Link>
+      </section>
+
+      {/* Region Links */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <RegionLinks currentGame="deadlock" />
       </section>
     </>
   )

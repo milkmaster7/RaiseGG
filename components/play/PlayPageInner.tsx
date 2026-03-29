@@ -26,14 +26,19 @@ const STAKE_FILTERS = [
   { value: 'high',  label: '$50+' },
 ]
 
-export function PlayPageInner() {
+interface PlayPageInnerProps {
+  initialMatches?: Match[]
+}
+
+export function PlayPageInner({ initialMatches }: PlayPageInnerProps) {
   const searchParams  = useSearchParams()
   const joinMatchId   = searchParams.get('join')
   const gameParam     = searchParams.get('game') as Game | null
   const highlightRef  = useRef<HTMLDivElement>(null)
 
-  const [matches, setMatches]         = useState<Match[]>([])
-  const [loading, setLoading]         = useState(true)
+  const [matches, setMatches]         = useState<Match[]>(initialMatches ?? [])
+  const [loading, setLoading]         = useState(!initialMatches || initialMatches.length === 0)
+  const didInitRef = useRef(!!initialMatches && initialMatches.length > 0)
   const [gameFilter, setGameFilter]   = useState<Game | 'all'>(
     gameParam && ['cs2', 'dota2', 'deadlock'].includes(gameParam) ? gameParam : 'all'
   )
@@ -63,7 +68,12 @@ export function PlayPageInner() {
   }, [gameFilter])
 
   useEffect(() => {
-    fetchLobbies()
+    // Skip initial fetch if server-rendered data was provided
+    if (didInitRef.current) {
+      didInitRef.current = false
+    } else {
+      fetchLobbies()
+    }
 
     const channel = supabase
       .channel('play-lobby')
