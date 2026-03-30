@@ -22,7 +22,7 @@ export async function readSession(req: NextRequest): Promise<string | null> {
   try {
     const { payload } = await jwtVerify(token, SECRET)
     return payload.playerId as string
-  } catch {
+  } catch (_) {
     return null
   }
 }
@@ -36,7 +36,7 @@ export async function readSessionFromCookies(
   try {
     const { payload } = await jwtVerify(token, SECRET)
     return payload.playerId as string
-  } catch {
+  } catch (_) {
     return null
   }
 }

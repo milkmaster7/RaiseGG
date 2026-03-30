@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { articleSchema, breadcrumbSchema } from '@/lib/schemas'
-import { getBlogPostSlugs, getBlogPostWithAI } from '@/lib/blog'
+import { getBlogPostSlugs, getBlogPostWithAI, getRelatedPosts } from '@/lib/blog'
 import { Clock, ArrowLeft } from 'lucide-react'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -44,6 +44,8 @@ export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
   const post = await getBlogPostWithAI(slug)
   if (!post) notFound()
+
+  const relatedPosts = await getRelatedPosts(slug, post.tag, 3)
 
   const aSchema = articleSchema({
     title:       post.title,
@@ -94,11 +96,15 @@ export default async function BlogPostPage({ params }: Props) {
           className="prose prose-invert prose-sm max-w-none
             prose-headings:font-orbitron prose-headings:text-white prose-headings:font-bold
             prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4
+            prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3
             prose-p:text-muted prose-p:leading-relaxed prose-p:mb-4
             prose-li:text-muted prose-li:mb-1
             prose-ol:text-muted prose-ul:text-muted
             prose-strong:text-white
-            prose-code:text-accent-cyan prose-code:bg-space-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded"
+            prose-code:text-accent-cyan prose-code:bg-space-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+            prose-img:rounded-lg prose-img:my-4 prose-img:w-full prose-img:h-auto prose-img:aspect-video prose-img:object-cover
+            prose-a:text-accent-cyan prose-a:no-underline hover:prose-a:text-white
+            [&_nav]:mb-6 [&_nav_a]:text-accent-cyan [&_nav_a]:no-underline [&_nav_a:hover]:text-white [&_nav_ul]:mt-2 [&_nav_li]:mb-1"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
@@ -112,6 +118,33 @@ export default async function BlogPostPage({ params }: Props) {
               {post.relatedLinks.map(link => (
                 <Link key={link.href} href={link.href} className="text-accent-cyan hover:text-white text-sm font-semibold transition-colors">
                   {link.label} →
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Related Posts */}
+        {relatedPosts.length > 0 && (
+          <div className="mb-10">
+            <h2 className="font-orbitron text-lg font-bold text-white mb-4">Related Posts</h2>
+            <div className="grid gap-3">
+              {relatedPosts.map((rp) => (
+                <Link
+                  key={rp.slug}
+                  href={`/blog/${rp.slug}`}
+                  className="card flex items-start gap-4 hover:border-accent-cyan/40 transition-colors group"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="badge-cyan text-xs">{rp.tag}</span>
+                      <span className="text-xs text-muted">{rp.readTime} min read</span>
+                    </div>
+                    <div className="font-semibold text-sm text-white group-hover:text-gradient transition-all line-clamp-1">
+                      {rp.title}
+                    </div>
+                    <p className="text-xs text-muted mt-1 line-clamp-2">{rp.description}</p>
+                  </div>
                 </Link>
               ))}
             </div>

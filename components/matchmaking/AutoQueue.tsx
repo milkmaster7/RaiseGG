@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
-import { Search, X, Loader2, Trophy, Swords, Clock, Users, ChevronRight, Check } from 'lucide-react'
+import { Search, X, Loader2, Trophy, Swords, Clock, Users, ChevronRight, Check, ShieldCheck, Info } from 'lucide-react'
 
 type Game = 'cs2' | 'dota2' | 'deadlock'
 type Currency = 'usdc' | 'usdt'
@@ -28,6 +28,8 @@ export function AutoQueue() {
   const [stakeAmount, setStakeAmount] = useState(10)
   const [currency, setCurrency] = useState<Currency>('usdc')
   const [status, setStatus] = useState<'idle' | 'searching' | 'matched' | 'accepting'>('idle')
+  const [verifiedOnly, setVerifiedOnly] = useState(false)
+  const [showVerifiedTooltip, setShowVerifiedTooltip] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -64,7 +66,7 @@ export function AutoQueue() {
           // Was removed from queue externally
           setStatus('idle')
         }
-      } catch {
+      } catch (_) {
         // silent fail on poll
       }
     }
@@ -105,7 +107,7 @@ export function AutoQueue() {
       const res = await fetch('/api/matchmaking/queue', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ game, stakeAmount, currency }),
+        body: JSON.stringify({ game, stakeAmount, currency, verified: verifiedOnly }),
       })
       const data = await res.json()
 
@@ -125,7 +127,7 @@ export function AutoQueue() {
         setElo(data.elo ?? 1000)
         setStatus('searching')
       }
-    } catch {
+    } catch (_) {
       setError('Network error')
     } finally {
       setSubmitting(false)
@@ -224,7 +226,12 @@ export function AutoQueue() {
         </div>
 
         <div className="font-orbitron text-xl font-bold text-white mb-1">Searching for opponent...</div>
-        <div className={`text-sm ${gameConf.color} mb-4`}>{gameConf.label} &middot; ${stakeAmount} {currency.toUpperCase()}</div>
+        <div className={`text-sm ${gameConf.color} mb-2`}>{gameConf.label} &middot; ${stakeAmount} {currency.toUpperCase()}</div>
+        {verifiedOnly && (
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30 mb-2">
+            <ShieldCheck className="w-3 h-3" /> Verified Only
+          </div>
+        )}
 
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="text-center">
@@ -335,6 +342,48 @@ export function AutoQueue() {
               {c}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Verified Queue Toggle */}
+      <div className="card mb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className={`w-4 h-4 ${verifiedOnly ? 'text-emerald-400' : 'text-gray-500'}`} />
+            <span className="text-sm font-semibold text-gray-200">Verified Queue</span>
+            {verifiedOnly && (
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                Verified Only
+              </span>
+            )}
+            <div className="relative">
+              <button
+                onMouseEnter={() => setShowVerifiedTooltip(true)}
+                onMouseLeave={() => setShowVerifiedTooltip(false)}
+                className="text-gray-500 hover:text-gray-300"
+              >
+                <Info className="w-3.5 h-3.5" />
+              </button>
+              {showVerifiedTooltip && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 px-3 py-2 rounded bg-gray-900 border border-gray-600 text-xs text-gray-300 shadow-lg z-20">
+                  Only players with linked FACEIT or Leetify accounts. Higher trust, competitive matches.
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 border-r border-b border-gray-600 rotate-45 -mt-1" />
+                </div>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={() => setVerifiedOnly(!verifiedOnly)}
+            className={`relative w-10 h-5 rounded-full transition-colors ${
+              verifiedOnly ? 'bg-emerald-500' : 'bg-gray-600'
+            }`}
+          >
+            <div
+              className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
+                verifiedOnly ? 'translate-x-5' : 'translate-x-0.5'
+              }`}
+            />
+          </button>
         </div>
       </div>
 

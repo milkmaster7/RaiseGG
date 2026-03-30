@@ -67,7 +67,12 @@ export function articleSchema(article: {
     '@type': 'BlogPosting',
     headline: article.title,
     description: article.description,
-    image: article.image,
+    image: {
+      '@type': 'ImageObject',
+      url: article.image,
+      width: 1200,
+      height: 630,
+    },
     datePublished: article.publishedAt,
     dateModified: article.modifiedAt ?? article.publishedAt,
     keywords: article.keywords?.join(', '),

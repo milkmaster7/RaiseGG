@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { joinMatch } from '@/lib/matches'
+import { joinMatch, joinTeamMatch } from '@/lib/matches'
 import { readSession } from '@/lib/session'
 import { createServiceClient } from '@/lib/supabase'
 import { sendMatchJoined } from '@/lib/email'
+import { isMatchableEloRange } from '@/lib/elo'
 
 // POST /api/matches/join — player B joins and stakes
 export async function POST(req: NextRequest) {
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { matchId, playerBId, joinTx, password } = await req.json()
+  const { matchId, playerBId, joinTx, password, team, teamName } = await req.json()
 
   if (!matchId || !playerBId || !joinTx) {
     return NextResponse.json({ error: 'matchId, playerBId, and joinTx are required' }, { status: 400 })
@@ -24,10 +25,10 @@ export async function POST(req: NextRequest) {
   // Check player is eligible and not banned
   const supabase = createServiceClient()
 
-  // Validate password and challenge lock
+  // Validate password, challenge lock, and match type
   const { data: matchData } = await supabase
     .from('matches')
-    .select('invite_password, has_password, challenged_player_id, player_a_id')
+    .select('invite_password, has_password, challenged_player_id, player_a_id, match_type, team_a_players, team_b_players')
     .eq('id', matchId)
     .single()
 
@@ -51,7 +52,50 @@ export async function POST(req: NextRequest) {
   if (player.banned) return NextResponse.json({ error: 'Your account has been suspended.' }, { status: 403 })
   if (!player.eligible) return NextResponse.json({ error: 'Your account does not meet eligibility requirements.' }, { status: 403 })
 
-  const { match, error } = await joinMatch(matchId, playerBId, joinTx)
+  // ELO range check — prevent smurfing
+  const { data: matchForElo } = await supabase
+    .from('matches')
+    .select('game, player_a:players!player_a_id(cs2_elo, dota2_elo, deadlock_elo)')
+    .eq('id', matchId)
+    .single()
+
+  if (matchForElo) {
+    const { data: playerBElo } = await supabase
+      .from('players')
+      .select('cs2_elo, dota2_elo, deadlock_elo')
+      .eq('id', playerBId)
+      .single()
+
+    if (playerBElo) {
+      const gameEloKey = `${matchForElo.game}_elo` as keyof typeof playerBElo
+      const playerAData = matchForElo.player_a as any
+      const eloA = playerAData?.[gameEloKey] ?? 1000
+      const eloB = (playerBElo[gameEloKey] as number) ?? 1000
+      const eloCheck = isMatchableEloRange(eloA, eloB)
+      if (!eloCheck.allowed) {
+        return NextResponse.json({ error: eloCheck.reason }, { status: 403 })
+      }
+    }
+  }
+
+  // Handle team matches vs 1v1
+  const isTeamMatch = matchData?.match_type && matchData.match_type !== '1v1'
+
+  let match: any = null
+  let error: any = null
+
+  if (isTeamMatch) {
+    // For team matches, 'team' param is required ('a' or 'b')
+    const joinTeam = team === 'a' || team === 'b' ? team : 'b'
+    const result = await joinTeamMatch(matchId, playerBId, joinTeam, joinTx, teamName)
+    match = result.match
+    error = result.error
+  } else {
+    const result = await joinMatch(matchId, playerBId, joinTx)
+    match = result.match
+    error = result.error
+  }
+
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
   if (!match) return NextResponse.json({ error: 'Match not available' }, { status: 404 })
 

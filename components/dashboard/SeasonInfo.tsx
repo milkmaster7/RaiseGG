@@ -92,7 +92,7 @@ export function SeasonInfo() {
         const data = await res.json()
         // For now we'll show rank as TBD until the season starts
         setRank(null)
-      } catch {
+      } catch (_) {
         // silent
       } finally {
         setLoading(false)

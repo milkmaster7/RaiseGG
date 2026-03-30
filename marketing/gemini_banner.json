@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": 400,
+    "message": "This model only supports text output.",
+    "status": "INVALID_ARGUMENT"
+  }
+}

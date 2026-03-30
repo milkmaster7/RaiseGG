@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  Zap,
+  ShieldCheck,
   House,
   Swords,
   Trophy,
@@ -22,7 +22,9 @@ import {
   Megaphone,
   Shield,
   Award,
+  Eye,
 } from 'lucide-react'
+import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup'
 
 // ─── Primary nav ─────────────────────────────────────────────────────────────
 const PRIMARY_NAV = [
@@ -30,9 +32,13 @@ const PRIMARY_NAV = [
   { href: '/play',         label: 'Play',         icon: Swords         },
   { href: '/tournaments',  label: 'Tournaments',  icon: Trophy         },
   { href: '/teams',        label: 'Teams',        icon: Users          },
+  { href: '/hubs',         label: 'Hubs',         icon: Users          },
   { href: '/clans',        label: 'Clans',        icon: Shield         },
   { href: '/leaderboard',  label: 'Leaderboard',  icon: BarChart2      },
+  { href: '/ladders',      label: 'Ladders',      icon: Activity       },
+  { href: '/spectate',     label: 'Spectate',     icon: Eye            },
   { href: '/challenges',   label: 'Challenges',   icon: Target         },
+  { href: '/missions',     label: 'Missions',     icon: Target         },
   { href: '/friends',      label: 'Friends',      icon: Users          },
   { href: '/demos',        label: 'Demos',        icon: Film           },
   { href: '/forum',        label: 'Community',    icon: MessageSquare  },
@@ -43,6 +49,7 @@ const PRIMARY_NAV = [
   { href: '/cosmetics',    label: 'Cosmetics',    icon: Palette        },
   { href: '/premium',      label: 'Premium',      icon: Crown          },
   { href: '/affiliate',    label: 'Affiliate',    icon: Megaphone      },
+  { href: '/creators',     label: 'Creators',     icon: Star           },
   { href: '/achievements', label: 'Achievements', icon: Award          },
 ]
 
@@ -55,6 +62,8 @@ const SECONDARY_NAV = [
   { href: '/referral',      label: 'Referral'      },
   { href: '/roadmap',       label: 'Roadmap'       },
   { href: '/support',       label: 'Support'       },
+  { href: '/disputes',      label: 'Disputes'      },
+  { href: '/settings',      label: 'Settings'      },
 ]
 
 export default function Sidebar() {
@@ -77,7 +86,7 @@ export default function Sidebar() {
       {/* ── Logo ────────────────────────────────────────────────────────── */}
       <div className="px-5 pt-6 pb-5">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <Zap className="w-5 h-5 text-accent-purple flex-shrink-0 group-hover:drop-shadow-[0_0_6px_#7b61ff] transition-all" />
+          <ShieldCheck className="w-5 h-5 text-accent-cyan flex-shrink-0 group-hover:drop-shadow-[0_0_6px_#00e6ff] transition-all" aria-hidden="true" />
           <span className="font-orbitron font-bold text-lg text-gradient tracking-wide">
             RaiseGG
           </span>
@@ -85,7 +94,7 @@ export default function Sidebar() {
       </div>
 
       {/* ── Primary nav ─────────────────────────────────────────────────── */}
-      <nav className="flex-1 px-3 space-y-0.5">
+      <nav aria-label="Main navigation" className="flex-1 px-3 space-y-0.5">
         {PRIMARY_NAV.map(({ href, label, icon: Icon }) => {
           const active = isActive(href)
           return (
@@ -141,10 +150,15 @@ export default function Sidebar() {
           )
         })}
 
+        {/* Newsletter */}
+        <div className="border-t border-border mt-3 pt-1">
+          <NewsletterSignup compact />
+        </div>
+
         {/* Social links */}
         <div className="pt-4 px-3 flex gap-4">
           <a
-            href="https://t.me/raisegg"
+            href="https://t.me/raise_GG"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-muted hover:text-accent-cyan transition-colors font-semibold"

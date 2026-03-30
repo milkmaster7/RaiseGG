@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
   let body: { action: string; cosmeticId?: string }
   try {
     body = await req.json()
-  } catch {
+  } catch (_) {
     return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
   }
 

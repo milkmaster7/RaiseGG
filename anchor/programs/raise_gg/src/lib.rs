@@ -3,13 +3,13 @@ use anchor_spl::token::{self, CloseAccount, Token, TokenAccount, Transfer};
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token::Mint;
 
-declare_id!("BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv");
+declare_id!("5TVDLAMTv5hGkgAmEYZsfdyPEvuUBJtkAnqy1LkyQPLK");
 
 pub const PLATFORM_FEE_BPS: u64 = 1000; // 10%
 pub const BPS_DENOMINATOR:   u64 = 10_000;
 
 /// Platform treasury wallet — rake is sent here on every resolved match.
-pub const TREASURY: &str = "CT7qFYnCwDgDquTxAL8eBQqBvDBqUJemSz3KEZvqc2HW";
+pub const TREASURY: &str = "2EYPY7nozd8ZnsKBhG7imZKkm36rthzw3ELRWCGvmfLG";
 
 // ─── Program ─────────────────────────────────────────────────────────────────
 

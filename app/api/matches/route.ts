@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createMatch } from '@/lib/matches'
 import { createServiceClient } from '@/lib/supabase'
 import { readSession } from '@/lib/session'
-import { minStakeForElo } from '@/lib/elo'
+import { minStakeForElo, maxStakeForElo } from '@/lib/elo'
 
 // GET /api/matches — open lobbies for play page
 export async function GET(req: NextRequest) {
@@ -34,13 +34,16 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json()
-  const { matchId, playerAId, game, format, stakeAmount, currency = 'usdc', vaultPda, createTx, region, invitePassword, challengedPlayerId } = body
+  const { matchId, playerAId, game, format, matchType = '1v1', teamName, stakeAmount, currency = 'usdc', vaultPda, createTx, region, invitePassword, challengedPlayerId } = body
 
   if (!matchId || !playerAId || !game || !format || !stakeAmount || !vaultPda || !createTx) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
   if (!['usdc', 'usdt'].includes(currency)) {
     return NextResponse.json({ error: 'Invalid currency' }, { status: 400 })
+  }
+  if (!['1v1', '2v2', '5v5'].includes(matchType)) {
+    return NextResponse.json({ error: 'Invalid match type' }, { status: 400 })
   }
 
   if (game === 'deadlock') {
@@ -55,7 +58,7 @@ export async function POST(req: NextRequest) {
   const supabaseCheck = createServiceClient()
   const { data: player } = await supabaseCheck
     .from('players')
-    .select('eligible, banned, cs2_elo, dota2_elo, deadlock_elo')
+    .select('eligible, banned, age_verified, cs2_elo, dota2_elo, deadlock_elo')
     .eq('id', playerAId)
     .single()
 
@@ -63,9 +66,12 @@ export async function POST(req: NextRequest) {
   if (player.banned) return NextResponse.json({ error: 'Your account has been suspended.' }, { status: 403 })
   if (!player.eligible) return NextResponse.json({ error: 'Your account does not meet eligibility requirements (account age, VAC status, or hours played).' }, { status: 403 })
 
-  const MAX_STAKE = 5000
-  if (stakeAmount > MAX_STAKE) {
-    return NextResponse.json({ error: `Maximum stake is $${MAX_STAKE}` }, { status: 400 })
+  // Age verification — must confirm 18+ before staking
+  if (!player.age_verified) {
+    return NextResponse.json({
+      error: 'You must confirm you are 18 or older before staking. Go to Settings to verify.',
+      code: 'AGE_VERIFICATION_REQUIRED'
+    }, { status: 403 })
   }
 
   const eloKey = `${game}_elo` as keyof typeof player
@@ -75,7 +81,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Minimum stake for your rank is $${minStake}` }, { status: 400 })
   }
 
-  const { match, error } = await createMatch({ matchId, playerAId, game, format, stakeAmount, currency, vaultPda, createTx, region, invitePassword, challengedPlayerId })
+  const maxStake = maxStakeForElo(playerElo)
+  if (stakeAmount > maxStake) {
+    return NextResponse.json({ error: `Maximum stake for your rank is $${maxStake}. Rank up to increase your limit.` }, { status: 400 })
+  }
+
+  const { match, error } = await createMatch({ matchId, playerAId, game, format, matchType, teamName, stakeAmount, currency, vaultPda, createTx, region, invitePassword, challengedPlayerId })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json(match, { status: 201 })

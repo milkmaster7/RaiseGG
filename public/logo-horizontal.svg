@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 60" fill="none">
+  <!-- Shield icon -->
+  <path d="M30 5 L48 12 L48 28 C48 38 40 44 30 47 C20 44 12 38 12 28 L12 12 Z" fill="none" stroke="#00e6ff" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M30 8 L45 14 L45 28 C45 36 38 42 30 44.5 C22 42 15 36 15 28 L15 14 Z" fill="#00e6ff" opacity="0.1"/>
+  <path d="M30 16 L35 24 L32 24 L32 33 L28 33 L28 24 L25 24 Z" fill="#00e6ff" opacity="0.9"/>
+  <!-- RaiseGG text -->
+  <text x="65" y="40" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="36" fill="#e0e6ef" letter-spacing="1">Raise<tspan fill="#00e6ff">GG</tspan></text>
+</svg>

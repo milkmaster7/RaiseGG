@@ -10,6 +10,7 @@ import FriendsPlaying from '@/components/dashboard/FriendsPlaying'
 import { SeasonInfo } from '@/components/dashboard/SeasonInfo'
 import { ActiveEvents } from '@/components/events/ActiveEvents'
 import { PayoutTicker } from '@/components/home/PayoutTicker'
+import { FirstMatchGuide } from '@/components/onboarding/FirstMatchGuide'
 
 export const metadata: Metadata = {
   title: 'Play — Open Lobbies | RaiseGG',
@@ -22,6 +23,13 @@ export const metadata: Metadata = {
       'Browse open CS2, Dota 2, and Deadlock lobbies. Wager USDC/USDT on skill-based matches.',
     url: 'https://raisegg.com/play',
     type: 'website',
+    images: [{ url: '/api/og?title=Open+Lobbies&sub=CS2+%E2%80%A2+Dota+2+%E2%80%A2+Deadlock&color=00e6ff', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Play — Open Lobbies | RaiseGG',
+    description: 'Browse open CS2, Dota 2, and Deadlock lobbies on RaiseGG.',
+    images: ['/api/og?title=Open+Lobbies&sub=CS2+%E2%80%A2+Dota+2+%E2%80%A2+Deadlock&color=00e6ff'],
   },
 }
 
@@ -95,7 +103,7 @@ export default async function PlayPage() {
       </noscript>
 
       {/* Hidden server-rendered content for crawlers (visible in HTML source) */}
-      <div className="sr-only" aria-hidden="true">
+      <div className="sr-only">
         <h2>RaiseGG Open Lobbies</h2>
         <p>{initialMatches.length} open lobbies across CS2, Dota 2, and Deadlock.</p>
         <ul>
@@ -123,6 +131,7 @@ export default async function PlayPage() {
       </div>
 
       <PlayPageInner initialMatches={initialMatches} />
+      <FirstMatchGuide />
     </>
   )
 }

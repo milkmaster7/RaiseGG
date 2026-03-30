@@ -4,12 +4,16 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { personSchema, breadcrumbSchema } from '@/lib/schemas'
 import { TierBadge } from '@/components/ui/Badge'
-import { MatchCard } from '@/components/matches/MatchCard'
 import { ChallengeButton } from '@/components/matches/ChallengeButton'
 import { createServiceClient } from '@/lib/supabase'
 import { readSessionFromCookies } from '@/lib/session'
 import { computeAchievements, AchievementBadge } from '@/components/ui/AchievementBadge'
-import type { Game, Match } from '@/types'
+import { MatchHistory } from '@/components/profile/MatchHistory'
+import { EloTrend } from '@/components/profile/EloTrend'
+import { CosmeticsDisplay } from '@/components/profile/CosmeticsDisplay'
+import { BattlePassProgress } from '@/components/profile/BattlePassProgress'
+import { getFlag, getCountryName } from '@/lib/countries'
+import type { Game } from '@/types'
 
 type Props = { params: Promise<{ username: string }> }
 
@@ -64,14 +68,6 @@ export default async function ProfilePage({ params }: Props) {
 
   // Noindex thin profiles (no matches played)
   const totalMatches = GAMES.reduce((sum, g) => sum + (player[`${g}_wins`] ?? 0) + (player[`${g}_losses`] ?? 0), 0)
-
-  const { data: recentMatches } = await supabase
-    .from('matches')
-    .select('*, player_a:players!player_a_id(*), player_b:players!player_b_id(*)')
-    .or(`player_a_id.eq.${player.id},player_b_id.eq.${player.id}`)
-    .eq('status', 'completed')
-    .order('resolved_at', { ascending: false })
-    .limit(10)
 
   // Head-to-head with logged-in player
   const cookieStore = await cookies()
@@ -138,7 +134,11 @@ export default async function ProfilePage({ params }: Props) {
           <div className="flex-1">
             <div className="flex items-center gap-3 flex-wrap mb-2">
               <h1 className="font-orbitron text-2xl font-black text-white">{player.username}</h1>
-              {player.country && <span className="text-muted text-sm">{player.country}</span>}
+              {player.country && (
+                <span className="text-sm" title={getCountryName(player.country)}>
+                  {getFlag(player.country)} <span className="text-muted">{getCountryName(player.country)}</span>
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex gap-2 flex-wrap">
@@ -186,6 +186,15 @@ export default async function ProfilePage({ params }: Props) {
           </div>
         )}
 
+        {/* ELO Trend */}
+        <EloTrend username={player.username} />
+
+        {/* Equipped Cosmetics */}
+        <CosmeticsDisplay playerId={player.id} />
+
+        {/* Battle Pass Progress */}
+        <BattlePassProgress playerId={player.id} />
+
         {/* Head-to-head */}
         {showH2H && (
           <div className="card mb-8 flex items-center justify-between gap-4">
@@ -200,17 +209,8 @@ export default async function ProfilePage({ params }: Props) {
           </div>
         )}
 
-        {/* Recent matches */}
-        <h2 className="font-orbitron text-xl font-bold text-white mb-4">Recent Matches</h2>
-        {!recentMatches || recentMatches.length === 0 ? (
-          <div className="card text-center py-12 text-muted">No matches played yet.</div>
-        ) : (
-          <div className="space-y-3">
-            {recentMatches.map((m) => (
-              <MatchCard key={m.id} match={m as Match} />
-            ))}
-          </div>
-        )}
+        {/* Match History (paginated client component) */}
+        <MatchHistory username={player.username} />
       </div>
     </>
   )

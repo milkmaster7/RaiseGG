@@ -20,11 +20,11 @@ function measureStun(stunUrl: string): Promise<number> {
       pc.onicecandidate = (e) => {
         if (e.candidate?.type === 'srflx') {
           resolve(Math.round(performance.now() - start))
-          try { pc.close() } catch { /* ignore */ }
+          try { pc.close() } catch (_) { /* ignore */ }
         }
       }
-      setTimeout(() => { try { pc.close() } catch { /* ignore */ } resolve(999) }, 3000)
-    } catch {
+      setTimeout(() => { try { pc.close() } catch (_) { /* ignore */ } resolve(999) }, 3000)
+    } catch (_) {
       resolve(999)
     }
   })

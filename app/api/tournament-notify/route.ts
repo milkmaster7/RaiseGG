@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       .upsert({ email: email.toLowerCase().trim() }, { onConflict: 'email' })
 
     return NextResponse.json({ ok: true })
-  } catch {
+  } catch (_) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }

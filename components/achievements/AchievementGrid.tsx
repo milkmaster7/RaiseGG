@@ -4,7 +4,7 @@ import { useState } from 'react'
 import {
   ACHIEVEMENTS,
   RARITY_COLORS,
-  getAchievementProgress,
+  getAchievementProgressValue,
   type Achievement,
   type AchievementRarity,
   type PlayerStats,
@@ -67,7 +67,7 @@ export default function AchievementGrid({ unlockedMap, stats }: Props) {
           const unlocked = unlockedMap[achievement.id]
           const colors = RARITY_COLORS[achievement.rarity]
           const progress = stats && achievement.target
-            ? getAchievementProgress(achievement, stats)
+            ? getAchievementProgressValue(achievement, stats)
             : null
 
           return (
@@ -156,11 +156,11 @@ export default function AchievementGrid({ unlockedMap, stats }: Props) {
                     <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-cyan-500 rounded-full"
-                        style={{ width: `${(getAchievementProgress(selected, stats) / selected.target) * 100}%` }}
+                        style={{ width: `${(getAchievementProgressValue(selected, stats) / selected.target) * 100}%` }}
                       />
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
-                      {getAchievementProgress(selected, stats)}/{selected.target}
+                      {getAchievementProgressValue(selected, stats)}/{selected.target}
                     </p>
                   </div>
                 )}

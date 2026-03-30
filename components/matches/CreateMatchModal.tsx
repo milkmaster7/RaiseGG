@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useRouter } from 'next/navigation'
-import { X, Zap, Loader2, Copy, CheckCircle, Lock, Wifi } from 'lucide-react'
+import Link from 'next/link'
+import { X, Zap, Loader2, Copy, CheckCircle, Lock, Wifi, AlertTriangle } from 'lucide-react'
 import { solanaCreateMatch, type StakeCurrency } from '@/lib/escrow'
 import { usePing } from '@/hooks/usePing'
-import type { Game, MatchFormat } from '@/types'
+import type { Game, MatchFormat, MatchType } from '@/types'
 
 const GAMES: { value: Game; label: string; badge?: string }[] = [
   { value: 'cs2',      label: 'CS2',      badge: 'Most Popular' },
@@ -20,6 +21,12 @@ const FORMATS: { value: MatchFormat; label: string }[] = [
   { value: '5v5', label: '5v5' },
 ]
 
+const MATCH_TYPES: { value: MatchType; label: string; teamSize: number }[] = [
+  { value: '1v1', label: '1v1', teamSize: 1 },
+  { value: '2v2', label: '2v2', teamSize: 2 },
+  { value: '5v5', label: '5v5', teamSize: 5 },
+]
+
 const REGIONS = [
   { value: 'EU',  label: 'EU',  flag: '🇪🇺' },
   { value: 'TR',  label: 'TR',  flag: '🇹🇷' },
@@ -29,6 +36,18 @@ const REGIONS = [
 ]
 
 const STAKE_PRESETS = [5, 10, 25, 50, 100]
+
+type MapMode = 'pick' | 'veto' | 'random'
+
+const CS2_MAPS = [
+  { id: 'mirage',   name: 'Mirage' },
+  { id: 'dust2',    name: 'Dust II' },
+  { id: 'inferno',  name: 'Inferno' },
+  { id: 'nuke',     name: 'Nuke' },
+  { id: 'anubis',   name: 'Anubis' },
+  { id: 'vertigo',  name: 'Vertigo' },
+  { id: 'ancient',  name: 'Ancient' },
+]
 
 interface Props {
   playerId: string
@@ -44,18 +63,52 @@ export function CreateMatchModal({ playerId, onClose, challengedPlayerId, challe
 
   const [game, setGame]           = useState<Game>('cs2')
   const [format, setFormat]       = useState<MatchFormat>('1v1')
+  const [matchType, setMatchType] = useState<MatchType>('1v1')
+  const [teamName, setTeamName]   = useState('')
   const [region, setRegion]       = useState('EU')
   const [stake, setStake]         = useState('')
   const [currency, setCurrency]   = useState<StakeCurrency>('usdc')
   const [password, setPassword]   = useState('')
   const [usePassword, setUsePassword] = useState(false)
+  const [mapMode, setMapMode]     = useState<MapMode>('random')
+  const [pickedMap, setPickedMap] = useState<string | null>(null)
   const [step, setStep]           = useState<'form' | 'confirm' | 'submitting' | 'done'>('form')
   const [error, setError]         = useState<string | null>(null)
   const [createdId, setCreatedId] = useState<string | null>(null)
   const [copied, setCopied]       = useState(false)
+  const [lossStreak, setLossStreak]             = useState(0)
+  const [lossWarningDismissed, setLossWarningDismissed] = useState(false)
+
+  // Fetch recent loss streak
+  useEffect(() => {
+    async function checkLossStreak() {
+      try {
+        const res = await fetch(`/api/matches?player_id=${playerId}&status=completed&limit=10`)
+        if (!res.ok) return
+        const recentMatches = await res.json()
+        if (!Array.isArray(recentMatches)) return
+        const today = new Date().toISOString().slice(0, 10)
+        let streak = 0
+        for (const m of recentMatches) {
+          const matchDate = (m.completed_at ?? m.updated_at ?? m.created_at ?? '').slice(0, 10)
+          if (matchDate !== today) break
+          if (m.winner_id && m.winner_id !== playerId) {
+            streak++
+          } else {
+            break
+          }
+        }
+        setLossStreak(streak)
+      } catch {}
+    }
+    checkLossStreak()
+  }, [playerId])
 
   const pings = usePing()
   const stakeNum = parseFloat(stake)
+  const teamSize = MATCH_TYPES.find(t => t.value === matchType)?.teamSize ?? 1
+  const isTeamMatch = matchType !== '1v1'
+  const totalStake = stakeNum * teamSize
   const valid = connected && stakeNum > 0 && game !== 'deadlock'
 
   async function handleCreate() {
@@ -85,11 +138,15 @@ export function CreateMatchModal({ playerId, onClose, challengedPlayerId, challe
           playerAId:          playerId,
           game,
           format,
+          matchType,
+          teamName:           isTeamMatch && teamName ? teamName : undefined,
           stakeAmount:        stakeNum,
           currency,
           vaultPda,
           createTx:           txSignature,
           region,
+          mapMode:            game === 'cs2' ? mapMode : undefined,
+          selectedMap:        game === 'cs2' && mapMode === 'pick' ? pickedMap : undefined,
           invitePassword:     usePassword && password ? password : undefined,
           challengedPlayerId: challengedPlayerId ?? undefined,
         }),
@@ -203,6 +260,46 @@ export function CreateMatchModal({ playerId, onClose, challengedPlayerId, challe
               </div>
             </div>
 
+            {/* Match Type */}
+            <div className="mb-5">
+              <label className="text-xs text-muted uppercase tracking-wider mb-2 block">Match Type</label>
+              <div className="flex gap-2">
+                {MATCH_TYPES.map((t) => (
+                  <button
+                    key={t.value}
+                    onClick={() => setMatchType(t.value)}
+                    className={`flex-1 py-2 rounded border text-sm font-semibold transition-all ${
+                      matchType === t.value
+                        ? 'border-accent-purple bg-accent-purple/10 text-white'
+                        : 'border-border text-muted hover:border-accent-purple/50'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              {isTeamMatch && (
+                <p className="text-[10px] text-muted mt-1.5">
+                  Each player stakes the amount below. Winner team splits the pot.
+                </p>
+              )}
+            </div>
+
+            {/* Team Name (team matches only) */}
+            {isTeamMatch && (
+              <div className="mb-5">
+                <label className="text-xs text-muted uppercase tracking-wider mb-2 block">Team Name</label>
+                <input
+                  type="text"
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  placeholder="Enter your team name..."
+                  maxLength={32}
+                  className="w-full bg-space-800 border border-border rounded px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-purple"
+                />
+              </div>
+            )}
+
             {/* Region */}
             <div className="mb-5">
               <label className="text-xs text-muted uppercase tracking-wider mb-2 block">Server Region</label>
@@ -230,6 +327,55 @@ export function CreateMatchModal({ playerId, onClose, challengedPlayerId, challe
                 })}
               </div>
             </div>
+
+            {/* Map Selection (CS2 only) */}
+            {game === 'cs2' && (
+              <div className="mb-5">
+                <label className="text-xs text-muted uppercase tracking-wider mb-2 block">Map Selection</label>
+                <div className="flex gap-2 mb-2">
+                  {([
+                    { value: 'pick' as MapMode, label: 'Map Pick' },
+                    { value: 'veto' as MapMode, label: 'Map Veto' },
+                    { value: 'random' as MapMode, label: 'Random' },
+                  ]).map(m => (
+                    <button
+                      key={m.value}
+                      onClick={() => { setMapMode(m.value); if (m.value !== 'pick') setPickedMap(null) }}
+                      className={`flex-1 py-2 rounded border text-xs font-semibold transition-all ${
+                        mapMode === m.value
+                          ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan'
+                          : 'border-border text-muted hover:border-accent-cyan/50'
+                      }`}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+                {mapMode === 'pick' && (
+                  <div className="grid grid-cols-4 gap-1.5 mt-2">
+                    {CS2_MAPS.map(map => (
+                      <button
+                        key={map.id}
+                        onClick={() => setPickedMap(map.id)}
+                        className={`py-2 px-1 rounded border text-xs font-semibold transition-all ${
+                          pickedMap === map.id
+                            ? 'border-green-500 bg-green-500/10 text-green-400 shadow-[0_0_8px_rgba(34,197,94,0.15)]'
+                            : 'border-border text-muted hover:border-accent-cyan/30 hover:text-white'
+                        }`}
+                      >
+                        {map.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {mapMode === 'veto' && (
+                  <p className="text-[10px] text-muted mt-1">Alternating bans after both players join. Last map standing is played.</p>
+                )}
+                {mapMode === 'random' && (
+                  <p className="text-[10px] text-muted mt-1">A random map will be selected when the match locks.</p>
+                )}
+              </div>
+            )}
 
             {/* Currency */}
             <div className="mb-5">
@@ -279,9 +425,21 @@ export function CreateMatchModal({ playerId, onClose, challengedPlayerId, challe
                 className="w-full bg-space-800 border border-border rounded px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent-cyan"
               />
               {stakeNum > 0 && (
-                <p className="text-xs text-muted mt-1.5">
-                  You stake <span className="text-white">${stakeNum.toFixed(2)}</span> · Winner takes <span className="text-green-400">${(stakeNum * 2 * 0.9).toFixed(2)}</span> · Rake <span className="text-muted">${(stakeNum * 2 * 0.1).toFixed(2)}</span>
-                </p>
+                <div className="text-xs text-muted mt-1.5 space-y-0.5">
+                  <p>
+                    You stake <span className="text-white">${stakeNum.toFixed(2)}</span>
+                    {isTeamMatch && (
+                      <> · Total pot: <span className="text-accent-purple">${(totalStake * 2).toFixed(2)}</span> ({teamSize}v{teamSize})</>
+                    )}
+                  </p>
+                  <p>
+                    {isTeamMatch ? (
+                      <>Winner team splits <span className="text-green-400">${(totalStake * 2 * 0.9).toFixed(2)}</span> · Rake <span className="text-muted">${(totalStake * 2 * 0.1).toFixed(2)}</span></>
+                    ) : (
+                      <>Winner takes <span className="text-green-400">${(stakeNum * 2 * 0.9).toFixed(2)}</span> · Rake <span className="text-muted">${(stakeNum * 2 * 0.1).toFixed(2)}</span></>
+                    )}
+                  </p>
+                </div>
               )}
             </div>
 
@@ -304,6 +462,32 @@ export function CreateMatchModal({ playerId, onClose, challengedPlayerId, challe
                 />
               )}
             </div>
+
+            {/* Loss streak warning */}
+            {lossStreak >= 3 && !lossWarningDismissed && (
+              <div className="mb-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-4 py-3">
+                <div className="flex items-start gap-2 mb-2">
+                  <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-yellow-200">
+                    You&apos;ve had a tough run ({lossStreak} losses in a row). Consider taking a break or playing a practice match.
+                  </p>
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <button
+                    onClick={() => setLossWarningDismissed(true)}
+                    className="px-3 py-1.5 rounded border border-yellow-500/40 text-xs font-semibold text-yellow-300 hover:bg-yellow-500/10 transition-all"
+                  >
+                    Continue Anyway
+                  </button>
+                  <Link
+                    href="/play?mode=practice"
+                    className="px-3 py-1.5 rounded bg-accent-cyan/10 border border-accent-cyan/30 text-xs font-semibold text-accent-cyan hover:bg-accent-cyan/20 transition-all"
+                  >
+                    Practice Instead
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {error && (
               <div className="mb-4 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded px-3 py-2">

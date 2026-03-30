@@ -33,9 +33,26 @@ function getRuleForPath(pathname: string): RateLimitRule {
 }
 
 export function middleware(req: NextRequest) {
+  // ── Subdomain routing: status.raisegg.com → /status ───────────
+  const host = req.headers.get('host') ?? ''
+  if (host.startsWith('status.')) {
+    const url = req.nextUrl.clone()
+    // Rewrite all status subdomain requests to /status path
+    if (!url.pathname.startsWith('/api/status') && !url.pathname.startsWith('/api/monitor') && !url.pathname.startsWith('/_next')) {
+      url.pathname = '/api/status'
+      return NextResponse.rewrite(url)
+    }
+  }
+
   cleanup()
 
   const pathname = req.nextUrl.pathname
+
+  // Only rate-limit API routes
+  if (!pathname.startsWith('/api/')) {
+    return NextResponse.next()
+  }
+
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? (req as any).ip ?? '127.0.0.1'
   const rule = getRuleForPath(pathname)
   const bucket = rules.find(r => pathname.startsWith(r.pattern))?.pattern ?? '/api/'
@@ -66,5 +83,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: '/api/:path*',
+  matcher: ['/((?!_next/static|_next/image|favicon|icon-|sw.js|manifest).*)',],
 }

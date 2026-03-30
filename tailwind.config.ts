@@ -36,9 +36,9 @@ const config: Config = {
         border: '#2a2d4f',
       },
       fontFamily: {
-        orbitron: ['Orbitron', 'sans-serif'],
-        outfit: ['Outfit', 'sans-serif'],
-        sans: ['Outfit', 'Inter', 'system-ui', 'sans-serif'],
+        orbitron: ['var(--font-orbitron)', 'sans-serif'],
+        outfit: ['var(--font-outfit)', 'sans-serif'],
+        sans: ['var(--font-outfit)', 'Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '8px',

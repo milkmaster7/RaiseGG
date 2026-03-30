@@ -2,12 +2,13 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { Shield, Zap, Trophy, Users, TrendingUp, Globe } from 'lucide-react'
+import { Shield, Zap, Trophy, Users, TrendingUp, Globe, Radio, ExternalLink, FileCheck, Coins, Lock, Award, Eye } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase'
 import { faqSchema, softwareAppSchema } from '@/lib/schemas'
 import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
 import { Accordion } from '@/components/ui/Accordion'
 import { PayoutTicker } from '@/components/home/PayoutTicker'
+import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup'
 
 export const revalidate = 60
 import { readSessionFromCookies } from '@/lib/session'
@@ -49,6 +50,15 @@ const TRUST_POINTS = [
   { title: 'Trustless Escrow',      description: 'Your stake goes into a Solana smart contract. Nobody — not even us — can touch it until the match resolves.', icon: Shield },
   { title: 'Instant Payouts',       description: 'Winner gets 90% of the pot in seconds. USDC or USDT, straight to your wallet. No waiting, no approval.', icon: Zap },
   { title: 'Built for Your Region', description: 'Optimised servers and low-latency infrastructure for the Caucasus, Turkey, Balkans and Central Asia.', icon: Globe },
+]
+
+const TRUST_BADGES = [
+  { title: 'On-Chain Escrow',       description: 'Every stake held in a Solana smart contract. Verify on Solscan.', icon: Lock },
+  { title: 'Skill-Based Platform',  description: 'Not gambling. Outcomes determined by player skill, not chance.',  icon: Award },
+  { title: 'Instant Payouts',       description: 'Winners paid automatically. No withdrawal delays.',               icon: Zap },
+  { title: 'Anti-Cheat Protected',  description: 'VAC monitoring, demo recording, automated detection.',            icon: Eye },
+  { title: '44 Countries',          description: 'Built for the Caucasus, Turkey, Balkans and beyond.',             icon: Globe },
+  { title: 'Trustless Platform',    description: 'Open-source smart contract. No middlemen. Code is the escrow.',   icon: Shield },
 ]
 
 const FAQS = [
@@ -117,7 +127,7 @@ export default async function HomePage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 text-center">
           <div className="inline-flex items-center gap-2 badge-cyan mb-6 text-sm">
-            <span className="live-dot" /> Live in 44 Countries
+            <span className="live-dot" aria-hidden="true" /> Live in 44 Countries
           </div>
           <h1 className="font-orbitron text-5xl md:text-7xl font-black mb-6 leading-tight">
             <span className="text-white">No Discord Scams.</span><br />
@@ -142,7 +152,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {buildStatItems(stats).map((item) => (
               <div key={item.label} className="flex items-center gap-3">
-                <item.icon className="w-5 h-5 text-accent-cyan flex-shrink-0" />
+                <item.icon className="w-5 h-5 text-accent-cyan flex-shrink-0" aria-hidden="true" />
                 <div>
                   <div className="font-orbitron font-bold text-xl text-accent-cyan">{item.value}</div>
                   <div className="text-xs text-muted uppercase tracking-wider">{item.label}</div>
@@ -160,7 +170,7 @@ export default async function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex items-center justify-between mb-6">
           <h2 className="section-title flex items-center gap-3">
-            <span className="live-dot" /> Live Matches
+            <span className="live-dot" aria-hidden="true" /> Live Matches
           </h2>
           <Link href="/play" className="text-sm text-accent-cyan hover:text-accent-cyan-glow transition-colors">
             View all →
@@ -179,7 +189,7 @@ export default async function HomePage() {
               <Link key={game.name} href={game.href} className="card-hover group block relative overflow-hidden">
                 {/* Background artwork */}
                 <div className="absolute inset-0 pointer-events-none">
-                  <img src={game.art} alt="" className="absolute right-0 top-0 h-full w-2/3 object-cover object-center opacity-10 group-hover:opacity-15 transition-opacity" />
+                  <img src={game.art} alt={`${game.name} gameplay artwork`} className="absolute right-0 top-0 h-full w-2/3 object-cover object-center opacity-10 group-hover:opacity-15 transition-opacity" loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-r from-space-800 via-space-800/90 to-transparent" />
                 </div>
                 <div className="relative">
@@ -207,7 +217,7 @@ export default async function HomePage() {
           {HOW_IT_WORKS.map((step) => (
             <div key={step.step} className="text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded bg-accent-cyan/10 border border-accent-cyan/30 mb-6">
-                <step.icon className="w-7 h-7 text-accent-cyan" />
+                <step.icon className="w-7 h-7 text-accent-cyan" aria-hidden="true" />
               </div>
               <div className="font-orbitron text-xs text-accent-cyan tracking-widest mb-2">STEP {step.step}</div>
               <h3 className="font-orbitron text-lg font-bold text-white mb-3">{step.title}</h3>
@@ -217,6 +227,84 @@ export default async function HomePage() {
         </div>
         <div className="text-center mt-12">
           <Link href="/how-it-works" className="btn-secondary px-8 py-3">Full Explainer</Link>
+        </div>
+      </section>
+
+      {/* ── Fair Ping ── */}
+      <section className="bg-space-800 border-y border-border py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 badge-cyan mb-4 text-sm">
+                <Radio className="w-3.5 h-3.5" /> Fair Ping
+              </div>
+              <h2 className="font-orbitron text-3xl font-black mb-4">
+                <span className="text-gradient">Fair Ping.</span>{' '}
+                <span className="text-white">Fair Play.</span>
+              </h2>
+              <p className="text-muted leading-relaxed mb-6">
+                Every match runs on dedicated servers in <strong className="text-white">Istanbul</strong> with
+                equal latency for all players in Turkey, Georgia, and the Balkans. No advantage from geography — only skill decides the winner.
+              </p>
+              <div className="space-y-3">
+                {[
+                  { label: 'Istanbul, Turkey', ping: '< 15ms', flag: '\ud83c\uddf9\ud83c\uddf7' },
+                  { label: 'Tbilisi, Georgia', ping: '~ 25ms', flag: '\ud83c\uddec\ud83c\uddea' },
+                  { label: 'Sofia, Bulgaria', ping: '~ 30ms', flag: '\ud83c\udde7\ud83c\uddec' },
+                  { label: 'Bucharest, Romania', ping: '~ 20ms', flag: '\ud83c\uddf7\ud83c\uddf4' },
+                ].map((loc) => (
+                  <div key={loc.label} className="flex items-center justify-between bg-space-700 border border-border rounded-lg px-4 py-2.5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">{loc.flag}</span>
+                      <span className="text-sm text-white font-semibold">{loc.label}</span>
+                    </div>
+                    <span className="font-mono text-sm text-accent-cyan font-bold">{loc.ping}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 bg-accent-cyan/5 rounded-2xl blur-xl" />
+              <div className="relative card text-center py-12">
+                <Globe className="w-16 h-16 text-accent-cyan mx-auto mb-6 opacity-80" />
+                <div className="font-orbitron text-5xl font-black text-accent-cyan mb-2">128 tick</div>
+                <p className="text-muted text-sm mb-6">Dedicated servers, not peer-to-peer</p>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <div className="font-orbitron text-lg font-bold text-white">44</div>
+                    <div className="text-xs text-muted">Countries</div>
+                  </div>
+                  <div>
+                    <div className="font-orbitron text-lg font-bold text-white">DDoS</div>
+                    <div className="text-xs text-muted">Protected</div>
+                  </div>
+                  <div>
+                    <div className="font-orbitron text-lg font-bold text-white">99.9%</div>
+                    <div className="text-xs text-muted">Uptime</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Trust & Security ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <h2 className="font-orbitron text-3xl font-black text-center mb-4">
+          <span className="text-gradient">Trust & Security</span>
+        </h2>
+        <p className="text-muted text-center mb-12">Every layer of the platform is built for transparency and fairness.</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {TRUST_BADGES.map((badge) => (
+            <div key={badge.title} className="card text-center py-6 px-3 group hover:border-accent-cyan/40 transition-all">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded bg-accent-cyan/10 border border-accent-cyan/20 mb-4 group-hover:shadow-[0_0_16px_rgba(0,229,255,0.15)] transition-shadow">
+                <badge.icon className="w-5 h-5 text-accent-cyan" aria-hidden="true" />
+              </div>
+              <h3 className="font-orbitron text-xs font-bold text-white mb-2 leading-snug">{badge.title}</h3>
+              <p className="text-muted text-[11px] leading-relaxed">{badge.description}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -241,12 +329,112 @@ export default async function HomePage() {
           {TRUST_POINTS.map((t) => (
             <div key={t.title} className="card text-center py-8">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded bg-accent-cyan/10 border border-accent-cyan/30 mb-5">
-                <t.icon className="w-6 h-6 text-accent-cyan" />
+                <t.icon className="w-6 h-6 text-accent-cyan" aria-hidden="true" />
               </div>
               <h3 className="font-orbitron text-lg font-bold text-white mb-3">{t.title}</h3>
               <p className="text-muted text-sm leading-relaxed">{t.description}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── Provably Fair ── */}
+      <section className="bg-space-800 border-y border-border py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 badge-cyan mb-4 text-sm">
+              <FileCheck className="w-3.5 h-3.5" /> Provably Fair
+            </div>
+            <h2 className="font-orbitron text-3xl font-black mb-4">
+              <span className="text-gradient">Every Payout Verified On-Chain</span>
+            </h2>
+            <p className="text-muted max-w-2xl mx-auto leading-relaxed">
+              Our smart contract is open-source on Solana. Every stake, every payout, every fee — permanently recorded and publicly verifiable. No trust required.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-6 mb-10">
+            <div className="card text-center py-8">
+              <Coins className="w-8 h-8 text-accent-cyan mx-auto mb-4" />
+              <div className="font-orbitron text-2xl font-black text-accent-cyan mb-1">90%</div>
+              <p className="text-muted text-sm">To the winner</p>
+            </div>
+            <div className="card text-center py-8">
+              <Shield className="w-8 h-8 text-accent-cyan mx-auto mb-4" />
+              <div className="font-orbitron text-2xl font-black text-accent-cyan mb-1">10%</div>
+              <p className="text-muted text-sm">Platform fee</p>
+            </div>
+            <div className="card text-center py-8">
+              <Zap className="w-8 h-8 text-accent-cyan mx-auto mb-4" />
+              <div className="font-orbitron text-2xl font-black text-accent-cyan mb-1">~2s</div>
+              <p className="text-muted text-sm">Payout speed</p>
+            </div>
+          </div>
+
+          <div className="card">
+            <h3 className="font-orbitron text-sm font-bold text-white mb-4 uppercase tracking-wider">Smart Contract Addresses</h3>
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                <span className="text-xs text-muted uppercase tracking-wider font-semibold w-20 flex-shrink-0">Program</span>
+                <a
+                  href="https://solscan.io/account/BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 font-mono text-xs text-accent-cyan hover:text-accent-cyan-glow transition-colors break-all"
+                >
+                  BqzXnsQCjBb7v9K4wMiFddfMa3dC1tFhxLEgBqyWpZGv
+                  <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                </a>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                <span className="text-xs text-muted uppercase tracking-wider font-semibold w-20 flex-shrink-0">Treasury</span>
+                <a
+                  href="https://solscan.io/account/CT7qFYnCwDgDquTxAL8eBQqBvDBqUJemSz3KEZvqc2HW"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 font-mono text-xs text-accent-cyan hover:text-accent-cyan-glow transition-colors break-all"
+                >
+                  CT7qFYnCwDgDquTxAL8eBQqBvDBqUJemSz3KEZvqc2HW
+                  <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                </a>
+              </div>
+            </div>
+            <p className="text-xs text-muted mt-4">
+              Verify any match vault or payout on{' '}
+              <a href="https://solscan.io" target="_blank" rel="noopener noreferrer" className="text-accent-cyan hover:text-accent-cyan-glow transition-colors">
+                Solscan
+              </a>
+              . The code is the escrow — nobody, not even us, can alter payouts.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Newsletter ── */}
+      <NewsletterSignup />
+
+      {/* ── Explore More ── */}
+      <section className="bg-space-800 border-y border-border py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="section-title text-center mb-8">Explore RaiseGG</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
+            <Link href="/tournaments" className="card-hover py-4">
+              <Trophy className="w-5 h-5 text-accent-cyan mx-auto mb-2" aria-hidden="true" />
+              <span className="text-white font-semibold">Tournaments</span>
+            </Link>
+            <Link href="/leaderboard" className="card-hover py-4">
+              <TrendingUp className="w-5 h-5 text-accent-cyan mx-auto mb-2" aria-hidden="true" />
+              <span className="text-white font-semibold">Leaderboard</span>
+            </Link>
+            <Link href="/blog" className="card-hover py-4">
+              <Globe className="w-5 h-5 text-accent-cyan mx-auto mb-2" aria-hidden="true" />
+              <span className="text-white font-semibold">Blog</span>
+            </Link>
+            <Link href="/about" className="card-hover py-4">
+              <Shield className="w-5 h-5 text-accent-cyan mx-auto mb-2" aria-hidden="true" />
+              <span className="text-white font-semibold">About Us</span>
+            </Link>
+          </div>
         </div>
       </section>
 

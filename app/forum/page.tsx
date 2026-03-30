@@ -6,6 +6,13 @@ export const metadata: Metadata = {
   title: 'Community Forum — Discuss, Recruit, Share',
   description: 'RaiseGG community forum. Discuss strategies, find teammates, report bugs, and share match highlights.',
   alternates: { canonical: 'https://raisegg.com/forum' },
+  openGraph: {
+    images: [{ url: '/api/og?title=Community+Forum&sub=RaiseGG&color=00e5ff', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: [{ url: '/api/og?title=Community+Forum&sub=RaiseGG&color=00e5ff', width: 1200, height: 630 }],
+  },
 }
 
 export default function ForumPage() {

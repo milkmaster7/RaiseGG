@@ -40,7 +40,7 @@ export default function Footer() {
               Competitive stake platform for CS2, Dota 2 & Deadlock. Fair play for the Caucasus, Turkey and Balkans.
             </p>
             <div className="flex gap-4 mt-4">
-              <a href="https://t.me/raisegg" target="_blank" rel="noopener noreferrer"
+              <a href="https://t.me/raise_GG" target="_blank" rel="noopener noreferrer"
                 className="text-muted hover:text-accent-purple transition-colors text-sm font-semibold">
                 Telegram
               </a>

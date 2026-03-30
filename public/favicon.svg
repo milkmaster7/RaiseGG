@@ -1,6 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
   <rect width="32" height="32" rx="6" fill="#0b0c1d"/>
-  <polygon points="16,4 20,13 30,13 22,19 25,28 16,22 7,28 10,19 2,13 12,13" fill="none" stroke="#00e6ff" stroke-width="1.5" stroke-linejoin="round"/>
-  <polygon points="16,8 19,14 26,14 20,18 22,25 16,21 10,25 12,18 6,14 13,14" fill="#00e6ff" opacity="0.15"/>
-  <text x="16" y="20" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="10" fill="#00e6ff" letter-spacing="-1">RG</text>
+  <!-- Shield shape -->
+  <path d="M16 3 L27 8 L27 17 C27 23 22 27 16 29 C10 27 5 23 5 17 L5 8 Z" fill="none" stroke="#00e6ff" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M16 5 L25 9.5 L25 17 C25 22 21 25.5 16 27.5 C11 25.5 7 22 7 17 L7 9.5 Z" fill="#00e6ff" opacity="0.1"/>
+  <!-- Upward arrow / raise indicator -->
+  <path d="M16 10 L20 16 L17.5 16 L17.5 22 L14.5 22 L14.5 16 L12 16 Z" fill="#00e6ff" opacity="0.9"/>
+  <!-- Glow accent -->
+  <path d="M16 10 L20 16 L17.5 16 L17.5 22 L14.5 22 L14.5 16 L12 16 Z" fill="#7b61ff" opacity="0.3"/>
 </svg>

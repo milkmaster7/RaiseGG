@@ -7,8 +7,12 @@ import { createServiceClient } from '@/lib/supabase'
 import { readSessionFromCookies } from '@/lib/session'
 import { Zap, Trophy, Wallet, Clock, Settings } from 'lucide-react'
 import { EloTrendWidget } from '@/components/ui/EloTrendWidget'
-import { OnboardingWrapper } from '@/components/ui/OnboardingWrapper'
+import { OnboardingWrapper } from '@/components/onboarding/OnboardingWrapper'
 import { ChallengesWidget } from '@/components/ui/ChallengesWidget'
+import { PlayerStats } from '@/components/dashboard/PlayerStats'
+import { StreakRewards } from '@/components/dashboard/StreakRewards'
+import { WeeklyHighlights } from '@/components/dashboard/WeeklyHighlights'
+import { PushBanner } from '@/components/notifications/PushSubscription'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -54,6 +58,7 @@ export default async function DashboardPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs).replace(/</g, '\\u003c') }} />
 
       <OnboardingWrapper hasBalance={Number(player?.usdc_balance ?? 0) > 0} />
+      <PushBanner />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="font-orbitron text-3xl font-black mb-2 text-gradient">Dashboard</h1>
@@ -86,6 +91,17 @@ export default async function DashboardPage() {
             <span className="text-xs text-muted">Last 30 matches</span>
           </div>
           <EloTrendWidget playerId={playerId} />
+        </div>
+
+        {/* Streak Rewards + Weekly Highlights */}
+        <div className="grid md:grid-cols-2 gap-4 mb-10">
+          <StreakRewards />
+          <WeeklyHighlights />
+        </div>
+
+        {/* Player Stats */}
+        <div className="mb-10">
+          <PlayerStats />
         </div>
 
         {/* Daily Challenges */}

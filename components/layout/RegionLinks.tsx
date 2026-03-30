@@ -7,20 +7,22 @@ type RegionLinksProps = {
 
 const REGIONS: { name: string; countries: { slug: string; label: string }[] }[] = [
   {
-    name: 'Caucasus',
+    name: 'Caucasus & Middle East',
     countries: [
-      { slug: 'georgia', label: 'Georgia' },
       { slug: 'turkey', label: 'Turkey' },
+      { slug: 'georgia', label: 'Georgia' },
       { slug: 'armenia', label: 'Armenia' },
       { slug: 'azerbaijan', label: 'Azerbaijan' },
+      { slug: 'iran', label: 'Iran' },
+      { slug: 'israel', label: 'Israel' },
     ],
   },
   {
     name: 'Balkans',
     countries: [
-      { slug: 'serbia', label: 'Serbia' },
       { slug: 'romania', label: 'Romania' },
       { slug: 'bulgaria', label: 'Bulgaria' },
+      { slug: 'serbia', label: 'Serbia' },
       { slug: 'greece', label: 'Greece' },
     ],
   },
@@ -28,9 +30,15 @@ const REGIONS: { name: string; countries: { slug: string; label: string }[] }[] 
     name: 'Eastern Europe',
     countries: [
       { slug: 'ukraine', label: 'Ukraine' },
-      { slug: 'poland', label: 'Poland' },
       { slug: 'russia', label: 'Russia' },
+      { slug: 'poland', label: 'Poland' },
+    ],
+  },
+  {
+    name: 'Central Asia',
+    countries: [
       { slug: 'kazakhstan', label: 'Kazakhstan' },
+      { slug: 'uzbekistan', label: 'Uzbekistan' },
     ],
   },
 ]
@@ -39,9 +47,9 @@ export function RegionLinks({ currentGame, currentCountry }: RegionLinksProps) {
   return (
     <div className="mt-12">
       <h3 className="font-orbitron text-sm font-bold text-muted uppercase tracking-widest mb-4">
-        Popular Regions
+        Available Regions
       </h3>
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         {REGIONS.map((region) => {
           const links = region.countries.filter((c) => c.slug !== currentCountry)
           if (links.length === 0) return null

@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   if (!walletAddress) return NextResponse.json({ error: 'walletAddress required' }, { status: 400 })
 
   // Validate it's a real Solana pubkey
-  try { new PublicKey(walletAddress) } catch {
+  try { new PublicKey(walletAddress) } catch (_) {
     return NextResponse.json({ error: 'Invalid Solana address' }, { status: 400 })
   }
 

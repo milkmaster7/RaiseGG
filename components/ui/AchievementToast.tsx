@@ -96,23 +96,6 @@ export function AchievementToastProvider({ children }: { children: React.ReactNo
         })}
       </div>
 
-      <style jsx global>{`
-        .achievement-toast-special {
-          animation: achievement-glow 2s ease-in-out infinite alternate;
-        }
-        @keyframes achievement-glow {
-          0% { filter: brightness(1); }
-          100% { filter: brightness(1.15); }
-        }
-        .achievement-sparkle {
-          animation: sparkle-float 1.5s ease-out infinite;
-        }
-        @keyframes sparkle-float {
-          0% { transform: translateY(100%) scale(0); opacity: 0; }
-          30% { opacity: 1; transform: translateY(50%) scale(1); }
-          100% { transform: translateY(-20px) scale(0); opacity: 0; }
-        }
-      `}</style>
     </>
   )
 }

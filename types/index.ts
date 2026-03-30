@@ -1,6 +1,6 @@
 export type Game = 'cs2' | 'dota2' | 'deadlock'
 export type MatchStatus = 'open' | 'locked' | 'live' | 'completed' | 'cancelled' | 'disputed'
-export type MatchFormat = '1v1' | '5v5'
+export type MatchFormat = '1v1' | '2v2' | '3v3' | '5v5'
 export type DisputeStatus = 'open' | 'resolved' | 'cancelled'
 export type StakeCurrency = 'usdc' | 'usdt'
 
@@ -10,6 +10,7 @@ export interface Player {
   username: string
   avatar_url: string | null
   country: string | null
+  city: string | null
   cs2_elo: number
   dota2_elo: number
   deadlock_elo: number
@@ -29,10 +30,13 @@ export interface Player {
   updated_at: string
 }
 
+export type MatchType = '1v1' | '2v2' | '5v5'
+
 export interface Match {
   id: string
   game: Game
   format: MatchFormat
+  match_type: MatchType
   player_a_id: string
   player_b_id: string | null
   stake_amount: number
@@ -47,6 +51,17 @@ export interface Match {
   region: string | null
   has_password: boolean | null
   challenged_player_id: string | null
+  is_team_match: boolean | null
+  team_size: number | null
+  stake_per_player: number | null
+  team_a_name: string | null
+  team_b_name: string | null
+  team_a_ids: string[] | null
+  team_b_ids: string[] | null
+  team_a_players: string[] | null
+  team_b_players: string[] | null
+  expires_at: string | null
+  resolve_deadline: string | null
   created_at: string
   resolved_at: string | null
   player_a?: Player

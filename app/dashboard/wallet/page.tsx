@@ -9,6 +9,7 @@ import { breadcrumbSchema } from '@/lib/schemas'
 import { getMintForCurrency, type StakeCurrency } from '@/lib/escrow'
 import { ArrowDownToLine, ArrowUpFromLine, Clock, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import OnRampWidget from '@/components/wallet/OnRampWidget'
 
 type TxRecord = {
   id: string
@@ -370,6 +371,14 @@ export default function WalletPage() {
                 )}
               </div>
             )}
+
+            {/* On-ramp: buy crypto with card */}
+            <div className="mt-6">
+              <OnRampWidget
+                walletAddress={publicKey?.toBase58()}
+                defaultCurrency={currency === 'usdt' ? 'USDT' : 'USDC'}
+              />
+            </div>
           </>
         )}
       </div>

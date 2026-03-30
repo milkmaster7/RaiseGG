@@ -25,7 +25,7 @@ import { AnchorProvider, Program, BN } from '@coral-xyz/anchor'
 function getProgramId(): PublicKey {
   const id = process.env.NEXT_PUBLIC_SOLANA_PROGRAM_ID
   if (id && id.length >= 32 && id.length <= 44 && !id.startsWith('PLACEHOLDER') && !id.startsWith('RGG')) {
-    try { return new PublicKey(id) } catch {}
+    try { return new PublicKey(id) } catch (_) {}
   }
   return new PublicKey('11111111111111111111111111111111')
 }
@@ -153,8 +153,14 @@ export async function solanaResolveMatch(
   currency: StakeCurrency = 'usdc'
 ): Promise<{ txSignature: string }> {
   const { Keypair } = await import('@solana/web3.js')
-  const rawKey = JSON.parse(process.env.SOLANA_AUTHORITY_PRIVATE_KEY ?? '[]') as number[]
-  const authorityKeypair = Keypair.fromSecretKey(Uint8Array.from(rawKey))
+  const keyStr = process.env.SOLANA_AUTHORITY_PRIVATE_KEY ?? '[]'
+  let authorityKeypair: InstanceType<typeof Keypair>
+  if (keyStr.startsWith('[')) {
+    authorityKeypair = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(keyStr)))
+  } else {
+    const bs58 = await import('bs58')
+    authorityKeypair = Keypair.fromSecretKey(bs58.default.decode(keyStr))
+  }
 
   const idl = await import('../anchor/target/idl/raise_gg.json')
 
@@ -206,8 +212,14 @@ export async function solanaCancelMatch(
   currency: StakeCurrency = 'usdc'
 ): Promise<{ txSignature: string }> {
   const { Keypair } = await import('@solana/web3.js')
-  const rawKey = JSON.parse(process.env.SOLANA_AUTHORITY_PRIVATE_KEY ?? '[]') as number[]
-  const authorityKeypair = Keypair.fromSecretKey(Uint8Array.from(rawKey))
+  const keyStr = process.env.SOLANA_AUTHORITY_PRIVATE_KEY ?? '[]'
+  let authorityKeypair: InstanceType<typeof Keypair>
+  if (keyStr.startsWith('[')) {
+    authorityKeypair = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(keyStr)))
+  } else {
+    const bs58 = await import('bs58')
+    authorityKeypair = Keypair.fromSecretKey(bs58.default.decode(keyStr))
+  }
 
   const { Transaction: LegacyTransaction } = await import('@solana/web3.js')
   const wallet: AnchorWallet = {

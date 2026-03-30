@@ -3,10 +3,10 @@ seeds = true
 skip-lint = false
 
 [programs.localnet]
-raise_gg = "RGGeskrowAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+raise_gg = "5TVDLAMTv5hGkgAmEYZsfdyPEvuUBJtkAnqy1LkyQPLK"
 
 [programs.mainnet]
-raise_gg = "RGGeskrowAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+raise_gg = "5TVDLAMTv5hGkgAmEYZsfdyPEvuUBJtkAnqy1LkyQPLK"
 
 [registry]
 url = "https://api.apr.dev"

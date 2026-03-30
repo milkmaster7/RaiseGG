@@ -45,7 +45,7 @@ async function getFeed(): Promise<FeedItem[]> {
     if (!res.ok) return []
     const data = await res.json()
     return data.feed ?? []
-  } catch {
+  } catch (_) {
     return []
   }
 }

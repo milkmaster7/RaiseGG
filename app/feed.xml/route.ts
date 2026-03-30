@@ -14,6 +14,7 @@ export async function GET() {
       <description><![CDATA[${p.description}]]></description>
       <pubDate>${new Date(p.publishedAt).toUTCString()}</pubDate>
       <category>${p.tag}</category>
+      <author>hello@raisegg.com (RaiseGG)</author>
     </item>`
     )
     .join('\n')

@@ -169,7 +169,7 @@ export const BLOG_POSTS: BlogPost[] = [
       <h2>Turkish CS2 Scene on RaiseGG</h2>
       <p>We specifically serve the Turkey and Caucasus region — you'll find opponents at your skill level with no ping disadvantage. Our servers are located to minimise latency for the region.</p>
       <h2>Language Support</h2>
-      <p>The platform is in English, but our Telegram has a dedicated Turkish community channel. Join at t.me/raisegg.</p>
+      <p>The platform is in English, but our Telegram has a dedicated Turkish community channel. Join at t.me/raise_GG.</p>
     `,
   },
   {
@@ -191,7 +191,7 @@ export const BLOG_POSTS: BlogPost[] = [
       <h2>Withdrawing Winnings</h2>
       <p>Won a match? Your USDC or USDT balance updates automatically. Withdraw anytime from your Wallet page — it hits your Phantom wallet in under 30 seconds.</p>
       <h2>Community</h2>
-      <p>Join our Telegram (t.me/raisegg) to find Georgian opponents, discuss maps, and get help from the team.</p>
+      <p>Join our Telegram (t.me/raise_GG) to find Georgian opponents, discuss maps, and get help from the team.</p>
     `,
   },
   {
@@ -307,7 +307,7 @@ export const BLOG_POSTS: BlogPost[] = [
       <p><strong>CS2:</strong> Matches are played on RaiseGG dedicated servers — you'll receive a connect string after both players are ready. Results are recorded automatically. No match ID required.</p>
       <p><strong>Dota 2:</strong> Play your match in the Dota 2 client (EU West or EU East server for lowest ping). After the game ends, paste the match ID into your active match on RaiseGG. Payout follows within seconds of verification.</p>
       <h2>Community</h2>
-      <p>Our Telegram has a Balkan community channel where you can find opponents, discuss meta, and get support. Join at t.me/raisegg.</p>
+      <p>Our Telegram has a Balkan community channel where you can find opponents, discuss meta, and get support. Join at t.me/raise_GG.</p>
     `,
   },
   {
@@ -408,7 +408,7 @@ export async function getAIBlogPosts(): Promise<BlogPost[]> {
       .select('slug,title,description,tag,published_at,read_time,content,related_links')
       .order('published_at', { ascending: false })
     return (data ?? []).map(rowToPost)
-  } catch {
+  } catch (_) {
     return []
   }
 }
@@ -428,6 +428,15 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
   return deduped.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 }
 
+export async function getRelatedPosts(currentSlug: string, tag: string, limit = 3): Promise<BlogPost[]> {
+  const all = await getAllBlogPosts()
+  // Prefer posts with the same tag, exclude current post
+  const sameTag = all.filter((p) => p.slug !== currentSlug && p.tag === tag)
+  const otherTag = all.filter((p) => p.slug !== currentSlug && p.tag !== tag)
+  const candidates = [...sameTag, ...otherTag]
+  return candidates.slice(0, limit)
+}
+
 export async function getBlogPostWithAI(slug: string): Promise<BlogPost | undefined> {
   const static_ = getBlogPost(slug)
   if (static_) return static_
@@ -440,7 +449,7 @@ export async function getBlogPostWithAI(slug: string): Promise<BlogPost | undefi
       .eq('slug', slug)
       .single()
     return data ? rowToPost(data) : undefined
-  } catch {
+  } catch (_) {
     return undefined
   }
 }

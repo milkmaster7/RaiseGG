@@ -108,7 +108,7 @@ export function ActiveEvents() {
         const data = await res.json()
         setActive(data.active ?? [])
         setUpcoming(data.upcoming ?? [])
-      } catch {
+      } catch (_) {
         // silent
       } finally {
         setLoading(false)

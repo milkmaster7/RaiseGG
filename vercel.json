@@ -7,6 +7,118 @@
     {
       "path": "/api/cron/blog",
       "schedule": "0 9 * * 1,3,5"
+    },
+    {
+      "path": "/api/cron/vac-check",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/monitor",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/self-heal",
+      "schedule": "30 */2 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-prizes",
+      "schedule": "0 0 * * 1"
+    },
+    {
+      "path": "/api/cron/season-reset",
+      "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/daily-tournament",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/cron/match-notify",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/marketing-post",
+      "schedule": "0 6,12,18,0 * * *"
+    },
+    {
+      "path": "/api/cron/discord-post",
+      "schedule": "0 2,10,18 * * *"
+    },
+    {
+      "path": "/api/cron/marketing-vk",
+      "schedule": "0 8,20 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-graphics",
+      "schedule": "0 12 * * 0"
+    },
+    {
+      "path": "/api/cron/streamer-discovery",
+      "schedule": "0 10 * * 1"
+    },
+    {
+      "path": "/api/cron/twitter-post",
+      "schedule": "0 9,15,21 * * *"
+    },
+    {
+      "path": "/api/cron/telegram-join",
+      "schedule": "0 3 * * 1"
+    },
+    {
+      "path": "/api/cron/bounty-refresh",
+      "schedule": "0 4 * * 1"
+    },
+    {
+      "path": "/api/cron/holiday-tournament",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/meme-post",
+      "schedule": "0 5,17 * * *"
+    },
+    {
+      "path": "/api/cron/migrations",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/roulette-match",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/city-leaderboard",
+      "schedule": "0 14 * * 0"
+    },
+    {
+      "path": "/api/cron/facebook-post",
+      "schedule": "0 8,14,22 * * *"
+    },
+    {
+      "path": "/api/cron/reddit-post",
+      "schedule": "0 10,20 * * *"
+    },
+    {
+      "path": "/api/cron/reddit-monitor",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/reddit-community",
+      "schedule": "0 3,9,15,21 * * *"
+    },
+    {
+      "path": "/api/cron/directory-submit",
+      "schedule": "0 6 * * 1"
+    },
+    {
+      "path": "/api/cron/reddit-karma",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/reddit-daily-thread",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/reddit-contest",
+      "schedule": "0 14 * * 0"
     }
   ]
 }

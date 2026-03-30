@@ -6,10 +6,26 @@ import { Clock, Zap, Link2, Lock } from 'lucide-react'
 import { useState } from 'react'
 import { TierBadge, Badge } from '@/components/ui/Badge'
 import { CancelMatchButton } from '@/components/matches/CancelMatchButton'
+import { MatchTimer } from '@/components/matches/MatchTimer'
 import { getStakeRarity, RARITY_STYLES } from '@/lib/rarity'
+import { calculateEloPreview } from '@/lib/elo'
 import type { Match } from '@/types'
 
 const GAME_LABELS = { cs2: 'CS2', dota2: 'Dota 2', deadlock: 'Deadlock' }
+
+const REGION_DISPLAY: Record<string, { label: string; flag: string }> = {
+  'eu-west':    { label: 'EU West',   flag: '\ud83c\uddea\ud83c\uddfa' },
+  'eu-east':    { label: 'EU East',   flag: '\ud83c\uddea\ud83c\uddfa' },
+  'istanbul':   { label: 'Istanbul',  flag: '\ud83c\uddf9\ud83c\uddf7' },
+  'tr':         { label: 'Istanbul',  flag: '\ud83c\uddf9\ud83c\uddf7' },
+  'turkey':     { label: 'Istanbul',  flag: '\ud83c\uddf9\ud83c\uddf7' },
+  'caucasus':   { label: 'Caucasus',  flag: '\ud83c\uddec\ud83c\uddea' },
+  'ge':         { label: 'Tbilisi',   flag: '\ud83c\uddec\ud83c\uddea' },
+  'balkans':    { label: 'Balkans',   flag: '\ud83c\udde7\ud83c\uddec' },
+  'na':         { label: 'NA East',   flag: '\ud83c\uddfa\ud83c\uddf8' },
+  'us':         { label: 'NA East',   flag: '\ud83c\uddfa\ud83c\uddf8' },
+  'asia':       { label: 'Asia',      flag: '\ud83c\uddef\ud83c\uddf5' },
+}
 const STATUS_CONFIG = {
   open:      { label: 'Open',      variant: 'green'  as const },
   locked:    { label: 'Locked',    variant: 'cyan'   as const },
@@ -24,9 +40,10 @@ interface MatchCardProps {
   showJoin?: boolean
   onJoin?: (match: Match) => void
   currentPlayerId?: string | null
+  currentPlayerElo?: number
 }
 
-export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: MatchCardProps) {
+export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId, currentPlayerElo }: MatchCardProps) {
   const status = STATUS_CONFIG[match.status]
   const rarity = getStakeRarity(match.stake_amount)
   const rarityStyle = RARITY_STYLES[rarity]
@@ -56,11 +73,16 @@ export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: 
           <Badge variant="cyan">{GAME_LABELS[match.game]}</Badge>
         </div>
         <Badge variant="gray">{match.format}</Badge>
-        {match.region && (
-          <span className="text-[10px] font-mono text-muted border border-border rounded px-1.5 py-0.5 flex-shrink-0">
-            {match.region}
-          </span>
-        )}
+        {match.region && (() => {
+          const regionKey = match.region.toLowerCase()
+          const info = REGION_DISPLAY[regionKey]
+          return (
+            <span className="inline-flex items-center gap-1 text-[10px] font-mono text-accent-cyan bg-accent-cyan/10 border border-accent-cyan/20 rounded px-1.5 py-0.5 flex-shrink-0" title={`Server: ${info?.label ?? match.region}`}>
+              <span>{info?.flag ?? '\ud83c\udf10'}</span>
+              <span>{info?.label ?? match.region}</span>
+            </span>
+          )
+        })()}
         {match.has_password && (
           <span title="Password protected">
             <Lock className="w-3 h-3 text-muted flex-shrink-0" />
@@ -126,8 +148,23 @@ export function MatchCard({ match, showJoin = false, onJoin, currentPlayerId }: 
         <span className="text-xs text-muted uppercase">{match.currency ?? 'usdc'}</span>
       </div>
 
-      {/* Status + action */}
+      {/* ELO preview badge */}
+      {match.status === 'open' && currentPlayerElo && match.player_a && (() => {
+        const opponentElo = match.player_a[`${match.game}_elo` as keyof typeof match.player_a] as number | undefined
+        if (!opponentElo || currentPlayerId === match.player_a_id) return null
+        const preview = calculateEloPreview(currentPlayerElo, opponentElo)
+        return (
+          <div className="flex items-center gap-1.5 flex-shrink-0 text-xs font-mono">
+            <span className="text-green-400">+{preview.win}</span>
+            <span className="text-muted">/</span>
+            <span className="text-red-400">{preview.loss}</span>
+          </div>
+        )
+      })()}
+
+      {/* Timer + Status + action */}
       <div className="flex items-center gap-2 flex-shrink-0">
+        <MatchTimer match={match} />
         <Badge variant={status.variant}>{status.label}</Badge>
         {showJoin && match.status === 'open' && (
           <>

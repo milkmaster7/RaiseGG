@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Shield, Users, Trophy, Crown, Star, Settings, LogOut, Trash2, UserPlus, UserMinus, ArrowUp } from 'lucide-react'
+import { Shield, Users, Trophy, Crown, Star, Settings, LogOut, Trash2, UserPlus, UserMinus, ArrowUp, Swords, MessageSquare, Award, Search, DollarSign } from 'lucide-react'
+import ClanWars from '@/components/clans/ClanWars'
+import ClanChat from '@/components/clans/ClanChat'
+import ClanAchievements from '@/components/clans/ClanAchievements'
+import ClanRecruitment from '@/components/clans/ClanRecruitment'
+import ClanTreasury from '@/components/clans/ClanTreasury'
 
 type ClanMember = {
   player_id: string
@@ -21,6 +26,9 @@ type ClanDetail = {
   game_focus: string
   region: string
   invite_only: boolean
+  recruiting: boolean
+  min_elo: number
+  treasury_balance: number
   created_at: string
   leader_name: string
   member_count: number
@@ -34,6 +42,8 @@ type ClanDetail = {
 
 const GAME_LABELS: Record<string, string> = { cs2: 'CS2', dota2: 'Dota 2', deadlock: 'Deadlock', all: 'All Games' }
 
+type TabKey = 'roster' | 'chat' | 'achievements' | 'recruitment' | 'treasury' | 'matches' | 'wars' | 'leaderboard' | 'settings'
+
 export default function ClanDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -41,7 +51,7 @@ export default function ClanDetailPage() {
 
   const [clan, setClan] = useState<ClanDetail | null>(null)
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState<'roster' | 'matches' | 'leaderboard' | 'settings'>('roster')
+  const [tab, setTab] = useState<TabKey>('roster')
   const [actionLoading, setActionLoading] = useState(false)
   const [editDesc, setEditDesc] = useState('')
   const [editInviteOnly, setEditInviteOnly] = useState(false)
@@ -117,12 +127,17 @@ export default function ClanDetailPage() {
     return null
   }
 
-  const tabs = [
-    { key: 'roster', label: 'Roster', icon: Users },
-    { key: 'matches', label: 'Matches', icon: Trophy },
-    { key: 'leaderboard', label: 'Leaderboard', icon: Trophy },
-    ...(clan.my_role === 'leader' ? [{ key: 'settings', label: 'Settings', icon: Settings }] : []),
-  ] as const
+  const isAdmin = clan.my_role === 'leader' || clan.my_role === 'officer'
+
+  const tabs: { key: TabKey; label: string; icon: typeof Users }[] = [
+    { key: 'roster', label: 'Overview', icon: Users },
+    { key: 'chat', label: 'Chat', icon: MessageSquare },
+    { key: 'achievements', label: 'Achievements', icon: Award },
+    { key: 'recruitment', label: 'Recruitment', icon: Search },
+    { key: 'treasury', label: 'Treasury', icon: DollarSign },
+    { key: 'wars', label: 'Clan Wars', icon: Swords },
+    ...(clan.my_role === 'leader' ? [{ key: 'settings' as TabKey, label: 'Settings', icon: Settings }] : []),
+  ]
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
@@ -143,6 +158,11 @@ export default function ClanDetailPage() {
               {clan.invite_only && (
                 <span className="px-2 py-0.5 rounded text-xs bg-yellow-500/10 text-yellow-400 border border-yellow-500/30">
                   Invite Only
+                </span>
+              )}
+              {clan.recruiting && (
+                <span className="px-2 py-0.5 rounded text-xs bg-green-500/10 text-green-400 border border-green-500/30">
+                  Recruiting
                 </span>
               )}
             </div>
@@ -201,12 +221,12 @@ export default function ClanDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 mb-6 border-b border-border pb-px">
+      <div className="flex items-center gap-1 mb-6 border-b border-border pb-px overflow-x-auto scrollbar-hide">
         {tabs.map(t => (
           <button
             key={t.key}
-            onClick={() => setTab(t.key as typeof tab)}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+            onClick={() => setTab(t.key)}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
               tab === t.key
                 ? 'border-accent-cyan text-white'
                 : 'border-transparent text-muted hover:text-white'
@@ -287,20 +307,42 @@ export default function ClanDetailPage() {
         </div>
       )}
 
-      {tab === 'matches' && (
-        <div className="rounded-xl bg-space-800 border border-border p-8 text-center">
-          <Trophy className="w-10 h-10 text-muted mx-auto mb-3" />
-          <p className="text-muted">Clan matches coming soon</p>
-          <p className="text-xs text-muted/60 mt-1">5v5 clan wars will be available when the tournament system launches.</p>
-        </div>
+      {tab === 'chat' && (
+        <ClanChat clanId={clan.id} isMember={!!clan.my_role} />
       )}
 
-      {tab === 'leaderboard' && (
-        <div className="rounded-xl bg-space-800 border border-border p-8 text-center">
-          <Trophy className="w-10 h-10 text-muted mx-auto mb-3" />
-          <p className="text-muted">Clan leaderboard coming soon</p>
-          <p className="text-xs text-muted/60 mt-1">Compete in clan matches to earn a ranking.</p>
-        </div>
+      {tab === 'achievements' && (
+        <ClanAchievements
+          stats={{
+            totalWins: clan.total_wins,
+            memberCount: clan.member_count,
+            longestWinStreak: 0, // populated from war data in future
+            totalEarnings: Number(clan.treasury_balance ?? 0),
+            createdAt: clan.created_at,
+          }}
+        />
+      )}
+
+      {tab === 'recruitment' && (
+        <ClanRecruitment
+          clanId={clan.id}
+          isAdmin={isAdmin}
+          isMember={!!clan.my_role}
+          currentSettings={{
+            recruiting: clan.recruiting ?? false,
+            minElo: clan.min_elo ?? 0,
+            preferredGame: clan.game_focus ?? 'all',
+            region: clan.region ?? 'Global',
+          }}
+        />
+      )}
+
+      {tab === 'treasury' && (
+        <ClanTreasury clanId={clan.id} />
+      )}
+
+      {tab === 'wars' && (
+        <ClanWars clanId={clan.id} memberCount={clan.member_count} myRole={clan.my_role} />
       )}
 
       {tab === 'settings' && clan.my_role === 'leader' && (

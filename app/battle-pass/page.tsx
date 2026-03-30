@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   title: `Battle Pass — Season ${SEASON_CONFIG.season}: ${SEASON_CONFIG.name}`,
   description: 'Level up your Season Battle Pass by playing matches. Unlock exclusive rewards, badges, USDC prizes, and more on the free and premium tracks.',
   alternates: { canonical: 'https://raisegg.com/battle-pass' },
+  openGraph: {
+    images: [{ url: '/api/og?title=Battle+Pass&sub=Season+Rewards&color=7b61ff', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: [{ url: '/api/og?title=Battle+Pass&sub=Season+Rewards&color=7b61ff', width: 1200, height: 630 }],
+  },
 }
 
 export default function BattlePassPage() {

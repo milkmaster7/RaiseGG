@@ -32,7 +32,7 @@ export function RegisterButton({ tournamentId, entryFee, maxPlayers, registeredC
         const data = await res.json()
         setPlayerId(data.player?.id ?? null)
         setBalance(Number(data.player?.usdc_balance ?? 0))
-      } catch {}
+      } catch (_) {}
 
       // Check if already registered
       try {
@@ -41,7 +41,7 @@ export function RegisterButton({ tournamentId, entryFee, maxPlayers, registeredC
         const data = await res.json()
         const me = data.registrations?.find((r: any) => r.player_id === playerId)
         if (me) setIsRegistered(true)
-      } catch {}
+      } catch (_) {}
     }
     check()
   }, [tournamentId, playerId])

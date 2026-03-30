@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { TierBadge } from './Badge'
+import { getFlag } from '@/lib/countries'
 import type { Player, Game } from '@/types'
 
 interface LeaderboardTableProps {
@@ -60,7 +61,9 @@ export function LeaderboardTable({ players, game, limit }: LeaderboardTableProps
                       <Image src={player.avatar_url} alt={player.username} width={28} height={28} className="rounded-full" />
                     )}
                     <span className="font-medium text-white">{player.username}</span>
-                    {player.country && <span className="text-muted text-xs">{player.country}</span>}
+                    {player.country && (
+                      <span className="text-sm" title={player.country}>{getFlag(player.country)}</span>
+                    )}
                   </Link>
                 </td>
                 <td className="py-3 px-4"><TierBadge elo={elo} /></td>

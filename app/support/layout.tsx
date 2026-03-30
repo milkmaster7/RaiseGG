@@ -1,14 +1,22 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Support — RaiseGG',
-  description: 'Get help with your RaiseGG account, matches, wallet or withdrawals. Contact us via email or Telegram.',
+  title: 'Support & Contact',
+  description: 'Get help with your RaiseGG account, matches, or payouts. Contact us via email or Telegram, or send a message directly from this page.',
   alternates: { canonical: 'https://raisegg.com/support' },
   openGraph: {
-    title: 'Support — RaiseGG',
-    description: 'Contact the RaiseGG support team for help with your account, matches or wallet.',
+    title: 'Support & Contact — RaiseGG',
+    description: 'Get help with your account, matches, or payouts. Contact us via email or Telegram.',
     url: 'https://raisegg.com/support',
+    siteName: 'RaiseGG',
     type: 'website',
+    images: [{ url: '/api/og?title=Support&sub=RaiseGG&color=7b61ff', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Support & Contact — RaiseGG',
+    description: 'Get help with your account, matches, or payouts. Contact us via email or Telegram.',
+    images: ['/api/og?title=Support&sub=RaiseGG&color=7b61ff'],
   },
 }
 

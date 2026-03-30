@@ -18,7 +18,7 @@ const CONTACT_METHODS = [
     icon: MessageCircle,
     label: 'Telegram',
     value: '@raisegg',
-    href: 'https://t.me/raisegg',
+    href: 'https://t.me/raise_GG',
     response: 'Within 1 hour during business hours',
   },
 ]

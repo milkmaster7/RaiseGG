@@ -41,7 +41,7 @@ export async function getDota2MatchDetails(matchId: string) {
       const result = data?.result
       if (result?.players?.length) return result
     }
-  } catch {}
+  } catch (_) {}
 
   // Fallback: OpenDota API (free, no key needed)
   try {
@@ -50,7 +50,7 @@ export async function getDota2MatchDetails(matchId: string) {
       const data = await res.json()
       if (data?.players?.length) return data
     }
-  } catch {}
+  } catch (_) {}
 
   return null
 }

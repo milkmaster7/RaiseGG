@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { User, Mail, Wallet, Trash2, Save } from 'lucide-react'
+import { User, Mail, Wallet, Trash2, Save, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { breadcrumbSchema } from '@/lib/schemas'
+import { COUNTRY_OPTIONS, getFlag } from '@/lib/countries'
+import { PushToggle } from '@/components/notifications/PushSubscription'
 
 interface Player {
   id: string
@@ -12,6 +14,7 @@ interface Player {
   email: string | null
   wallet_address: string | null
   avatar_url: string | null
+  country: string | null
 }
 
 export default function SettingsPage() {
@@ -21,6 +24,7 @@ export default function SettingsPage() {
 
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
+  const [country, setCountry] = useState('')
   const [saving, setSaving] = useState(false)
   const [saveMsg, setSaveMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
@@ -49,11 +53,12 @@ export default function SettingsPage() {
         setPlayer(detailData.player)
         setUsername(detailData.player.username ?? '')
         setEmail(detailData.player.email ?? '')
+        setCountry(detailData.player.country ?? '')
       } else {
-        setPlayer({ ...data.player, email: null, wallet_address: null })
+        setPlayer({ ...data.player, email: null, wallet_address: null, country: null })
         setUsername(data.player.username ?? '')
       }
-    } catch {
+    } catch (_) {
       router.push('/api/auth/steam')
     } finally {
       setLoading(false)
@@ -72,7 +77,7 @@ export default function SettingsPage() {
       const res = await fetch('/api/players/me', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: username.trim(), email: email.trim() || null }),
+        body: JSON.stringify({ username: username.trim(), email: email.trim() || null, country: country || null }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to save')
@@ -96,7 +101,7 @@ export default function SettingsPage() {
       // Logout and redirect
       await fetch('/api/auth/logout', { method: 'POST' })
       router.push('/')
-    } catch {
+    } catch (_) {
       setDeleting(false)
       setShowDeleteModal(false)
     }
@@ -156,6 +161,34 @@ export default function SettingsPage() {
           <p className="text-muted text-xs mt-2">Used for match notifications and account recovery. Optional.</p>
         </div>
 
+        {/* Country */}
+        <div className="card mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Globe className="w-5 h-5 text-accent-cyan" />
+            <h2 className="font-orbitron font-bold text-white text-sm">Country</h2>
+          </div>
+          <div className="relative">
+            <select
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className="w-full bg-space-800 border border-space-700 rounded px-3 py-2.5 text-white text-sm focus:border-accent-cyan focus:outline-none transition-colors appearance-none cursor-pointer"
+            >
+              <option value="">Not set</option>
+              {COUNTRY_OPTIONS.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.flag} {c.name}
+                </option>
+              ))}
+            </select>
+            {country && (
+              <span className="absolute right-10 top-1/2 -translate-y-1/2 text-lg">
+                {getFlag(country)}
+              </span>
+            )}
+          </div>
+          <p className="text-muted text-xs mt-2">Shown as a flag on leaderboards and your profile.</p>
+        </div>
+
         {/* Connected Wallet */}
         <div className="card mb-6">
           <div className="flex items-center gap-3 mb-4">
@@ -170,6 +203,9 @@ export default function SettingsPage() {
             <p className="text-muted text-sm">No wallet connected. Connect your Phantom wallet from the dashboard.</p>
           )}
         </div>
+
+        {/* Push Notifications */}
+        <PushToggle />
 
         {/* Save Button */}
         <div className="flex items-center gap-4 mb-12">

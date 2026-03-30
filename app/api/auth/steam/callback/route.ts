@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   if (!state) return NextResponse.redirect(`${SITE_URL}?error=missing_state`)
   try {
     await jwtVerify(state, SECRET)
-  } catch {
+  } catch (_) {
     return NextResponse.redirect(`${SITE_URL}?error=invalid_state`)
   }
 

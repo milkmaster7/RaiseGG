@@ -28,10 +28,18 @@ interface TierBadgeProps {
 
 export function TierBadge({ elo, className }: TierBadgeProps) {
   const tier = getTier(elo)
+  const isApex = tier.name === 'Apex'
   return (
     <span
-      className={clsx('badge', className)}
-      style={{ color: tier.color, background: tier.bg, border: `1px solid ${tier.color}40` }}
+      className={clsx('badge', isApex && 'font-black', className)}
+      style={{
+        color: isApex ? '#fbbf24' : tier.color,
+        background: isApex
+          ? 'linear-gradient(135deg, rgba(251,191,36,0.2), rgba(255,255,255,0.1))'
+          : tier.bg,
+        border: `1px solid ${tier.color}40`,
+        textShadow: isApex ? '0 0 8px rgba(251,191,36,0.6)' : undefined,
+      }}
     >
       {tier.name}
     </span>

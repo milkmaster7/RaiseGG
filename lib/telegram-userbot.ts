@@ -111,8 +111,15 @@ export async function sendMessage(
   if (!client) return { ok: false, error: 'Userbot not configured' }
 
   try {
-    // If target looks like a numeric ID, convert to number for GramJS
-    const peer = /^\d+$/.test(target) ? BigInt(target) : target
+    // If target looks like a numeric ID, resolve entity first
+    let peer: any = target
+    if (/^\d+$/.test(target)) {
+      try {
+        peer = await client.getEntity(BigInt(target) as any)
+      } catch {
+        peer = target // fallback to string
+      }
+    }
     const result = await client.sendMessage(peer, {
       message: text,
       parseMode: 'html',

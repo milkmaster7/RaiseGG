@@ -20,6 +20,7 @@ export default function MobileNav() {
 
   return (
     <nav
+      aria-label="Mobile navigation"
       className="
         md:hidden
         fixed bottom-0 left-0 right-0 z-50

@@ -9,16 +9,94 @@ export const SEASON_CONFIG = {
   totalTiers: 30,
 }
 
-// XP sources
+// XP sources (base values — daily_login scales with streak via getStreakLoginXP)
 export const XP_SOURCES = {
   match_win: 100,
   match_loss: 25,
   daily_login: 20,
   challenge_complete: 50,
-  login_streak_bonus: 10, // per streak day
+  mission_complete: 30, // bonus XP when claiming a mission reward (in addition to RP)
+  login_streak_bonus: 10, // per streak day (legacy — use getStreakLoginXP instead)
 } as const
 
 export type XPSource = keyof typeof XP_SOURCES
+
+// Streak milestone thresholds
+export const STREAK_MILESTONES = {
+  STREAK_STARTED: 3,
+  COSMETIC_DROP: 7,
+  STREAK_VETERAN: 14,
+  STREAK_MASTER: 30,
+  STREAK_LEGEND: 60,
+} as const
+
+export interface StreakRewardInfo {
+  xp: number
+  multiplier: number
+  cosmeticDropChance: number // 0-1
+  milestone: string | null
+  badgeUnlock: string | null
+  nextMilestone: { day: number; label: string } | null
+  daysToNextMilestone: number
+}
+
+/** Calculate daily login XP and rewards based on streak length */
+export function getStreakLoginXP(streakDays: number): StreakRewardInfo {
+  const base = XP_SOURCES.daily_login // 20
+
+  let multiplier: number
+  let cosmeticDropChance = 0
+  let badgeUnlock: string | null = null
+
+  if (streakDays >= 60) {
+    multiplier = 6
+    cosmeticDropChance = 1
+    badgeUnlock = 'badge_streak_legend' // "Streak Legend" exclusive badge
+  } else if (streakDays >= 30) {
+    multiplier = 5
+    cosmeticDropChance = 1 // guaranteed cosmetic on milestone day handled separately
+    badgeUnlock = 'badge_streak' // "Streak Master" exclusive badge
+  } else if (streakDays >= 14) {
+    multiplier = 4
+  } else if (streakDays >= 7) {
+    multiplier = 3
+    cosmeticDropChance = 0.1 // 10% random cosmetic drop
+  } else if (streakDays >= 3) {
+    multiplier = 2
+  } else {
+    multiplier = 1
+  }
+
+  const xp = base * multiplier
+
+  // Determine milestone toast
+  let milestone: string | null = null
+  if (streakDays === STREAK_MILESTONES.STREAK_STARTED) milestone = 'Streak Started'
+  else if (streakDays === STREAK_MILESTONES.COSMETIC_DROP) milestone = 'Cosmetic Drop Unlocked'
+  else if (streakDays === STREAK_MILESTONES.STREAK_VETERAN) milestone = 'Streak Veteran'
+  else if (streakDays === STREAK_MILESTONES.STREAK_MASTER) milestone = 'Streak Master'
+  else if (streakDays === STREAK_MILESTONES.STREAK_LEGEND) milestone = 'Streak Legend'
+
+  // Next milestone
+  let nextMilestone: { day: number; label: string } | null = null
+  let daysToNextMilestone = 0
+  const milestoneList = [
+    { day: 3, label: '100 RaisePoints (2x XP)' },
+    { day: 7, label: '$1 Match Credit (3x XP)' },
+    { day: 14, label: '500 RP + Badge (4x XP)' },
+    { day: 30, label: 'Free Tournament (5x XP)' },
+    { day: 60, label: '$5 Match Credit (6x XP)' },
+  ]
+  for (const m of milestoneList) {
+    if (streakDays < m.day) {
+      nextMilestone = m
+      daysToNextMilestone = m.day - streakDays
+      break
+    }
+  }
+
+  return { xp, multiplier, cosmeticDropChance, milestone, badgeUnlock, nextMilestone, daysToNextMilestone }
+}
 
 export type RewardType =
   | 'badge'
@@ -146,14 +224,15 @@ export function formatXPSource(source: XPSource): string {
     match_loss: 'Match Loss',
     daily_login: 'Daily Login',
     challenge_complete: 'Challenge Complete',
+    mission_complete: 'Mission Complete',
     login_streak_bonus: 'Login Streak',
   }
   return labels[source]
 }
 
-/** Calculate login streak bonus XP */
+/** Calculate login streak bonus XP (legacy — prefer getStreakLoginXP) */
 export function getStreakBonus(streakDays: number): number {
-  return Math.min(streakDays, 30) * XP_SOURCES.login_streak_bonus
+  return getStreakLoginXP(streakDays).xp
 }
 
 /** Check if season is active */

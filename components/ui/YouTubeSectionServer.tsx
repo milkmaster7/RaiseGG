@@ -26,7 +26,7 @@ async function fetchLatestVideos(
       thumbnail: item.snippet.thumbnails.medium?.url ?? item.snippet.thumbnails.default?.url,
       publishedAt: item.snippet.publishedAt,
     }))
-  } catch {
+  } catch (_) {
     return []
   }
 }

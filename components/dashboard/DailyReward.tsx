@@ -8,6 +8,11 @@ interface Reward {
   label: string
 }
 
+interface NextMilestone {
+  day: number
+  label: string
+}
+
 export default function DailyReward() {
   const [loading, setLoading] = useState(true)
   const [claiming, setClaiming] = useState(false)
@@ -15,6 +20,11 @@ export default function DailyReward() {
   const [reward, setReward] = useState<Reward | null>(null)
   const [milestone, setMilestone] = useState<string | null>(null)
   const [streak, setStreak] = useState(0)
+  const [multiplier, setMultiplier] = useState(1)
+  const [xp, setXp] = useState(20)
+  const [cosmeticDrop, setCosmeticDrop] = useState<string | null>(null)
+  const [nextMilestone, setNextMilestone] = useState<NextMilestone | null>(null)
+  const [daysToNextMilestone, setDaysToNextMilestone] = useState(0)
   const [showCelebration, setShowCelebration] = useState(false)
   const [spinning, setSpinning] = useState(false)
   const [countdown, setCountdown] = useState('')
@@ -26,6 +36,10 @@ export default function DailyReward() {
       .then((data) => {
         setAlreadyClaimed(data.alreadyClaimed)
         setStreak(data.loginStreak ?? 0)
+        setMultiplier(data.multiplier ?? 1)
+        setXp(data.xp ?? 20)
+        setNextMilestone(data.nextMilestone ?? null)
+        setDaysToNextMilestone(data.daysToNextMilestone ?? 0)
       })
       .catch(() => {})
       .finally(() => setLoading(false))
@@ -65,11 +79,16 @@ export default function DailyReward() {
         setReward(data.reward)
         setStreak(data.loginStreak)
         setMilestone(data.milestone)
+        setMultiplier(data.multiplier ?? 1)
+        setXp(data.xp ?? 20)
+        setCosmeticDrop(data.cosmeticDrop ?? null)
+        setNextMilestone(data.nextMilestone ?? null)
+        setDaysToNextMilestone(data.daysToNextMilestone ?? 0)
         setAlreadyClaimed(true)
         setShowCelebration(true)
         setTimeout(() => setShowCelebration(false), 3000)
       }
-    } catch {
+    } catch (_) {
       // silently fail
     } finally {
       setClaiming(false)
@@ -86,6 +105,14 @@ export default function DailyReward() {
   }
 
   const streakEmoji = streak >= 30 ? '\u{1F451}' : streak >= 7 ? '\u{1F525}' : streak >= 3 ? '\u{1F525}' : '\u2B50'
+
+  // Milestone progress bar
+  const milestoneSteps = [
+    { day: 3, label: '2x XP' },
+    { day: 7, label: '3x + Cosmetic' },
+    { day: 14, label: '4x XP' },
+    { day: 30, label: '5x + Badge' },
+  ]
 
   return (
     <div className="relative overflow-hidden rounded-lg border border-gray-700 bg-gray-800/50 p-4">
@@ -107,32 +134,69 @@ export default function DailyReward() {
         </div>
       )}
 
-      <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">
-        Daily Reward
-      </h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">
+          Daily Reward
+        </h3>
+        {/* Streak multiplier badge */}
+        {multiplier > 1 && (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-bold border border-yellow-500/30">
+            {multiplier}x XP!
+          </span>
+        )}
+      </div>
 
       {/* Streak display */}
       {streak > 0 && (
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg">{streakEmoji}</span>
-          <span className="text-sm font-medium text-yellow-400">
-            {streak}-day streak!
-          </span>
-          {/* Streak milestone indicators */}
-          <div className="flex gap-1 ml-auto">
-            {[3, 7, 14, 30].map((day) => (
-              <div
-                key={day}
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${
-                  streak >= day
-                    ? 'bg-yellow-500/20 border-yellow-500 text-yellow-400'
-                    : 'bg-gray-700/50 border-gray-600 text-gray-500'
-                }`}
-              >
-                {day}
-              </div>
-            ))}
+        <div className="mb-3">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">{streakEmoji}</span>
+            <span className="text-sm font-medium text-yellow-400">
+              {streak}-day streak!
+            </span>
+            <span className="text-xs text-gray-400 ml-auto">
+              +{xp} XP/day
+            </span>
           </div>
+
+          {/* Milestone progress bar */}
+          <div className="relative">
+            <div className="flex justify-between mb-1">
+              {milestoneSteps.map((step) => (
+                <div
+                  key={step.day}
+                  className={`flex flex-col items-center ${
+                    streak >= step.day ? 'text-yellow-400' : 'text-gray-500'
+                  }`}
+                >
+                  <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${
+                      streak >= step.day
+                        ? 'bg-yellow-500/20 border-yellow-500'
+                        : 'bg-gray-700/50 border-gray-600'
+                    }`}
+                  >
+                    {step.day}
+                  </div>
+                  <span className="text-[9px] mt-0.5 whitespace-nowrap">{step.label}</span>
+                </div>
+              ))}
+            </div>
+            {/* Progress track */}
+            <div className="h-1 bg-gray-700 rounded-full mt-1">
+              <div
+                className="h-full bg-gradient-to-r from-yellow-500 to-amber-400 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min((streak / 30) * 100, 100)}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Next milestone hint */}
+          {nextMilestone && daysToNextMilestone > 0 && (
+            <p className="text-xs text-gray-400 mt-2">
+              {daysToNextMilestone} day{daysToNextMilestone !== 1 ? 's' : ''} to {nextMilestone.label}
+            </p>
+          )}
         </div>
       )}
 
@@ -161,7 +225,7 @@ export default function DailyReward() {
               text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed
               shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40"
           >
-            {claiming ? 'Spinning...' : 'Claim Daily Reward'}
+            {claiming ? 'Spinning...' : `Claim Daily Reward (+${xp} XP)`}
           </button>
         </div>
       )}
@@ -175,6 +239,14 @@ export default function DailyReward() {
             {reward.type === 'rake_discount' && '\u{1F3AB}'}
           </div>
           <p className="text-sm font-semibold text-white">{reward.label}</p>
+          {multiplier > 1 && (
+            <p className="text-xs text-yellow-400 mt-1">{multiplier}x streak bonus: +{xp} XP</p>
+          )}
+          {cosmeticDrop && (
+            <p className="text-xs text-emerald-400 mt-1 font-medium">
+              Cosmetic drop: {cosmeticDrop.replace(/_/g, ' ')}!
+            </p>
+          )}
           {milestone && (
             <p className="text-xs text-yellow-400 mt-2 font-medium">{milestone}</p>
           )}
@@ -189,51 +261,6 @@ export default function DailyReward() {
         </div>
       )}
 
-      <style jsx>{`
-        .spin-wheel {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          position: relative;
-          animation: spin 0.4s linear infinite;
-          overflow: hidden;
-        }
-        .spin-segment {
-          position: absolute;
-          width: 50%;
-          height: 50%;
-          top: 0;
-          left: 25%;
-          transform-origin: bottom center;
-          clip-path: polygon(50% 100%, 0 0, 100% 0);
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        .confetti-piece {
-          position: absolute;
-          width: 6px;
-          height: 6px;
-          border-radius: 1px;
-          background: var(--color);
-          animation: confetti-fly 1s ease-out forwards;
-          animation-delay: var(--delay);
-          opacity: 0;
-        }
-        @keyframes confetti-fly {
-          0% {
-            opacity: 1;
-            transform: translate(0, 0) rotate(0deg);
-          }
-          100% {
-            opacity: 0;
-            transform: translate(
-              calc(cos(var(--angle)) * 80px),
-              calc(sin(var(--angle)) * 80px)
-            ) rotate(720deg);
-          }
-        }
-      `}</style>
     </div>
   )
 }

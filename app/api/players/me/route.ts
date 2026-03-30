@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   const db = createServiceClient()
   const { data: player, error } = await db
     .from('players')
-    .select('id, username, email, avatar_url, wallet_address')
+    .select('id, username, email, avatar_url, wallet_address, country')
     .eq('id', playerId)
     .single()
 
@@ -26,10 +26,10 @@ export async function PATCH(req: NextRequest) {
   const playerId = await readSession(req)
   if (!playerId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  let body: { username?: string; email?: string | null }
+  let body: { username?: string; email?: string | null; country?: string | null }
   try {
     body = await req.json()
-  } catch {
+  } catch (_) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
@@ -55,6 +55,18 @@ export async function PATCH(req: NextRequest) {
     }
   }
 
+  if (body.country !== undefined) {
+    if (body.country === null || body.country === '') {
+      updates.country = null
+    } else {
+      const code = body.country.trim().toUpperCase()
+      if (code.length !== 2) {
+        return NextResponse.json({ error: 'Country must be a 2-letter ISO code' }, { status: 400 })
+      }
+      updates.country = code
+    }
+  }
+
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: 'Nothing to update' }, { status: 400 })
   }
@@ -64,7 +76,7 @@ export async function PATCH(req: NextRequest) {
     .from('players')
     .update(updates)
     .eq('id', playerId)
-    .select('id, username, email, avatar_url, wallet_address')
+    .select('id, username, email, avatar_url, wallet_address, country')
     .single()
 
   if (error) {

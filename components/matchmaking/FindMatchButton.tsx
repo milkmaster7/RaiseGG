@@ -1,27 +1,39 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Search, X, Loader2 } from 'lucide-react'
 
 type Game = 'cs2' | 'dota2' | 'deadlock'
+
+function calcEstWait(queueSize: number): number {
+  return Math.max(15, 120 - (queueSize * 10))
+}
 
 export function FindMatchButton() {
   const [open, setOpen] = useState(false)
   const [inQueue, setInQueue] = useState(false)
   const [queueSize, setQueueSize] = useState(0)
+  const [queuePosition, setQueuePosition] = useState<number | null>(null)
   const [searching, setSearching] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const [form, setForm] = useState({ game: 'cs2' as Game, mode: 'stake' as 'stake' | 'free', stakeAmount: 10, currency: 'usdc' as 'usdc' | 'usdt' })
+  const matchSoundPlayed = useRef(false)
 
   // Poll queue status
   useEffect(() => {
     if (!inQueue) return
+    matchSoundPlayed.current = false
     const interval = setInterval(async () => {
       const res = await fetch('/api/matchmaking')
       const data = await res.json()
       setQueueSize(data.queueSize ?? 0)
+      if (data.position !== undefined) setQueuePosition(data.position)
       if (!data.inQueue) {
-        // Match found or cancelled
+        // Match found — play notification sound
+        if (!matchSoundPlayed.current) {
+          matchSoundPlayed.current = true
+          new Audio('/match-found.mp3').play().catch(() => {})
+        }
         setInQueue(false)
         setOpen(false)
         window.location.reload()
@@ -75,7 +87,11 @@ export function FindMatchButton() {
         <div className="font-orbitron text-lg font-bold text-white mb-1">Finding Match...</div>
         <div className="text-sm text-muted mb-1">{form.game.toUpperCase()} · {form.mode === 'free' ? 'Free Play' : `$${form.stakeAmount}`}</div>
         <div className="font-orbitron text-accent-cyan text-sm mb-3">{formatTime(elapsed)}</div>
-        <div className="text-xs text-muted mb-4">{queueSize} player{queueSize !== 1 ? 's' : ''} in queue</div>
+        <div className="text-xs text-muted mb-1">{queueSize} player{queueSize !== 1 ? 's' : ''} in queue</div>
+        {queuePosition !== null && (
+          <div className="text-xs text-accent-purple mb-1">Queue position: #{queuePosition}</div>
+        )}
+        <div className="text-xs text-muted/70 mb-4">Est. wait: ~{calcEstWait(queueSize)}s</div>
         <button onClick={cancelSearch} className="btn-secondary px-6 py-2 text-sm">
           <X className="w-4 h-4 mr-1 inline" /> Cancel
         </button>

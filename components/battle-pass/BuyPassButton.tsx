@@ -36,7 +36,7 @@ export function BuyPassButton({ isPremium, onPurchased }: BuyPassButtonProps) {
       }
       setSuccess(true)
       onPurchased()
-    } catch {
+    } catch (_) {
       setError('Network error. Try again.')
     } finally {
       setLoading(false)

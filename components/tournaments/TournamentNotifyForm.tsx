@@ -19,7 +19,7 @@ export function TournamentNotifyForm() {
       if (!res.ok) throw new Error()
       setStatus('success')
       setEmail('')
-    } catch {
+    } catch (_) {
       setStatus('error')
     }
   }

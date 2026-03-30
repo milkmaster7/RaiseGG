@@ -49,7 +49,7 @@ export function ShareWinCard({ matchId, playerId, game, payout, opponentUsername
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
-    } catch {
+    } catch (_) {
       // Fallback: open in new tab
       window.open(pnlCardUrl, '_blank')
     }

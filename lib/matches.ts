@@ -5,7 +5,7 @@ import { verifyDota2Match } from './steam'
 import { calculateElo } from './elo'
 import { solanaResolveMatch, solanaCancelMatch } from './escrow'
 import { Connection } from '@solana/web3.js'
-import type { Game, MatchFormat, StakeCurrency } from '@/types'
+import type { Game, MatchFormat, MatchType, StakeCurrency } from '@/types'
 import { sendMatchResult, sendMatchCancelled } from '@/lib/email'
 
 function getSolanaConnection() {
@@ -56,17 +56,22 @@ async function creditReferralBonus(supabase: any, winnerId: string, payout: numb
       match_id: matchId,
       note: `5% referral bonus from ${winnerId} win (${currency.toUpperCase()})`,
     })
-  } catch {
+  } catch (_) {
     // Non-critical — don't break match resolution if referral fails
   }
 }
 
 // Create a new match (player A stakes)
+// Team size lookup for match types
+const MATCH_TYPE_SIZES: Record<MatchType, number> = { '1v1': 1, '2v2': 2, '5v5': 5 }
+
 export async function createMatch(params: {
   matchId: string
   playerAId: string
   game: Game
   format: MatchFormat
+  matchType?: MatchType
+  teamName?: string
   stakeAmount: number
   currency: StakeCurrency
   vaultPda: string
@@ -78,6 +83,10 @@ export async function createMatch(params: {
   const supabase = createServiceClient()
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000) // 30 min to join
 
+  const matchType: MatchType = params.matchType ?? '1v1'
+  const isTeam = matchType !== '1v1'
+  const teamSize = MATCH_TYPE_SIZES[matchType]
+
   const { data, error } = await supabase
     .from('matches')
     .insert({
@@ -85,6 +94,7 @@ export async function createMatch(params: {
       player_a_id:     params.playerAId,
       game:            params.game,
       format:          params.format,
+      match_type:      matchType,
       stake_amount:    params.stakeAmount,
       currency:        params.currency,
       vault_pda:       params.vaultPda,
@@ -95,6 +105,11 @@ export async function createMatch(params: {
       invite_password:       params.invitePassword ?? null,
       has_password:          !!params.invitePassword,
       challenged_player_id:  params.challengedPlayerId ?? null,
+      // Team match fields
+      team_a_name:     isTeam ? (params.teamName || null) : null,
+      team_b_name:     null,
+      team_a_players:  isTeam ? [params.playerAId] : [],
+      team_b_players:  [],
     })
     .select()
     .single()
@@ -105,7 +120,7 @@ export async function createMatch(params: {
 // Player B joins match
 export async function joinMatch(matchId: string, playerBId: string, joinTx: string) {
   const supabase = createServiceClient()
-  const resolveDeadline = new Date(Date.now() + 3 * 60 * 60 * 1000) // 3hr to resolve
+  const resolveDeadline = new Date(Date.now() + 2 * 60 * 60 * 1000) // 2hr to resolve
 
   const { data, error } = await supabase
     .from('matches')
@@ -118,6 +133,71 @@ export async function joinMatch(matchId: string, playerBId: string, joinTx: stri
     .eq('id', matchId)
     .eq('status', 'open')
     .is('player_b_id', null)
+    .select()
+    .single()
+
+  return { match: data, error }
+}
+
+// Player joins a team match (team_a or team_b)
+export async function joinTeamMatch(matchId: string, playerId: string, team: 'a' | 'b', joinTx: string, teamName?: string) {
+  const supabase = createServiceClient()
+
+  // Fetch the match to validate
+  const { data: match, error: fetchErr } = await supabase
+    .from('matches')
+    .select('*')
+    .eq('id', matchId)
+    .eq('status', 'open')
+    .single()
+
+  if (fetchErr || !match) return { match: null, error: { message: 'Match not found or not open' } }
+
+  const matchType: MatchType = match.match_type ?? '1v1'
+  const teamSize = MATCH_TYPE_SIZES[matchType]
+  const teamAPlayers: string[] = match.team_a_players ?? []
+  const teamBPlayers: string[] = match.team_b_players ?? []
+
+  // Prevent duplicate join
+  if (teamAPlayers.includes(playerId) || teamBPlayers.includes(playerId)) {
+    return { match: null, error: { message: 'You have already joined this match' } }
+  }
+
+  // Validate team capacity
+  if (team === 'a' && teamAPlayers.length >= teamSize) {
+    return { match: null, error: { message: 'Team A is already full' } }
+  }
+  if (team === 'b' && teamBPlayers.length >= teamSize) {
+    return { match: null, error: { message: 'Team B is already full' } }
+  }
+
+  // Build update
+  const update: Record<string, any> = {}
+  if (team === 'a') {
+    update.team_a_players = [...teamAPlayers, playerId]
+  } else {
+    update.team_b_players = [...teamBPlayers, playerId]
+    if (teamName) update.team_b_name = teamName
+  }
+
+  const newTeamA = update.team_a_players ?? teamAPlayers
+  const newTeamB = update.team_b_players ?? teamBPlayers
+
+  // If both teams are full, lock the match
+  if (newTeamA.length >= teamSize && newTeamB.length >= teamSize) {
+    const resolveDeadline = new Date(Date.now() + 2 * 60 * 60 * 1000)
+    update.status = 'locked'
+    update.resolve_deadline = resolveDeadline.toISOString()
+    // Set player_b_id to the first player on team B for compatibility
+    update.player_b_id = newTeamB[0]
+    update.join_tx = joinTx
+  }
+
+  const { data, error } = await supabase
+    .from('matches')
+    .update(update)
+    .eq('id', matchId)
+    .eq('status', 'open')
     .select()
     .single()
 
@@ -234,10 +314,41 @@ export async function resolveDota2Match(matchId: string, externalMatchId: string
   const rake = match.stake_amount * 2 * 0.1
   const payout = match.stake_amount * 2 * 0.9
 
+  // Streak play bonus — consecutive days playing gives bonus on wins
+  let streakBonus = 0
+  const { data: winnerStreakData } = await supabase
+    .from('players')
+    .select('login_streak')
+    .eq('id', winnerId)
+    .single()
+  const playStreak = winnerStreakData?.login_streak ?? 0
+  if (playStreak >= 30) streakBonus = 0.25  // 25% bonus
+  else if (playStreak >= 14) streakBonus = 0.15  // 15% bonus
+  else if (playStreak >= 7) streakBonus = 0.10   // 10% bonus
+  else if (playStreak >= 3) streakBonus = 0.05   // 5% bonus
+  const bonusAmount = Math.round(payout * streakBonus * 100) / 100
+
   await supabase.from('transactions').insert([
     { player_id: winnerId, type: 'win',  amount: payout,             match_id: matchId, note: currency.toUpperCase() },
     { player_id: loserId,  type: 'loss', amount: match.stake_amount, match_id: matchId, note: currency.toUpperCase() },
   ])
+
+  // Credit streak bonus
+  if (bonusAmount > 0) {
+    const streakBalanceField = currency === 'usdt' ? 'usdt_balance' : 'usdc_balance'
+    await supabase.rpc('increment_balance', {
+      player_id: winnerId,
+      field: streakBalanceField,
+      amount: bonusAmount,
+    })
+    await supabase.from('transactions').insert({
+      player_id: winnerId,
+      type: 'streak_bonus',
+      amount: bonusAmount,
+      match_id: matchId,
+      note: `${Math.round(streakBonus * 100)}% streak bonus (${playStreak}-day streak)`,
+    })
+  }
 
   // Referral bonus: referrer gets 5% of winner's payout
   await creditReferralBonus(supabase, winnerId, payout, matchId, currency)
@@ -247,6 +358,13 @@ export async function resolveDota2Match(matchId: string, externalMatchId: string
   const loser  = winnerId === match.player_a_id ? match.player_b : match.player_a
   if (winner.email) sendMatchResult(winner.email, winner.username, true, payout, match.game, loser.username).catch(() => {})
   if (loser.email)  sendMatchResult(loser.email, loser.username, false, 0, match.game, winner.username).catch(() => {})
+
+  // Push notifications (non-blocking)
+  try {
+    const { sendMatchNotification } = await import('@/app/api/notifications/send/route')
+    sendMatchNotification('match_result', winnerId, { won: true, payout, game: match.game }).catch(() => {})
+    sendMatchNotification('match_result', loserId, { won: false, payout: 0, game: match.game }).catch(() => {})
+  } catch {}
 
   return { winnerId, payout, rake, eloResult, currency, winnerHero, loserHero }
 }
@@ -362,11 +480,42 @@ export async function resolveCS2Match(params: {
     last_played_date: new Date().toISOString().split('T')[0],
   }).eq('id', loserId)
 
+  // Streak play bonus — consecutive days playing gives bonus on wins
+  let streakBonusCS2 = 0
+  const { data: winnerStreakDataCS2 } = await supabase
+    .from('players')
+    .select('login_streak')
+    .eq('id', winnerId)
+    .single()
+  const playStreakCS2 = winnerStreakDataCS2?.login_streak ?? 0
+  if (playStreakCS2 >= 30) streakBonusCS2 = 0.25  // 25% bonus
+  else if (playStreakCS2 >= 14) streakBonusCS2 = 0.15  // 15% bonus
+  else if (playStreakCS2 >= 7) streakBonusCS2 = 0.10   // 10% bonus
+  else if (playStreakCS2 >= 3) streakBonusCS2 = 0.05   // 5% bonus
+  const bonusAmountCS2 = Math.round(payout * streakBonusCS2 * 100) / 100
+
   // Log transactions
   await supabase.from('transactions').insert([
     { player_id: winnerId, type: 'win',  amount: payout,              match_id: match.id, note: `CS2 win — score ${params.team1Score}:${params.team2Score} (${currency.toUpperCase()})` },
     { player_id: loserId,  type: 'loss', amount: match.stake_amount,  match_id: match.id, note: currency.toUpperCase() },
   ])
+
+  // Credit streak bonus
+  if (bonusAmountCS2 > 0) {
+    const streakBalanceFieldCS2 = currency === 'usdt' ? 'usdt_balance' : 'usdc_balance'
+    await supabase.rpc('increment_balance', {
+      player_id: winnerId,
+      field: streakBalanceFieldCS2,
+      amount: bonusAmountCS2,
+    })
+    await supabase.from('transactions').insert({
+      player_id: winnerId,
+      type: 'streak_bonus',
+      amount: bonusAmountCS2,
+      match_id: match.id,
+      note: `${Math.round(streakBonusCS2 * 100)}% streak bonus (${playStreakCS2}-day streak)`,
+    })
+  }
 
   // Referral bonus: referrer gets 5% of winner's payout
   await creditReferralBonus(supabase, winnerId, payout, match.id, currency)
@@ -376,6 +525,13 @@ export async function resolveCS2Match(params: {
   const loser  = winnerId === match.player_a_id ? match.player_b : match.player_a
   if (winner.email) sendMatchResult(winner.email, winner.username, true, payout, match.game, loser.username).catch(() => {})
   if (loser.email)  sendMatchResult(loser.email, loser.username, false, 0, match.game, winner.username).catch(() => {})
+
+  // Push notifications (non-blocking)
+  try {
+    const { sendMatchNotification } = await import('@/app/api/notifications/send/route')
+    sendMatchNotification('match_result', winnerId, { won: true, payout, game: match.game }).catch(() => {})
+    sendMatchNotification('match_result', loserId, { won: false, payout: 0, game: match.game }).catch(() => {})
+  } catch {}
 
   return { winnerId, payout, rake, eloResult, currency, mapName: mapDisplay }
 }
@@ -411,10 +567,10 @@ export async function cancelExpiredMatches() {
     if (pA?.email) sendMatchCancelled(pA.email, pA.username, m.stake_amount, 'No opponent joined before the match expired.').catch(() => {})
   }
 
-  // Cancel locked matches past resolve_deadline — refund both players
+  // Cancel locked matches past resolve_deadline — auto-draw, refund both players
   const { data: expiredLocked } = await supabase
     .from('matches')
-    .select('id, player_a_id, player_b_id, stake_amount, vault_pda, player_a:players!player_a_id(wallet_address,email,username), player_b:players!player_b_id(wallet_address,email,username)')
+    .select('id, player_a_id, player_b_id, stake_amount, vault_pda, currency, match_type, team_a_players, team_b_players, player_a:players!player_a_id(wallet_address,email,username), player_b:players!player_b_id(wallet_address,email,username)')
     .eq('status', 'locked')
     .lt('resolve_deadline', now)
 
@@ -428,13 +584,68 @@ export async function cancelExpiredMatches() {
       }
     }
     await supabase.from('matches').update({ status: 'cancelled' }).eq('id', m.id)
-    await supabase.from('transactions').insert([
-      { player_id: m.player_a_id, type: 'refund', amount: m.stake_amount, match_id: m.id, note: 'Match unresolved — deadline passed' },
-      { player_id: m.player_b_id, type: 'refund', amount: m.stake_amount, match_id: m.id, note: 'Match unresolved — deadline passed' },
-    ])
+
+    // Refund all participants — for team matches, refund every player in both teams
+    const isTeam = m.match_type && m.match_type !== '1v1'
+    if (isTeam) {
+      const allPlayers = [...(m.team_a_players ?? []), ...(m.team_b_players ?? [])]
+      if (allPlayers.length > 0) {
+        await supabase.from('transactions').insert(
+          allPlayers.map(pid => ({
+            player_id: pid,
+            type: 'refund',
+            amount: m.stake_amount,
+            match_id: m.id,
+            note: 'Team match unresolved — auto-draw, deadline passed',
+          }))
+        )
+      }
+    } else {
+      await supabase.from('transactions').insert([
+        { player_id: m.player_a_id, type: 'refund', amount: m.stake_amount, match_id: m.id, note: 'Match unresolved — auto-draw, deadline passed' },
+        { player_id: m.player_b_id, type: 'refund', amount: m.stake_amount, match_id: m.id, note: 'Match unresolved — auto-draw, deadline passed' },
+      ])
+    }
+
     const pAL = m.player_a as any
     const pBL = m.player_b as any
-    if (pAL?.email) sendMatchCancelled(pAL.email, pAL.username, m.stake_amount, 'Match was not resolved before the deadline.').catch(() => {})
-    if (pBL?.email) sendMatchCancelled(pBL.email, pBL.username, m.stake_amount, 'Match was not resolved before the deadline.').catch(() => {})
+    if (pAL?.email) sendMatchCancelled(pAL.email, pAL.username, m.stake_amount, 'Match was not resolved before the 2-hour deadline — auto-draw applied.').catch(() => {})
+    if (pBL?.email) sendMatchCancelled(pBL.email, pBL.username, m.stake_amount, 'Match was not resolved before the 2-hour deadline — auto-draw applied.').catch(() => {})
+  }
+
+  // Cancel open team matches that have expired — refund all joined players
+  const { data: expiredTeamOpen } = await supabase
+    .from('matches')
+    .select('id, player_a_id, stake_amount, vault_pda, currency, match_type, team_a_players, team_b_players, player_a:players!player_a_id(wallet_address,email,username)')
+    .eq('status', 'open')
+    .neq('match_type', '1v1')
+    .lt('expires_at', now)
+
+  for (const m of expiredTeamOpen ?? []) {
+    const allPlayers = [...(m.team_a_players ?? []), ...(m.team_b_players ?? [])]
+    // On-chain cancel — refund creator
+    if (m.vault_pda && (m.player_a as any)?.wallet_address) {
+      try {
+        await solanaCancelMatch(conn, m.id, (m.player_a as any).wallet_address, null, 'open', (m as any).currency ?? 'usdc')
+      } catch (e) {
+        console.error('solanaCancelMatch (team open) failed for', m.id, e)
+        continue
+      }
+    }
+    await supabase.from('matches').update({ status: 'cancelled' }).eq('id', m.id)
+    // Refund all players who joined
+    if (allPlayers.length > 0) {
+      await supabase.from('transactions').insert(
+        allPlayers.map(pid => ({
+          player_id: pid,
+          type: 'refund',
+          amount: m.stake_amount,
+          match_id: m.id,
+          note: 'Team match expired — not enough players joined',
+        }))
+      )
+    }
+    const pA = m.player_a as any
+    if (pA?.email) sendMatchCancelled(pA.email, pA.username, m.stake_amount, 'Team match expired — not enough players joined.').catch(() => {})
   }
 }

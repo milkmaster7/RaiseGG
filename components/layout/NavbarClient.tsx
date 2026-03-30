@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Menu, X, Zap } from 'lucide-react'
+import { Menu, X, ShieldCheck } from 'lucide-react'
 
 const NAV_LINKS = [
   { href: '/play', label: 'Play', soon: false },
@@ -23,7 +23,7 @@ export default function NavbarClient({ isLoggedIn }: { isLoggedIn: boolean }) {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <Zap className="w-6 h-6 text-accent-purple group-hover:text-accent-purple-glow transition-colors" />
+            <ShieldCheck className="w-6 h-6 text-accent-cyan group-hover:text-accent-cyan-glow transition-colors" />
             <span className="font-orbitron font-bold text-lg text-gradient">RAISEGG</span>
           </Link>
 

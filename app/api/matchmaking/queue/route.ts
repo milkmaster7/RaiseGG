@@ -8,10 +8,11 @@ export async function POST(req: NextRequest) {
   const playerId = await readSession(req)
   if (!playerId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { game, stakeAmount, currency } = await req.json()
+  const { game, stakeAmount, currency, verified } = await req.json()
   if (!game || !stakeAmount || !currency) {
     return NextResponse.json({ error: 'Missing game, stakeAmount, or currency' }, { status: 400 })
   }
+  const verifiedOnly = verified === true
 
   if (!['cs2', 'dota2', 'deadlock'].includes(game)) {
     return NextResponse.json({ error: 'Invalid game' }, { status: 400 })
@@ -67,6 +68,7 @@ export async function POST(req: NextRequest) {
       elo,
       status: 'searching',
       region: 'EU',
+      verified_only: verifiedOnly,
     })
     .select()
     .single()
@@ -77,9 +79,9 @@ export async function POST(req: NextRequest) {
   const stakeMin = stakeAmount * 0.8
   const stakeMax = stakeAmount * 1.2
 
-  const { data: candidates } = await db
+  let candidateQuery = db
     .from('matchmaking_queue')
-    .select('*, player:players!player_id(id, username, avatar_url, cs2_elo, dota2_elo, deadlock_elo, cs2_wins, cs2_losses, dota2_wins, dota2_losses, deadlock_wins, deadlock_losses)')
+    .select('*, player:players!player_id(id, username, avatar_url, cs2_elo, dota2_elo, deadlock_elo, cs2_wins, cs2_losses, dota2_wins, dota2_losses, deadlock_wins, deadlock_losses, faceit_username, leetify_url)')
     .eq('game', game)
     .eq('mode', 'stake')
     .eq('status', 'searching')
@@ -88,6 +90,17 @@ export async function POST(req: NextRequest) {
     .lte('stake_amount', stakeMax)
     .order('elo', { ascending: true })
     .limit(20)
+
+  const { data: allCandidates } = await candidateQuery
+
+  // Filter for verified players if requested
+  let candidates = allCandidates
+  if (verifiedOnly && candidates) {
+    candidates = candidates.filter((c: any) => {
+      const p = c.player
+      return p?.faceit_username || p?.leetify_url
+    })
+  }
 
   if (candidates?.length) {
     // Find closest ELO

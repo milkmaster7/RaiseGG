@@ -1,11 +1,26 @@
 ﻿import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
+import { Orbitron, Outfit } from 'next/font/google'
 import './globals.css'
 import Sidebar from '@/components/layout/Sidebar'
 import MobileNav from '@/components/layout/MobileNav'
-import { SolanaWalletProvider } from '@/components/providers/WalletProvider'
-import { MatchNotifications } from '@/components/matches/MatchNotifications'
-import LiveWinTicker from '@/components/ui/LiveWinTicker'
+import { TopBar } from '@/components/layout/TopBar'
+import { ClientProviders } from '@/components/providers/ClientProviders'
+import { InstallPrompt } from '@/components/ui/InstallPrompt'
+
+const orbitron = Orbitron({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+  variable: '--font-orbitron',
+})
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+  variable: '--font-outfit',
+})
 
 // ─── Viewport ────────────────────────────────────────────────────────────────
 export const viewport: Viewport = {
@@ -77,7 +92,10 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
     shortcut: '/favicon.svg',
     apple: '/icon-192.png',
   },
@@ -107,7 +125,7 @@ const organizationSchema = {
   ],
   sameAs: [
     'https://twitter.com/RaiseGG',
-    'https://t.me/raisegg',
+    'https://t.me/raise_GG',
   ],
   contactPoint: {
     '@type': 'ContactPoint',
@@ -138,13 +156,14 @@ const websiteSchema = {
 // ─── Layout ───────────────────────────────────────────────────────────────────
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${orbitron.variable} ${outfit.variable}`}>
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://avatars.steamstatic.com" />
         <link rel="alternate" type="application/rss+xml" title="RaiseGG Blog" href="/feed.xml" />
+        <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(reg){reg.unregister()})});caches.keys().then(function(k){k.forEach(function(n){caches.delete(n)})})}` }} />
       </head>
-      <body className="min-h-screen bg-space-900 flex">
+      <body className="min-h-screen bg-space-900 flex font-outfit">
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-BSDK3JMC7Y" strategy="afterInteractive" />
         <Script id="ga" strategy="afterInteractive">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-BSDK3JMC7Y');`}
@@ -161,22 +180,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: JSON.stringify(websiteSchema).replace(/</g, '\\u003c'),
           }}
         />
-        <SolanaWalletProvider>
+        <ClientProviders>
           {/* Persistent left sidebar — hidden on mobile */}
           <Sidebar />
 
           {/* Main content area fills remaining space */}
           <div className="flex-1 min-w-0 flex flex-col">
+            <TopBar />
             <main className="flex-1 pb-20 md:pb-9">{children}</main>
-
-            <LiveWinTicker />
-
-            <MatchNotifications />
 
             {/* Bottom mobile nav — hidden on desktop */}
             <MobileNav />
           </div>
-        </SolanaWalletProvider>
+          <InstallPrompt />
+        </ClientProviders>
       </body>
     </html>
   )

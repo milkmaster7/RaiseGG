@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase'
+import { recordCronRun } from '@/lib/monitor'
 
 // Topics pool — Gemini picks one that hasn't been published yet
 const TOPIC_POOL = [
@@ -28,6 +29,16 @@ const TOPIC_POOL = [
   'CS2 1v1 format guide: map pool, rules, and winning strategies',
   'Dota 2 match ID verification: what RaiseGG checks and why',
   'How Solana makes instant esports payouts possible',
+  'Turkish CS2 community guide: best servers, tournaments, and stake matches in Turkey',
+  'CS2 in Istanbul: how the Turkish competitive scene is growing in 2026',
+  'Georgian gaming scene: from Tbilisi LAN parties to online stake matches',
+  'How to buy USDC with a debit card and start staking in under 5 minutes',
+  'USDC vs USDT for esports staking: which stablecoin is better on Solana',
+  'RaiseGG beginner guide: from Steam login to your first stake match',
+  'How to use the RaiseGG ELO system to find fair matches at your skill level',
+  'RaiseGG wallet guide: depositing USDC, withdrawing winnings, and Phantom tips',
+  'How to warm up properly before a CS2 stake match — aim drills and mindset',
+  'Competitive gaming tips: 5 habits that separate consistent winners from grinders',
 ]
 
 export const dynamic = 'force-dynamic'
@@ -53,6 +64,7 @@ export async function GET(req: Request) {
   })
 
   if (available.length === 0) {
+    await recordCronRun('blog', 'ok', { message: 'All topics published' })
     return NextResponse.json({ message: 'All topics published' })
   }
 
@@ -71,5 +83,30 @@ export async function GET(req: Request) {
   })
 
   const result = await res.json()
+  if (!res.ok) {
+    await recordCronRun('blog', 'error', { message: `Failed: ${result.error ?? 'unknown'}` })
+    return NextResponse.json({ topic, ...result })
+  }
+
+  // Generate Turkish or Russian article on alternate days
+  const dayOfMonth = new Date().getDate()
+  const extraLanguage = dayOfMonth % 2 === 0 ? 'tr' : 'ru'
+  const extraTopic = available[Math.floor(Math.random() * available.length)] ?? topic
+
+  try {
+    await fetch(`${baseUrl}/api/blog/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.CRON_SECRET}`,
+      },
+      body: JSON.stringify({ topic: extraTopic, language: extraLanguage }),
+      signal: AbortSignal.timeout(60000),
+    })
+  } catch {
+    // Non-critical — don't fail the main cron
+  }
+
+  await recordCronRun('blog', 'ok', { message: `Generated: ${result.title ?? topic} + ${extraLanguage.toUpperCase()}` })
   return NextResponse.json({ topic, ...result })
 }

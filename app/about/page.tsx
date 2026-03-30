@@ -4,7 +4,7 @@ import { Shield, Zap, Globe, DollarSign } from 'lucide-react'
 import { breadcrumbSchema } from '@/lib/schemas'
 
 export const metadata: Metadata = {
-  title: 'About — RaiseGG',
+  title: 'About RaiseGG',
   description: 'RaiseGG is the first competitive CS2, Dota 2 and Deadlock stake platform built for the Caucasus, Turkey and Balkans region.',
   alternates: { canonical: 'https://raisegg.com/about' },
   openGraph: {
@@ -125,7 +125,7 @@ export default function AboutPage() {
               Questions? Reach us at{' '}
               <a href="mailto:hello@raisegg.com" className="text-accent-cyan hover:text-accent-cyan-glow transition-colors">hello@raisegg.com</a>{' '}
               or in our{' '}
-              <a href="https://t.me/raisegg" target="_blank" rel="noopener noreferrer" className="text-accent-cyan hover:text-accent-cyan-glow transition-colors">Telegram</a>.
+              <a href="https://t.me/raise_GG" target="_blank" rel="noopener noreferrer" className="text-accent-cyan hover:text-accent-cyan-glow transition-colors">Telegram</a>.
             </p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default function AboutPage() {
           </p>
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <a
-              href="https://t.me/raisegg"
+              href="https://t.me/raise_GG"
               target="_blank"
               rel="noopener noreferrer"
               className="card flex items-center gap-4 hover:border-accent-cyan/40 transition-colors group"

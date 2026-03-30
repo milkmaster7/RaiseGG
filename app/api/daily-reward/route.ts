@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { readSession } from '@/lib/session'
 import { createServiceClient } from '@/lib/supabase'
+import { getStreakLoginXP } from '@/lib/battle-pass'
 
 type RewardType = 'elo_boost' | 'usdc_bonus' | 'rake_discount'
 
@@ -59,11 +60,17 @@ export async function GET(req: NextRequest) {
   const now = new Date()
   const lastClaim = player.last_daily_claim ? new Date(player.last_daily_claim) : null
   const alreadyClaimed = lastClaim ? isSameDay(lastClaim, now) : false
+  const currentStreak = player.login_streak ?? 0
+  const streakInfo = getStreakLoginXP(currentStreak)
 
   return NextResponse.json({
     alreadyClaimed,
-    loginStreak: player.login_streak ?? 0,
+    loginStreak: currentStreak,
     lastClaim: player.last_daily_claim,
+    multiplier: streakInfo.multiplier,
+    xp: streakInfo.xp,
+    nextMilestone: streakInfo.nextMilestone,
+    daysToNextMilestone: streakInfo.daysToNextMilestone,
   })
 }
 
@@ -75,7 +82,7 @@ export async function POST(req: NextRequest) {
   const db = createServiceClient()
   const { data: player } = await db
     .from('players')
-    .select('login_streak, last_daily_claim, last_login_date, usdc_balance')
+    .select('login_streak, last_daily_claim, last_login_date, usdc_balance, raise_points')
     .eq('id', playerId)
     .single()
 
@@ -89,7 +96,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Already claimed today', alreadyClaimed: true }, { status: 400 })
   }
 
-  // Calculate streak
+  // ── Comeback Bonus for Lapsed Players ──
+  let comebackBonus: { xp: number; points: number; message: string } | null = null
+  if (lastClaim) {
+    const daysSinceLogin = Math.floor((now.getTime() - lastClaim.getTime()) / (1000 * 60 * 60 * 24))
+    if (daysSinceLogin >= 30) {
+      comebackBonus = {
+        xp: 500,
+        points: 100,
+        message: 'Welcome back! You\'ve been away for 30+ days. Here\'s a massive bonus to get you started again.',
+      }
+    } else if (daysSinceLogin >= 7) {
+      comebackBonus = {
+        xp: 200,
+        points: 50,
+        message: 'Welcome back! Here\'s a bonus to get you started again.',
+      }
+    }
+  }
+
+  // Calculate streak — reset on comeback but give bonus to soften the blow
   let newStreak: number
   if (lastClaim && isYesterday(lastClaim, now)) {
     newStreak = (player.login_streak ?? 0) + 1
@@ -97,15 +123,53 @@ export async function POST(req: NextRequest) {
     newStreak = 1
   }
 
-  // Generate reward
+  // Calculate streak-scaled XP and rewards
+  const streakInfo = getStreakLoginXP(newStreak)
+
+  // Generate base reward
   const reward = generateReward()
 
-  // Apply streak milestone bonuses
+  // Streak milestone labels & real-value rewards
   let milestoneLabel: string | null = null
-  if (newStreak === 3) milestoneLabel = '3-day streak! +10% ELO bonus on next match'
-  else if (newStreak === 7) milestoneLabel = '7-day streak! 5% rake discount earned'
-  else if (newStreak === 14) milestoneLabel = '14-day streak! $1.00 USDC bonus earned'
-  else if (newStreak === 30) milestoneLabel = '30-day streak! Exclusive badge unlocked'
+  let cosmeticDrop: string | null = null
+  let streakBonusPoints = 0
+  let streakBonusUsdc = 0
+  let freeTournamentEntry = false
+
+  if (streakInfo.milestone) {
+    switch (newStreak) {
+      case 3:
+        milestoneLabel = '3-day streak! +100 RaisePoints + 2x XP'
+        streakBonusPoints = 100
+        break
+      case 7:
+        milestoneLabel = '7-day streak! $1.00 free match credit + 3x XP'
+        streakBonusUsdc = 1.0
+        cosmeticDrop = ['flame_avatar', 'neon_border', 'pixel_badge', 'holo_ring'][Math.floor(Math.random() * 4)]
+        break
+      case 14:
+        milestoneLabel = '14-day streak! +500 RaisePoints + exclusive badge + 4x XP'
+        streakBonusPoints = 500
+        cosmeticDrop = 'badge_streak_veteran'
+        break
+      case 30:
+        milestoneLabel = 'Streak Master! Free tournament entry + badge + 5x XP'
+        cosmeticDrop = 'badge_streak'
+        freeTournamentEntry = true
+        break
+    }
+  }
+
+  // 60-day milestone (not in STREAK_MILESTONES const but we handle it here)
+  if (newStreak === 60) {
+    milestoneLabel = '60-day streak! $5.00 free match credit — legendary!'
+    streakBonusUsdc = 5.0
+  }
+
+  // 10% cosmetic drop chance for days 7-13 (non-milestone days)
+  if (!cosmeticDrop && newStreak >= 7 && newStreak < 14 && Math.random() < 0.1) {
+    cosmeticDrop = ['flame_avatar', 'neon_border', 'pixel_badge', 'holo_ring'][Math.floor(Math.random() * 4)]
+  }
 
   const todayStr = now.toISOString()
 
@@ -116,17 +180,63 @@ export async function POST(req: NextRequest) {
     last_login_date: todayStr,
   }
 
-  // If USDC bonus, credit directly
+  // If USDC bonus from base reward, credit directly
   if (reward.type === 'usdc_bonus') {
     updateFields.usdc_balance = (player.usdc_balance ?? 0) + reward.value
   }
 
-  // Apply 14-day milestone USDC bonus
-  if (newStreak === 14) {
-    updateFields.usdc_balance = (updateFields.usdc_balance ?? player.usdc_balance ?? 0) + 1.0
+  // Apply streak milestone USDC bonus (7-day = $1, 60-day = $5)
+  if (streakBonusUsdc > 0) {
+    updateFields.usdc_balance = (updateFields.usdc_balance ?? player.usdc_balance ?? 0) + streakBonusUsdc
+  }
+
+  // Apply comeback bonus RaisePoints
+  if (comebackBonus) {
+    updateFields.raise_points = ((player.raise_points as number) ?? 0) + comebackBonus.points
+  }
+
+  // Apply streak milestone RaisePoints bonus (stacks with comeback)
+  if (streakBonusPoints > 0) {
+    const currentPts = (updateFields.raise_points as number) ?? (player.raise_points as number) ?? 0
+    updateFields.raise_points = currentPts + streakBonusPoints
   }
 
   await db.from('players').update(updateFields).eq('id', playerId)
+
+  // 30-day streak: free tournament entry for next daily tournament
+  if (freeTournamentEntry) {
+    const { data: nextTournament } = await db
+      .from('tournaments')
+      .select('id')
+      .eq('status', 'upcoming')
+      .order('starts_at', { ascending: true })
+      .limit(1)
+      .single()
+
+    if (nextTournament) {
+      // Check not already registered
+      const { data: existingReg } = await db
+        .from('tournament_registrations')
+        .select('id')
+        .eq('tournament_id', nextTournament.id)
+        .eq('player_id', playerId)
+        .single()
+
+      if (!existingReg) {
+        await db.from('tournament_registrations').insert({
+          tournament_id: nextTournament.id,
+          player_id: playerId,
+          paid: true,
+        })
+        await db.from('transactions').insert({
+          player_id: playerId,
+          type: 'win',
+          amount: 0,
+          note: `30-day streak reward: free tournament entry (${nextTournament.id})`,
+        })
+      }
+    }
+  }
 
   // Save reward to daily_rewards table
   await db.from('daily_rewards').insert({
@@ -135,6 +245,8 @@ export async function POST(req: NextRequest) {
     reward_value: reward.value,
     streak_day: newStreak,
     milestone: milestoneLabel,
+    multiplier: streakInfo.multiplier,
+    cosmetic_drop: cosmeticDrop,
   })
 
   // Log USDC transactions
@@ -146,12 +258,24 @@ export async function POST(req: NextRequest) {
       note: `Daily reward: ${reward.label}`,
     })
   }
-  if (newStreak === 14) {
+  if (streakBonusUsdc > 0) {
     await db.from('transactions').insert({
       player_id: playerId,
       type: 'win',
-      amount: 1.0,
-      note: '14-day streak milestone: $1.00 USDC bonus',
+      amount: streakBonusUsdc,
+      note: `${newStreak}-day streak milestone: $${streakBonusUsdc.toFixed(2)} match credit`,
+    })
+  }
+
+  // Log comeback bonus
+  if (comebackBonus) {
+    await db.from('daily_rewards').insert({
+      player_id: playerId,
+      reward_type: 'comeback_bonus',
+      reward_value: comebackBonus.points,
+      streak_day: 0,
+      milestone: comebackBonus.message,
+      multiplier: 1,
     })
   }
 
@@ -159,6 +283,19 @@ export async function POST(req: NextRequest) {
     reward,
     loginStreak: newStreak,
     milestone: milestoneLabel,
+    multiplier: streakInfo.multiplier,
+    xp: comebackBonus ? streakInfo.xp + comebackBonus.xp : streakInfo.xp,
+    cosmeticDrop,
+    nextMilestone: streakInfo.nextMilestone,
+    daysToNextMilestone: streakInfo.daysToNextMilestone,
+    streakBonusPoints,
+    streakBonusUsdc,
+    freeTournamentEntry,
     alreadyClaimed: false,
+    comebackBonus: comebackBonus ? {
+      xp: comebackBonus.xp,
+      points: comebackBonus.points,
+      message: comebackBonus.message,
+    } : null,
   })
 }

@@ -7,6 +7,7 @@ import { createServiceClient } from '@/lib/supabase'
 import { Trophy, Users, Calendar, DollarSign, CheckCircle, Swords, Award } from 'lucide-react'
 import { GAME_CONFIG, PRIZE_DISTRIBUTION, calculatePrizes, getGameElo, roundCount, type Game } from '@/lib/tournaments'
 import { BracketView } from '@/components/tournaments/BracketView'
+import { TournamentBracket } from '@/components/tournaments/TournamentBracket'
 import { RegisterButton } from '@/components/tournaments/RegisterButton'
 
 type Props = { params: Promise<{ id: string }> }
@@ -169,10 +170,11 @@ export default async function TournamentDetailPage({ params }: Props) {
                   Bracket
                 </h2>
                 <div className="card">
-                  <BracketView
+                  <TournamentBracket
                     tournamentId={id}
                     game={game}
                     totalRounds={totalRounds}
+                    bracketSize={bracketSize}
                     initialMatches={bracketMatches?.map(m => ({
                       ...m,
                       player_a: Array.isArray(m.player_a) ? m.player_a[0] ?? null : m.player_a,

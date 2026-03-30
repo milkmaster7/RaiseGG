@@ -4,18 +4,21 @@ import { useState } from 'react'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useRouter } from 'next/navigation'
-import { X, Zap, Loader2, Lock } from 'lucide-react'
+import { X, Zap, Loader2, Lock, TrendingUp, TrendingDown, Map } from 'lucide-react'
 import { solanaJoinMatch } from '@/lib/escrow'
 import type { StakeCurrency } from '@/lib/escrow'
 import type { Match } from '@/types'
+import { RivalryCard } from '@/components/matches/RivalryCard'
+import { calculateEloPreview } from '@/lib/elo'
 
 interface Props {
   match: Match
   playerId: string
+  playerElo?: number
   onClose: () => void
 }
 
-export function JoinMatchModal({ match, playerId, onClose }: Props) {
+export function JoinMatchModal({ match, playerId, playerElo, onClose }: Props) {
   const router = useRouter()
   const { connection } = useConnection()
   const { connected, publicKey, signTransaction, signAllTransactions } = useWallet()
@@ -26,6 +29,12 @@ export function JoinMatchModal({ match, playerId, onClose }: Props) {
 
   const payout = match.stake_amount * 2 * 0.9
   const rake   = match.stake_amount * 2 * 0.1
+
+  // ELO preview calculation
+  const opponentElo = match.player_a?.[`${match.game}_elo` as keyof typeof match.player_a] as number | undefined
+  const eloPreview = (playerElo && opponentElo)
+    ? calculateEloPreview(playerElo, opponentElo)
+    : null
 
   async function handleJoin() {
     if (!connected || !publicKey || !signTransaction || !signAllTransactions) return
@@ -94,8 +103,34 @@ export function JoinMatchModal({ match, playerId, onClose }: Props) {
               </div>
               {match.region && (
                 <div className="flex justify-between">
-                  <span className="text-muted">Region</span>
-                  <span className="text-white font-semibold">{match.region}</span>
+                  <span className="text-muted">Server</span>
+                  <span className="text-accent-cyan font-semibold">
+                    {match.region === 'istanbul' || match.region === 'tr' || match.region === 'turkey'
+                      ? '\ud83c\uddf9\ud83c\uddf7 Istanbul'
+                      : match.region === 'caucasus' || match.region === 'ge'
+                      ? '\ud83c\uddec\ud83c\uddea Caucasus'
+                      : match.region === 'balkans'
+                      ? '\ud83c\udde7\ud83c\uddec Balkans'
+                      : match.region}
+                  </span>
+                </div>
+              )}
+              {/* Map info (CS2) */}
+              {match.game === 'cs2' && (match as any).map_mode && (
+                <div className="flex justify-between">
+                  <span className="text-muted flex items-center gap-1"><Map className="w-3 h-3" /> Map</span>
+                  <span className="text-white font-semibold">
+                    {(match as any).map_mode === 'pick' && (match as any).selected_map
+                      ? (match as any).selected_map.charAt(0).toUpperCase() + (match as any).selected_map.slice(1)
+                      : (match as any).map_mode === 'veto'
+                      ? 'Map Veto'
+                      : 'Random'}
+                  </span>
+                </div>
+              )}
+              {match.game === 'cs2' && (match as any).map_mode === 'veto' && (
+                <div className="bg-accent-purple/10 border border-accent-purple/20 rounded px-3 py-1.5">
+                  <p className="text-[10px] text-accent-purple font-medium">Map veto will begin after both players join</p>
                 </div>
               )}
               <div className="flex justify-between">
@@ -119,6 +154,41 @@ export function JoinMatchModal({ match, playerId, onClose }: Props) {
                 <span className="text-muted">${rake.toFixed(2)}</span>
               </div>
             </div>
+
+            {/* ELO Change Preview */}
+            {eloPreview && (
+              <div className="card bg-space-700 mb-5">
+                <p className="text-xs text-muted uppercase tracking-wider mb-2">ELO Preview</p>
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-2 flex-1 bg-green-500/10 border border-green-500/20 rounded px-3 py-2">
+                    <TrendingUp className="w-4 h-4 text-green-400 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-muted">Win</p>
+                      <p className="font-orbitron font-bold text-green-400">+{eloPreview.win}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-1 bg-red-500/10 border border-red-500/20 rounded px-3 py-2">
+                    <TrendingDown className="w-4 h-4 text-red-400 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-muted">Loss</p>
+                      <p className="font-orbitron font-bold text-red-400">{eloPreview.loss}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Rivalry history */}
+            {match.player_a && (
+              <div className="mb-4">
+                <RivalryCard
+                  opponentId={match.player_a.id}
+                  opponentUsername={match.player_a.username}
+                  opponentAvatar={match.player_a.avatar_url}
+                  currentPlayerId={playerId}
+                />
+              </div>
+            )}
 
             {/* Password field if match is protected */}
             {match.has_password && (

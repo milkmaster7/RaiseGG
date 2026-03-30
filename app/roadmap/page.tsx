@@ -106,7 +106,7 @@ export default function RoadmapPage() {
           <h2 className="font-orbitron text-lg font-bold text-white mb-2">Got a Feature Request?</h2>
           <p className="text-muted text-sm mb-4">Tell us what you want built — we listen to our community.</p>
           <div className="flex gap-3 justify-center">
-            <a href="https://t.me/raisegg" target="_blank" rel="noopener noreferrer" className="btn-primary px-6 py-2.5 text-sm">
+            <a href="https://t.me/raise_GG" target="_blank" rel="noopener noreferrer" className="btn-primary px-6 py-2.5 text-sm">
               Telegram
             </a>
             <a href="mailto:hello@raisegg.com" className="btn-secondary px-6 py-2.5 text-sm">

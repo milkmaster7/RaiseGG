@@ -34,7 +34,7 @@ export function PayoutTicker() {
         const data = await res.json()
         setPayouts(data.payouts ?? [])
         setStats({ total24h: data.total24h ?? 0, totalAllTime: data.totalAllTime ?? 0 })
-      } catch {
+      } catch (_) {
         // silent
       }
     }
@@ -85,15 +85,6 @@ export function PayoutTicker() {
         </span>
       </div>
 
-      <style jsx>{`
-        @keyframes ticker {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-ticker {
-          animation: ticker linear infinite;
-        }
-      `}</style>
     </div>
   )
 }

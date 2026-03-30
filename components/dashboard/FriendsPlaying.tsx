@@ -96,7 +96,7 @@ export default function FriendsPlaying() {
           })
 
         setFriends(result)
-      } catch {
+      } catch (_) {
         // silently fail
       } finally {
         setLoading(false)

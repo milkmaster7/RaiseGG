@@ -20,7 +20,7 @@ async function generateMessage(username: string, country: string, payout: number
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -39,7 +39,7 @@ async function generateMessage(username: string, country: string, payout: number
     // Trim quotes and whitespace, enforce 60 char cap
     const clean = text.replace(/^["']|["']$/g, '').trim().slice(0, 60)
     return clean || `${username} won $${payout.toFixed(0)} on ${game}`
-  } catch {
+  } catch (_) {
     return `${username} won $${payout.toFixed(0)} on ${game}`
   }
 }

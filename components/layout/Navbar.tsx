@@ -14,7 +14,7 @@ export default async function Navbar() {
     try {
       await jwtVerify(token, SECRET)
       isLoggedIn = true
-    } catch {}
+    } catch (_) {}
   }
   return <NavbarClient isLoggedIn={isLoggedIn} />
 }

@@ -34,7 +34,7 @@ export default function LiveWinTicker() {
         setItems(data)
         setUsingSeed(false)
       }
-    } catch {
+    } catch (_) {
       // keep current items on network error
     }
   }

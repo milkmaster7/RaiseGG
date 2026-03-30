@@ -59,7 +59,8 @@ export default async function Dota2Page() {
         <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none hidden lg:block">
           <img
             src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/juggernaut.png"
-            alt=""
+            alt="Dota 2 Juggernaut hero artwork"
+            loading="lazy"
             className="absolute right-12 bottom-0 h-[110%] object-contain opacity-20"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-space-900 via-space-900/80 to-transparent" />
@@ -128,6 +129,30 @@ export default async function Dota2Page() {
           <Link href="/leaderboard" className="text-sm text-accent-cyan hover:underline">Full leaderboard →</Link>
         </div>
         <LeaderboardTable players={(topPlayers ?? []) as any} game="dota2" limit={10} />
+      </section>
+
+      {/* Also on RaiseGG */}
+      <section className="bg-space-800 border-y border-border py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="section-title text-center mb-6">Also on RaiseGG</h2>
+          <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            <Link href="/games/cs2" className="card-hover block text-center py-6">
+              <h3 className="font-orbitron font-bold text-white mb-1">CS2</h3>
+              <p className="text-muted text-sm">Dedicated servers, 1v1 stake matches</p>
+            </Link>
+            <Link href="/games/deadlock" className="card-hover block text-center py-6">
+              <h3 className="font-orbitron font-bold text-white mb-1">Deadlock</h3>
+              <p className="text-muted text-sm">First & only stake platform</p>
+            </Link>
+          </div>
+          <div className="flex justify-center gap-4 mt-6 text-sm">
+            <Link href="/how-it-works" className="text-accent-cyan hover:underline">How It Works</Link>
+            <span className="text-gray-600">&bull;</span>
+            <Link href="/faq" className="text-accent-cyan hover:underline">FAQ</Link>
+            <span className="text-gray-600">&bull;</span>
+            <Link href="/leaderboard" className="text-accent-cyan hover:underline">Leaderboard</Link>
+          </div>
+        </div>
       </section>
 
       {/* Region Links */}
