@@ -48,8 +48,14 @@ let cachedToken: { token: string; expiresAt: number } | null = null
 
 // ─── Core functions ─────────────────────────────────────────────────────────
 
-/** Check if Twitch credentials are configured */
+/** Check if Twitch credentials are configured (Helix API or GQL fallback) */
 export function isConfigured(): boolean {
+  // Always true — GQL fallback works without credentials
+  return true
+}
+
+/** Check if full Helix API is available */
+function hasHelixCredentials(): boolean {
   return !!(process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET)
 }
 
@@ -116,13 +122,87 @@ async function helixFetch(path: string, params?: Record<string, string>): Promis
   return res.json()
 }
 
+// ─── Twitch GQL (no auth needed) ──────────────────────────────────────────
+
+const TWITCH_GQL_URL = 'https://gql.twitch.tv/gql'
+const TWITCH_PUBLIC_CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko'
+
+const GAME_NAMES: Record<string, string> = {
+  cs2: 'Counter-Strike',
+  'counter-strike': 'Counter-Strike',
+  dota2: 'Dota 2',
+  'dota 2': 'Dota 2',
+  deadlock: 'Deadlock',
+}
+
+/** Search streams via Twitch GQL — works without any credentials */
+async function gqlSearchStreams(gameName: string, limit = 30): Promise<StreamerInfo[]> {
+  const query = `
+    query {
+      game(name: "${gameName}") {
+        streams(first: ${limit}) {
+          edges {
+            node {
+              id
+              title
+              viewersCount
+              broadcaster {
+                id
+                login
+                displayName
+                description
+                profileImageURL(width: 150)
+              }
+              game {
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  `
+
+  try {
+    const res = await fetch(TWITCH_GQL_URL, {
+      method: 'POST',
+      headers: {
+        'Client-ID': TWITCH_PUBLIC_CLIENT_ID,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+      signal: AbortSignal.timeout(15000),
+    })
+
+    if (!res.ok) return []
+    const data = await res.json()
+
+    const edges = data?.data?.game?.streams?.edges ?? []
+    return edges.map((e: any) => {
+      const node = e.node
+      const broadcaster = node.broadcaster
+      return {
+        userId: broadcaster?.id ?? '',
+        username: broadcaster?.login ?? '',
+        displayName: broadcaster?.displayName ?? '',
+        viewerCount: node.viewersCount ?? 0,
+        language: '', // GQL doesn't return language in this query
+        profileUrl: `https://twitch.tv/${broadcaster?.login ?? ''}`,
+        description: broadcaster?.description ?? '',
+        gameName: node.game?.name ?? gameName,
+        title: node.title ?? '',
+        thumbnailUrl: broadcaster?.profileImageURL ?? '',
+      }
+    })
+  } catch (err) {
+    console.error('Twitch GQL error:', err)
+    return []
+  }
+}
+
 /**
- * Search for live streamers of a specific game filtered by language and viewer range.
- *
- * @param game - Game key: 'cs2' or 'dota2'
- * @param language - ISO language code: 'tr', 'ro', 'ru', 'sr', 'pl', 'en', etc.
- * @param minViewers - Minimum concurrent viewers (e.g. 20)
- * @param maxViewers - Maximum concurrent viewers (e.g. 200)
+ * Search for live streamers of a specific game filtered by viewer range.
+ * Uses Helix API if credentials exist, falls back to GQL (no auth needed).
  */
 export async function searchStreamers(
   game: string,
@@ -130,12 +210,36 @@ export async function searchStreamers(
   minViewers: number = 20,
   maxViewers: number = 200
 ): Promise<StreamerInfo[]> {
+  // Try Helix API first if credentials exist
+  if (hasHelixCredentials()) {
+    try {
+      return await searchStreamersHelix(game, language, minViewers, maxViewers)
+    } catch (err) {
+      console.warn('Helix API failed, falling back to GQL:', err)
+    }
+  }
+
+  // Fallback: GQL (no credentials needed)
+  const resolvedName = GAME_NAMES[game.toLowerCase()] ?? game
+  const allStreams = await gqlSearchStreams(resolvedName, 50)
+
+  return allStreams
+    .filter(s => s.viewerCount >= minViewers && s.viewerCount <= maxViewers)
+    .sort((a, b) => b.viewerCount - a.viewerCount)
+}
+
+/** Helix API search (requires TWITCH_CLIENT_ID + TWITCH_CLIENT_SECRET) */
+async function searchStreamersHelix(
+  game: string,
+  language: string,
+  minViewers: number,
+  maxViewers: number
+): Promise<StreamerInfo[]> {
   const gameId = GAME_IDS[game.toLowerCase()] ?? game
 
   const streamers: StreamerInfo[] = []
   let cursor: string | undefined
 
-  // Paginate through results (max 3 pages = 300 streams)
   for (let page = 0; page < 3; page++) {
     const params: Record<string, string> = {
       game_id: gameId,
@@ -169,9 +273,7 @@ export async function searchStreamers(
     if (!cursor) break
   }
 
-  // Sort by viewer count descending (best prospects first)
   streamers.sort((a, b) => b.viewerCount - a.viewerCount)
-
   return streamers
 }
 
@@ -180,17 +282,24 @@ export async function searchStreamers(
  * Pulls from the users endpoint and channel info.
  */
 export async function getStreamerSocials(
-  userId: string
+  userId: string,
+  descriptionHint?: string
 ): Promise<StreamerWithSocials['socials']> {
   const socials: StreamerWithSocials['socials'] = {}
 
   try {
-    // Get user info (includes description which may contain links)
-    const userData = await helixFetch('users', { id: userId })
-    const user = userData.data?.[0]
+    let desc = descriptionHint ?? ''
 
-    if (user?.description) {
-      const desc = user.description as string
+    // Try Helix API for user info if available
+    if (hasHelixCredentials() && !desc) {
+      try {
+        const userData = await helixFetch('users', { id: userId })
+        const user = userData.data?.[0]
+        desc = user?.description ?? ''
+      } catch {}
+    }
+
+    if (desc) {
       // Extract social links from bio
       const twitterMatch = desc.match(/(?:twitter\.com|x\.com)\/(\w+)/i)
       if (twitterMatch) socials.twitter = `https://x.com/${twitterMatch[1]}`
@@ -240,7 +349,7 @@ export async function buildOutreachList(
           seen.add(s.userId)
 
           // Rate-limit social lookups to avoid hitting Twitch limits
-          const socials = await getStreamerSocials(s.userId)
+          const socials = await getStreamerSocials(s.userId, s.description)
 
           allStreamers.push({ ...s, socials })
 
