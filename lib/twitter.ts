@@ -197,6 +197,167 @@ export async function tweetAnnouncement(
   return tweet(text)
 }
 
+// ─── Engagement (search, like, reply, retweet) ───────────────────────────
+
+/** Search recent tweets by query. Returns tweet IDs + text. */
+export async function searchTweets(query: string, maxResults = 10): Promise<Array<{
+  id: string; text: string; authorId: string; authorUsername?: string; metrics?: { like_count: number; retweet_count: number; reply_count: number }
+}>> {
+  if (!hasCredentials()) return []
+
+  const url = `https://api.twitter.com/2/tweets/search/recent?query=${encodeURIComponent(query)}&max_results=${maxResults}&tweet.fields=public_metrics,author_id&expansions=author_id&user.fields=username`
+  const authHeader = await generateOAuthHeader('GET', url.split('?')[0])
+
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: authHeader },
+      signal: AbortSignal.timeout(15000),
+    })
+    if (!res.ok) return []
+    const data = await res.json()
+
+    const users = new Map<string, string>()
+    for (const u of data?.includes?.users ?? []) {
+      users.set(u.id, u.username)
+    }
+
+    return (data?.data ?? []).map((t: any) => ({
+      id: t.id,
+      text: t.text,
+      authorId: t.author_id,
+      authorUsername: users.get(t.author_id),
+      metrics: t.public_metrics ? {
+        like_count: t.public_metrics.like_count,
+        retweet_count: t.public_metrics.retweet_count,
+        reply_count: t.public_metrics.reply_count,
+      } : undefined,
+    }))
+  } catch {
+    return []
+  }
+}
+
+/** Like a tweet */
+export async function likeTweet(tweetId: string): Promise<boolean> {
+  if (!hasCredentials()) return false
+
+  // Need our own user ID first
+  const userId = await getOwnUserId()
+  if (!userId) return false
+
+  const url = `https://api.twitter.com/2/users/${userId}/likes`
+  const body = JSON.stringify({ tweet_id: tweetId })
+  const authHeader = await generateOAuthHeader('POST', url, body)
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: authHeader, 'Content-Type': 'application/json' },
+      body,
+      signal: AbortSignal.timeout(10000),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
+/** Retweet a tweet */
+export async function retweet(tweetId: string): Promise<boolean> {
+  if (!hasCredentials()) return false
+
+  const userId = await getOwnUserId()
+  if (!userId) return false
+
+  const url = `https://api.twitter.com/2/users/${userId}/retweets`
+  const body = JSON.stringify({ tweet_id: tweetId })
+  const authHeader = await generateOAuthHeader('POST', url, body)
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: authHeader, 'Content-Type': 'application/json' },
+      body,
+      signal: AbortSignal.timeout(10000),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
+/** Reply to a tweet */
+export async function replyToTweet(tweetId: string, text: string): Promise<string | null> {
+  if (!hasCredentials()) return null
+
+  const trimmed = text.length > 280 ? text.slice(0, 277) + '...' : text
+  const url = 'https://api.twitter.com/2/tweets'
+  const body = JSON.stringify({ text: trimmed, reply: { in_reply_to_tweet_id: tweetId } })
+  const authHeader = await generateOAuthHeader('POST', url, body)
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: authHeader, 'Content-Type': 'application/json' },
+      body,
+      signal: AbortSignal.timeout(15000),
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    return data?.data?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+/** Follow a user */
+export async function followUser(targetUserId: string): Promise<boolean> {
+  if (!hasCredentials()) return false
+
+  const userId = await getOwnUserId()
+  if (!userId) return false
+
+  const url = `https://api.twitter.com/2/users/${userId}/following`
+  const body = JSON.stringify({ target_user_id: targetUserId })
+  const authHeader = await generateOAuthHeader('POST', url, body)
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: authHeader, 'Content-Type': 'application/json' },
+      body,
+      signal: AbortSignal.timeout(10000),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
+// Cache own user ID
+let _ownUserId: string | null = null
+
+/** Get our own user ID (cached) */
+async function getOwnUserId(): Promise<string | null> {
+  if (_ownUserId) return _ownUserId
+
+  const url = 'https://api.twitter.com/2/users/me'
+  const authHeader = await generateOAuthHeader('GET', url)
+
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: authHeader },
+      signal: AbortSignal.timeout(10000),
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    _ownUserId = data?.data?.id ?? null
+    return _ownUserId
+  } catch {
+    return null
+  }
+}
+
 /** Tweet daily stats summary */
 export async function tweetDailyStats(stats: {
   matchesPlayed: number
