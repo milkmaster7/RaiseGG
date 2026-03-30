@@ -163,9 +163,9 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: 'No groups' })
     }
 
-    // Pick 5 random groups per run
+    // Pick 3 random groups per run (limited by 120s function timeout)
     const shuffled = [...groups].sort(() => Math.random() - 0.5)
-    const selected = shuffled.slice(0, 5)
+    const selected = shuffled.slice(0, 3)
 
     const results: Array<{ group: string; scanned: number; replied: number; error?: string }> = []
     let totalReplied = 0
@@ -204,7 +204,7 @@ export async function GET(req: Request) {
           }
 
           // Wait between replies
-          await new Promise(r => setTimeout(r, 15000))
+          await new Promise(r => setTimeout(r, 8000))
         }
 
         results.push({ group: group.title, scanned: recent.length, replied })
@@ -213,7 +213,7 @@ export async function GET(req: Request) {
       }
 
       // Wait between groups
-      await new Promise(r => setTimeout(r, 10000))
+      await new Promise(r => setTimeout(r, 5000))
     }
 
     await recordCronRun('telegram-engage', 'ok', {

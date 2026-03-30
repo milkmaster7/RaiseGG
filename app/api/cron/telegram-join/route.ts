@@ -46,7 +46,7 @@ const DIRECT_JOIN_GROUPS = [
   'CS2NEWSUPDATE',        // 5K — fastest CS2 news
   'tg_globaloffensive',   // 2K — community group
   'cs2trading',
-  'cs2_turkey',
+  'cs2_turk',             // CS2 Turkey community
   'csgobetting',
   'cybersport_nn',        // 10K — CS2 insiders
   'awpcsgo',              // 5K — CS community
