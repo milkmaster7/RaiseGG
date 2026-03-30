@@ -8,6 +8,7 @@ import { faqSchema, softwareAppSchema } from '@/lib/schemas'
 import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
 import { Accordion } from '@/components/ui/Accordion'
 import { PayoutTicker } from '@/components/home/PayoutTicker'
+import { WinnersTicker } from '@/components/home/WinnersTicker'
 import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup'
 import { SocialProof } from '@/components/home/SocialProof'
 import { ComparisonTable } from '@/components/home/ComparisonTable'
@@ -173,6 +174,9 @@ export default async function HomePage() {
 
       {/* ── Payout Ticker ── */}
       <PayoutTicker />
+
+      {/* ── Winners Ticker ── */}
+      <WinnersTicker />
 
       {/* ── Live Matches ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
