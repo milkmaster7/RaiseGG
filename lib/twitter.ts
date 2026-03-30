@@ -314,9 +314,9 @@ export async function retweet(tweetId: string): Promise<boolean> {
   }
 }
 
-/** Reply to a tweet */
-export async function replyToTweet(tweetId: string, text: string): Promise<string | null> {
-  if (!hasCredentials()) return null
+/** Reply to a tweet. Returns reply tweet ID or null + error. */
+export async function replyToTweet(tweetId: string, text: string): Promise<{ id: string | null; error?: string }> {
+  if (!hasCredentials()) return { id: null, error: 'no creds' }
 
   const trimmed = text.length > 280 ? text.slice(0, 277) + '...' : text
   const url = 'https://api.twitter.com/2/tweets'
@@ -330,11 +330,15 @@ export async function replyToTweet(tweetId: string, text: string): Promise<strin
       body,
       signal: AbortSignal.timeout(15000),
     })
-    if (!res.ok) return null
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '')
+      console.error(`Twitter reply ${res.status}: ${errText}`)
+      return { id: null, error: `${res.status}: ${errText.slice(0, 200)}` }
+    }
     const data = await res.json()
-    return data?.data?.id ?? null
-  } catch {
-    return null
+    return { id: data?.data?.id ?? null }
+  } catch (err) {
+    return { id: null, error: String(err) }
   }
 }
 

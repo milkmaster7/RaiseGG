@@ -151,11 +151,11 @@ export async function GET(req: Request) {
         const category = pickCategory(tw.text)
         const replyText = pick(REPLIES[category])
 
-        const replyId = await replyToTweet(tw.id, replyText)
-        if (replyId) {
+        const result = await replyToTweet(tw.id, replyText)
+        if (result.id) {
           replied++
         } else {
-          errors.push(`Reply failed on ${tw.id}`)
+          errors.push(`Reply to ${tw.id}: ${result.error}`)
         }
         await new Promise(r => setTimeout(r, 2000))
       }
