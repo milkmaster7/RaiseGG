@@ -150,7 +150,7 @@ No deposit needed. $5 USDC prize to the winner. 8-player single elimination.
 - [Play Now](https://raisegg.com/play)
 - [Tournaments](https://raisegg.com/tournaments)
 - [Leaderboard](https://raisegg.com/leaderboard)
-- [Discord](https://discord.gg/raisegg)
+- [Discord](https://discord.gg/ErWPgH7gd6)
 - [Telegram](https://t.me/raisegg)
 - [Twitter / X](https://x.com/raise_gg)
 
@@ -197,7 +197,7 @@ comment: |
 
     **Quick links:**
     - [Play Now](https://raisegg.com/play) | [Tournaments](https://raisegg.com/tournaments) | [Leaderboard](https://raisegg.com/leaderboard)
-    - [Discord](https://discord.gg/raisegg) | [Telegram](https://t.me/raisegg)
+    - [Discord](https://discord.gg/ErWPgH7gd6) | [Telegram](https://t.me/raisegg)
 
     Please make sure your post has the correct flair. If you're reporting a bug, include as much detail as possible.
 
@@ -265,7 +265,7 @@ Istanbul, Ankara, Bucharest, Belgrade, Tbilisi, Baku, and more.
 - **Play:** [raisegg.com/play](https://raisegg.com/play)
 - **Tournaments:** [raisegg.com/tournaments](https://raisegg.com/tournaments)
 - **Leaderboard:** [raisegg.com/leaderboard](https://raisegg.com/leaderboard)
-- **Discord:** [discord.gg/raisegg](https://discord.gg/raisegg)
+- **Discord:** [discord.gg/ErWPgH7gd6](https://discord.gg/ErWPgH7gd6)
 - **Telegram:** [t.me/raisegg](https://t.me/raisegg)
 - **Twitter:** [x.com/raise_gg](https://x.com/raise_gg)
 

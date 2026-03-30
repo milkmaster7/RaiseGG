@@ -174,6 +174,14 @@ export default function Sidebar() {
           >
             Twitter/X
           </a>
+          <a
+            href="https://discord.gg/ErWPgH7gd6"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-muted hover:text-accent-cyan transition-colors"
+          >
+            Discord
+          </a>
         </div>
       </div>
     </aside>

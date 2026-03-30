@@ -48,8 +48,12 @@ export default function Footer() {
                 className="text-muted hover:text-accent-purple transition-colors text-sm">
                 Twitter/X
               </a>
+              <a href="https://discord.gg/ErWPgH7gd6" target="_blank" rel="noopener noreferrer"
+                className="text-muted hover:text-accent-purple transition-colors text-sm">
+                Discord
+              </a>
             </div>
-            <p className="text-xs text-muted mt-2">500+ players on Telegram</p>
+            <p className="text-xs text-muted mt-2">500+ players on Telegram &amp; Discord</p>
           </div>
 
           {/* Games */}

@@ -98,7 +98,7 @@ No deposit needed. $5 USDC prize to the winner. 8-player single elimination.
 - [Play Now](https://raisegg.com/play)
 - [Tournaments](https://raisegg.com/tournaments)
 - [Leaderboard](https://raisegg.com/leaderboard)
-- [Discord](https://discord.gg/raisegg)
+- [Discord](https://discord.gg/ErWPgH7gd6)
 - [Telegram](https://t.me/raisegg)
 - [Twitter / X](https://x.com/raise_gg)
 
@@ -310,7 +310,7 @@ comment: |
 
     **Quick links:**
     - [Play Now](https://raisegg.com/play) | [Tournaments](https://raisegg.com/tournaments) | [Leaderboard](https://raisegg.com/leaderboard)
-    - [Discord](https://discord.gg/raisegg) | [Telegram](https://t.me/raisegg)
+    - [Discord](https://discord.gg/ErWPgH7gd6) | [Telegram](https://t.me/raisegg)
 
     Please make sure your post has the correct flair. If you're reporting a bug, include as much detail as possible.
 
@@ -707,7 +707,7 @@ Welcome to the official RaiseGG wiki! Everything you need to know about competit
 - [Play Now](https://raisegg.com/play)
 - [Tournaments](https://raisegg.com/tournaments)
 - [Leaderboard](https://raisegg.com/leaderboard)
-- [Discord](https://discord.gg/raisegg)
+- [Discord](https://discord.gg/ErWPgH7gd6)
 `,
   },
   'getting-started': {
@@ -739,7 +739,7 @@ Every match earns you ELO points. Climb the leaderboard and rep your city!
 - **Deadlock** — 1v1
 
 ## Need Help?
-- [Discord](https://discord.gg/raisegg)
+- [Discord](https://discord.gg/ErWPgH7gd6)
 - [Telegram](https://t.me/raisegg)
 `,
   },

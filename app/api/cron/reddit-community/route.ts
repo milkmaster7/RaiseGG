@@ -503,7 +503,7 @@ Feedback? Drop it in the comments.
 
 ---
 
-[Play Now](https://raisegg.com/play) | [Discord](https://discord.gg/raisegg)`,
+[Play Now](https://raisegg.com/play) | [Discord](https://discord.gg/ErWPgH7gd6)`,
   },
   {
     category: 'announcement',
@@ -635,7 +635,7 @@ What should we prioritize? Vote in the comments.
 
 ---
 
-[Play Now](https://raisegg.com/play) | [Discord](https://discord.gg/raisegg)`,
+[Play Now](https://raisegg.com/play) | [Discord](https://discord.gg/ErWPgH7gd6)`,
   },
 
   // ── Discussion Starters (8) ─────────────────────────────────────────────
