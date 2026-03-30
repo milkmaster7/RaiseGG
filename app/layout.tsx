@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     url: 'https://raisegg.com',
     images: [
       {
-        url: 'https://raisegg.com/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff',
+        url: 'https://raisegg.com/og-image.png',
         width: 1200,
         height: 630,
         alt: 'RaiseGG — Competitive Stake Platform',
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     creator: '@RaiseGG',
     title: 'RaiseGG – CS2, Dota 2 & Deadlock Stake Matches',
     description: 'Stake USDC/USDT on competitive matches. Instant payouts. 44 countries.',
-    images: ['https://raisegg.com/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff'],
+    images: ['https://raisegg.com/og-image.png'],
   },
 
   robots: {
