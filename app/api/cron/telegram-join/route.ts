@@ -47,7 +47,7 @@ const DIRECT_JOIN_GROUPS = [
   'tg_globaloffensive',   // 2K — community group
   'cs2trading',
   'cs2_turk',             // CS2 Turkey community
-  'csgobetting',
+  'csgo_betting',           // CS:GO betting community
   'cybersport_nn',        // 10K — CS2 insiders
   'awpcsgo',              // 5K — CS community
 
