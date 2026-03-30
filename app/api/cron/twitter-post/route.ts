@@ -5,16 +5,16 @@
 import { NextResponse } from 'next/server'
 import { tweet, tweetWithDetails } from '@/lib/twitter'
 import { recordCronRun } from '@/lib/monitor'
-import { createServiceClient } from '@/lib/supabase'
+// Supabase removed — no longer using DB stats in fallback tweets
 
 export const maxDuration = 30
 
 // 30 tweet templates — rotates daily so no repeats for a month
 const TWEETS = [
   // Tournament hype
-  `Free CS2 tournament tonight - $5 USDC prize pool\n\n8 players. Single elimination. Anti-cheat.\nNo entry fee. Just skill.\n\nhttps://raisegg.com/tournaments\n\n#CS2 #esports`,
+  `Free CS2 tournament tonight - $5 USDC prize pool\n\n8 players. Single elimination. Anti-cheat.\nNo entry fee. Just skill.\n\nhttps://raisegg.com/tournaments\n\n#CS2`,
   `Istanbul Friday Night CS2 is becoming a thing\n\nFree entry, real prizes, city pride on the line\n\nhttps://raisegg.com/tournaments\n\n#CS2 #Istanbul`,
-  `Tbilisi vs Baku - who has better CS2 players?\n\nFree tournament every week. Rep your city.\n\nhttps://raisegg.com/tournaments\n\n#CS2 #Caucasus #esports`,
+  `Tbilisi vs Baku - who has better CS2 players?\n\nFree tournament every week. Rep your city.\n\nhttps://raisegg.com/tournaments\n\n#CS2 #Caucasus`,
   `Belgrade Cup tonight\n\nFree CS2 tournament, $5 prize, 8 slots\nBalkan pride on the line\n\nhttps://raisegg.com/tournaments\n\n#CS2 #Balkans`,
   `Bucharest vs Cluj - the eternal Romanian CS2 rivalry\n\nSettle it on RaiseGG. Free tournaments daily.\n\nhttps://raisegg.com/tournaments\n\n#CS2 #Romania`,
   `Warsaw CS2 Invitational - free entry, real prizes\n\nPolish CS2 scene deserves more love\n\nhttps://raisegg.com/tournaments\n\n#CS2 #Poland`,
@@ -55,7 +55,7 @@ const TWEETS = [
   `Deadlock is on RaiseGG\n\nStake matches in Valve's newest game\nEarly adopter advantage\n\nhttps://raisegg.com/play\n\n#Deadlock`,
 
   // Call to action
-  `Follow us for daily CS2 tournament announcements, city rivalries, and esports staking updates\n\nFree tournaments every day at https://raisegg.com/tournaments\n\n#CS2 #esports`,
+  `Follow us for daily CS2 tournament announcements, city rivalries, and esports staking updates\n\nFree tournaments every day at https://raisegg.com/tournaments\n\n#CS2`,
   `Join the RaiseGG Telegram for instant tournament alerts\n\nt.me/raise_GG\n\nFree CS2 tournaments daily. Real prizes. No entry fee.`,
 ]
 
@@ -79,15 +79,13 @@ export async function GET(req: Request) {
     const { id: tweetId, error: tweetError, status: tweetStatus } = await tweetWithDetails(tweetText)
 
     if (!tweetId) {
-      // Try to get stats from DB for a dynamic tweet instead
-      const supabase = createServiceClient()
-      const { count } = await supabase.from('matches').select('*', { count: 'exact', head: true })
-
-      const fallback = `${count ?? 0} matches played on RaiseGG so far\n\nFree CS2 tournaments every day. Real USDC prizes.\n\nhttps://raisegg.com/tournaments\n\n#CS2 #esports`
-      const fallbackId = await tweet(fallback)
+      // Try a different template as fallback (skip the one that failed)
+      const fallbackIndex = (tweetIndex + 1) % TWEETS.length
+      const fallbackText = TWEETS[fallbackIndex]
+      const fallbackId = await tweet(fallbackText)
 
       await recordCronRun('twitter-post', fallbackId ? 'ok' : 'error', {
-        message: fallbackId ? `Fallback tweet posted: ${fallbackId}` : 'Both tweets failed',
+        message: fallbackId ? `Fallback tweet posted: ${fallbackId} (template ${fallbackIndex})` : 'Both tweets failed',
         durationMs: Date.now() - start,
       })
 
