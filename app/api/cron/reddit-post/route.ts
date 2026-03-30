@@ -38,6 +38,12 @@ const TIER1_SUBS = [
   'SolanaNetwork',      // 5K — Solana projects
   'defi',               // 100K — DeFi/crypto
   'CryptoCurrency',     // 7M — crypto discussion
+  'CryptoMoonShots',    // 2M — new crypto projects
+  'SatoshiStreetBets',  // 750K — degen crypto
+  'ethgaming',          // 5K — ETH gaming
+  'NFTGaming',          // 10K — NFT/gaming crossover
+  'blockchain',         // 500K — blockchain tech
+  'altcoin',            // 200K — altcoin discussion
 ] as const
 
 // Tier 2: Organic/discussion — blend in, no direct ads
@@ -1386,6 +1392,77 @@ Tehran vs Isfahan on the city leaderboard. Who's better?
 
 raisegg.com/tournaments`,
     subreddits: ['iran', 'iranian'],
+  },
+
+  // ── Crypto-native community posts ─────────────────────────────
+  {
+    title: 'Finally a crypto project where the product is actually useful — competitive gaming escrow',
+    body: `Tired of memecoins and vaporware? RaiseGG uses Solana for something that actually makes sense: escrow for competitive gaming.
+
+How it works:
+1. Two players agree to a CS2/Dota 2/Deadlock match ($1-50 USDC)
+2. Both deposit USDC into a Solana smart contract
+3. Match plays on anti-cheat servers
+4. Winner gets paid automatically — 400ms settlement
+
+No tokens to buy. No NFTs. No ponzinomics. Just USDC in, USDC out.
+
+The cross-border angle is what makes crypto necessary here — try sending $5 from Azerbaijan to Georgia through traditional banking. Crypto does it in milliseconds.
+
+Free daily tournaments too ($5 USDC prize, no entry fee): raisegg.com/tournaments`,
+    subreddits: ['CryptoCurrency', 'CryptoMoonShots', 'altcoin', 'blockchain', 'SatoshiStreetBets'],
+  },
+  {
+    title: 'Solana use case that isn\'t a memecoin: P2P gaming escrow with instant USDC settlement',
+    body: `Built an escrow system on Solana for competitive gaming. Players deposit USDC into a program, play their match (CS2/Dota 2/Deadlock), winner gets paid.
+
+Why Solana:
+- 400ms finality = winner gets paid before the scoreboard fades
+- USDC/USDT native = no volatile token risk
+- $0.001 tx fees = viable for $1-5 micro-stakes
+- SPL Token program = battle-tested escrow
+
+This solves a real problem — online gaming wager matches have always been plagued by scammers who just don't pay. Smart contract escrow makes that impossible.
+
+44 countries live, most players from Turkey, Balkans, Caucasus, CIS — regions where cross-border banking is slow/expensive but crypto works perfectly.
+
+Platform: raisegg.com
+Free to try — daily tournaments with $5 USDC prizes, no deposit needed.`,
+    subreddits: ['solana', 'SolanaNetwork', 'SolanaGaming', 'defi'],
+  },
+  {
+    title: 'Earn USDC playing CS2 and Dota 2 — not P2E grinding, actual competitive matches',
+    body: `RaiseGG isn't another play-to-earn token grind. It's real competitive gaming with crypto payments.
+
+Two ways to earn:
+1. Free tournaments — no entry fee, $5 USDC prize daily
+2. Stake matches — put up $1-50 USDC, play 1v1, winner takes the pot
+
+Everything runs through Solana blockchain escrow. Both players deposit before the match, smart contract auto-releases to the winner.
+
+Games: CS2, Dota 2, Deadlock
+Payment: USDC/USDT on Solana
+Anti-cheat: Yes, on all servers
+
+The crypto part is invisible to players who don't care about it — they just see "deposit, play, get paid." But for those of us who get it, it's one of the cleanest crypto use cases out there.
+
+raisegg.com`,
+    subreddits: ['CryptoGaming', 'PlayToEarn', 'web3gaming', 'NFTGaming', 'ethgaming', 'FreeCrypto'],
+  },
+  {
+    title: 'How crypto solves the biggest problem in online gaming wagers',
+    body: `The #1 problem with playing games for money online: the loser doesn't pay.
+
+Every Discord wager group has this issue. You win a 1v1, the other person blocks you. Nothing you can do.
+
+Crypto fix: Both players deposit USDC into a Solana smart contract BEFORE the match starts. Neither can withdraw. Match plays on anti-cheat servers. Winner gets both deposits automatically.
+
+No middleman. No trust needed. No "bro I'll pay you tomorrow."
+
+This is what we built at RaiseGG — competitive CS2, Dota 2, and Deadlock matches with blockchain escrow. Works across 44 countries because USDC doesn't care about borders.
+
+Free daily tournaments too: raisegg.com/tournaments`,
+    subreddits: ['CryptoCurrency', 'CryptoMoonShots', 'SatoshiStreetBets', 'altcoin', 'blockchain'],
   },
 ]
 
