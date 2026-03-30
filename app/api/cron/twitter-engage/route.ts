@@ -146,8 +146,9 @@ export async function GET(req: Request) {
         await new Promise(r => setTimeout(r, 1000))
       }
 
-      // Reply to the top 2 most popular tweets
-      for (const tw of sorted.slice(0, 2)) {
+      // Reply to the top 2 most popular tweets that allow replies from everyone
+      const replyable = sorted.filter(t => !t.replySettings || t.replySettings === 'everyone')
+      for (const tw of replyable.slice(0, 2)) {
         const category = pickCategory(tw.text)
         const replyText = pick(REPLIES[category])
 

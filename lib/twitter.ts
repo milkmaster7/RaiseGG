@@ -212,7 +212,7 @@ export async function tweetAnnouncement(
 
 /** Search recent tweets by query. Returns tweet IDs + text. */
 export async function searchTweets(query: string, maxResults = 10): Promise<Array<{
-  id: string; text: string; authorId: string; authorUsername?: string; metrics?: { like_count: number; retweet_count: number; reply_count: number }
+  id: string; text: string; authorId: string; authorUsername?: string; replySettings?: string; metrics?: { like_count: number; retweet_count: number; reply_count: number }
 }>> {
   if (!hasCredentials()) return []
 
@@ -220,7 +220,7 @@ export async function searchTweets(query: string, maxResults = 10): Promise<Arra
   const params = new URLSearchParams({
     query,
     max_results: String(Math.max(10, maxResults)),
-    'tweet.fields': 'public_metrics,author_id',
+    'tweet.fields': 'public_metrics,author_id,reply_settings',
     expansions: 'author_id',
     'user.fields': 'username',
   })
@@ -253,6 +253,7 @@ export async function searchTweets(query: string, maxResults = 10): Promise<Arra
       text: t.text,
       authorId: t.author_id,
       authorUsername: users.get(t.author_id),
+      replySettings: t.reply_settings, // 'everyone' | 'mentionedUsers' | 'following'
       metrics: t.public_metrics ? {
         like_count: t.public_metrics.like_count,
         retweet_count: t.public_metrics.retweet_count,
