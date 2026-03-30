@@ -15,49 +15,47 @@ export const maxDuration = 60
 // ─── Search queries (rotates each run) ────────────────────────────────────
 
 const SEARCH_QUERIES = [
-  // CS2 conversations
-  'CS2 tournament -is:retweet lang:en',
+  // CS2 stake / wager / 1v1
   'CS2 1v1 -is:retweet',
-  '"counter strike 2" competitive -is:retweet',
+  'CS2 wager -is:retweet',
+  'CS2 "1v1 me" -is:retweet',
+  'CS2 tournament -is:retweet lang:en',
   'CS2 ranked -is:retweet lang:en',
-  'CS2 tips -is:retweet',
   'CS2 matchmaking -is:retweet',
   'CS2 skins trade -is:retweet',
 
-  // Dota 2 conversations
-  'Dota 2 tournament -is:retweet lang:en',
+  // Dota 2
   'Dota 2 1v1 mid -is:retweet',
-  'Dota 2 ranked -is:retweet',
   'Dota 2 MMR -is:retweet',
+  'Dota 2 wager -is:retweet',
+  'Dota 2 tournament -is:retweet lang:en',
 
   // Deadlock
   'Deadlock Valve -is:retweet',
   'Deadlock competitive -is:retweet',
 
-  // Esports general
-  'esports tournament free -is:retweet',
-  'esports wager -is:retweet',
-  'esports betting -is:retweet',
+  // Wager / stake gaming
+  'CS2 bet skin -is:retweet',
+  'gaming wager -is:retweet',
+  'stake match CS2 -is:retweet',
 
-  // Regional
+  // Regional (RaiseGG target audience)
   'CS2 Turkey -is:retweet',
-  'esports Balkans -is:retweet',
   'CS2 CIS -is:retweet',
+  'Dota 2 Turkey -is:retweet',
 
-  // Crypto gaming
-  'crypto esports -is:retweet',
-  'blockchain gaming tournament -is:retweet',
-  'USDC esports -is:retweet',
+  // Crypto gaming (RaiseGG uses Solana/USDC)
+  'crypto gaming -is:retweet',
+  'blockchain gaming -is:retweet',
+  'play to earn -is:retweet',
 
-  // Conversational / question tweets (more likely to have open replies)
+  // Conversational (people asking questions)
   '"anyone know" CS2 -is:retweet',
   '"looking for" CS2 tournament -is:retweet',
-  '"where can I" CS2 -is:retweet',
-  '"any good" esports platform -is:retweet',
-  'CS2 "1v1 me" -is:retweet',
+  '"where can I" play CS2 -is:retweet',
   '"need players" CS2 -is:retweet',
   'Dota 2 "looking for" -is:retweet',
-  '"free tournament" -is:retweet',
+  '"free tournament" CS2 -is:retweet',
 ]
 
 // ─── Reply templates (contextual) ─────────────────────────────────────────
@@ -90,8 +88,8 @@ const REPLIES: Record<string, string[]> = {
     'This is what we\'re building at raisegg.com — crypto-esports with on-chain escrow. Free tournaments daily too',
   ],
   general: [
-    'Nice! Check out raisegg.com if you haven\'t — free daily tournaments + stake matches for CS2, Dota 2, Deadlock',
-    'CS2 + Dota 2 + Deadlock tournaments daily at raisegg.com — free entry, real USDC prizes',
+    'Check out raisegg.com — free daily CS2/Dota 2 tournaments + 1v1 stake matches with blockchain escrow',
+    'raisegg.com has free daily tournaments and 1v1 stake matches for CS2, Dota 2, Deadlock. USDC prizes',
   ],
 }
 
