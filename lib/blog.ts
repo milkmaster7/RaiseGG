@@ -363,6 +363,151 @@ export const BLOG_POSTS: BlogPost[] = [
       <p>The short version: play FACEIT for rank. Play RaiseGG when you want to earn.</p>
     `,
   },
+  {
+    slug:         'best-esports-betting-sites-2026',
+    title:        'Best Esports Betting Sites in 2026 — CS2, Dota 2 & Deadlock',
+    description:  'Our honest review of the top esports betting sites for CS2, Dota 2 and Deadlock. Rivalry, Thunderpick, GG.bet and more compared.',
+    tag:          'Guide',
+    publishedAt:  '2026-01-15',
+    readTime:     7,
+    relatedLinks: [{ href: '/betting', label: 'Full Betting Guide' }, { href: '/play', label: 'Play Stake Matches' }],
+    content: `
+      <p>The esports betting market has exploded. For CS2, Dota 2 and Deadlock players in Turkey, the Caucasus and the Balkans, the options keep growing. We've tested the biggest platforms so you don't have to.</p>
+      <h2>Our Top Picks</h2>
+      <p><strong>Rivalry</strong> — our #1 pick overall. Licensed in the Isle of Man, accepts crypto, and has the best CS2 odds we've found. Their live betting is fast and the minimum bet is just $0.10.</p>
+      <p><strong>Thunderpick</strong> — if you're already in the crypto world, this is your site. No KYC for crypto deposits, supports BTC/ETH/USDT/SOL, and has provably fair games alongside esports betting.</p>
+      <p><strong>GG.bet</strong> — the widest coverage. 30+ esports titles with live streaming built into the platform. Their welcome bonus (200% up to $200) is the most generous.</p>
+      <h2>Betting vs Staking — Which Is Better?</h2>
+      <p>Here's the thing: betting means wagering on someone else's game. If you're actually good at CS2 or Dota 2, <strong>staking your own matches</strong> is more profitable. RaiseGG lets you stake USDC/USDT on your own 1v1 matches — the outcome depends entirely on your skill, not odds set by a bookmaker.</p>
+      <p>Many players use both: betting on pro matches they're watching, and staking on their own competitive games.</p>
+      <h2>What to Look For</h2>
+      <ul>
+        <li><strong>Licensing:</strong> Always check for a valid license (Malta, Isle of Man, Curacao minimum)</li>
+        <li><strong>Crypto support:</strong> Essential for players in regions with limited banking</li>
+        <li><strong>Live betting:</strong> Real-time odds on ongoing matches</li>
+        <li><strong>Withdrawal speed:</strong> Crypto payouts should be instant</li>
+      </ul>
+      <p>Check our <a href="/betting">full betting guide</a> for detailed reviews, bonuses, and comparison tables.</p>
+    `,
+  },
+  {
+    slug:         'how-to-make-money-playing-cs2',
+    title:        'How to Make Money Playing CS2 in 2026',
+    description:  'Five realistic ways to earn money from CS2 — from staking 1v1 matches to streaming, tournaments, and skin trading.',
+    tag:          'CS2',
+    publishedAt:  '2026-01-22',
+    readTime:     6,
+    relatedLinks: [{ href: '/games/cs2', label: 'CS2 on RaiseGG' }, { href: '/play', label: 'Play Now' }],
+    content: `
+      <p>CS2 is more than a hobby — skilled players can turn their hours into real income. Here are the most realistic ways to make money from CS2 in 2026.</p>
+      <h2>1. Stake Matches on RaiseGG</h2>
+      <p>The most direct way. Put USDC or USDT on your own 1v1 matches. Win, and 90% of the pot goes to you — paid in seconds. No waiting for tournament prize pools, no relying on unreliable Discord opponents. Stakes start at $2.</p>
+      <h2>2. Esports Betting</h2>
+      <p>If you understand the meta deeply, betting on pro CS2 matches can be profitable. Sites like Rivalry and Thunderpick offer CS2 match betting with crypto deposits. The key is specialising — pick 2-3 teams you follow closely and only bet when you have a genuine edge.</p>
+      <h2>3. Tournament Prize Pools</h2>
+      <p>RaiseGG runs daily free tournaments with USDC prize pools. FACEIT and other platforms offer monthly prize pools for high-rank players. The catch: competition is fierce at the top.</p>
+      <h2>4. Skin Trading</h2>
+      <p>CS2's skin market remains liquid. Buy low during case drops, sell high during majors. Some traders make consistent income from float-value sniping and pattern recognition. Platforms like Buff163 and DMarket are the standard.</p>
+      <h2>5. Content Creation</h2>
+      <p>Streaming CS2 on Twitch/YouTube or creating educational content (guides, analysis) can generate income through ads, donations, and sponsorships. The RaiseGG Creator Program offers higher commission rates for creators who bring in new players.</p>
+      <h2>What Works Best?</h2>
+      <p>For most competitive players, <strong>staking</strong> is the fastest path from skill to income. You already have the skill — you just need a platform that pays for wins. That's what RaiseGG does.</p>
+    `,
+  },
+  {
+    slug:         'crypto-esports-platforms-solana',
+    title:        'Why Crypto Esports Platforms Are Moving to Solana',
+    description:  'Solana is becoming the blockchain of choice for esports. Sub-second finality, near-zero fees, and perfect UX for gaming payouts.',
+    tag:          'Tech',
+    publishedAt:  '2026-02-05',
+    readTime:     5,
+    relatedLinks: [{ href: '/how-it-works', label: 'How It Works' }, { href: '/blog/why-usdc-solana-for-gaming', label: 'Why USDC on Solana' }],
+    content: `
+      <p>In 2024, most blockchain gaming projects were on Ethereum or Polygon. By 2026, the serious platforms have migrated to Solana — and the reasons are obvious when you look at the numbers.</p>
+      <h2>Speed</h2>
+      <p>Solana confirms transactions in ~400ms. For esports payouts, this means the winner sees their USDC or USDT balance update before they've finished celebrating. Ethereum's 12-second block time feels glacial by comparison.</p>
+      <h2>Cost</h2>
+      <p>A Solana transaction costs under $0.001. An equivalent Ethereum transaction can cost $2-$15 depending on congestion. For a $5 stake match, Ethereum fees would eat the entire profit margin.</p>
+      <h2>Developer Experience</h2>
+      <p>Anchor (Solana's smart contract framework) lets developers build secure escrow systems quickly. RaiseGG's entire stake system — deposit, lock, resolve, payout — runs as a single Anchor program. The PDA (Program Derived Address) vault pattern makes trustless escrow elegant and auditable.</p>
+      <h2>The Gaming Chain</h2>
+      <p>Solana's processing speed makes it uniquely suited for real-time gaming applications. Match results can be settled on-chain instantly, esports data can be recorded permanently, and player reputations can be tracked transparently.</p>
+      <p>This is why RaiseGG chose Solana from day one — not because of hype, but because the technology matches the use case perfectly.</p>
+    `,
+  },
+  {
+    slug:         'esports-staking-vs-gambling-legal',
+    title:        'Is Esports Staking Legal? Staking vs Gambling Explained',
+    description:  'The legal difference between skill-based esports staking and traditional gambling. What regulators say and how RaiseGG stays compliant.',
+    tag:          'Guide',
+    publishedAt:  '2026-02-12',
+    readTime:     5,
+    relatedLinks: [{ href: '/about', label: 'About RaiseGG' }, { href: '/responsible-play', label: 'Responsible Play' }],
+    content: `
+      <p>One of the most common questions we get: "Is this gambling?" The short answer: no. But the full answer matters for understanding why.</p>
+      <h2>The Legal Distinction</h2>
+      <p>Most jurisdictions define gambling as wagering on an outcome determined <strong>primarily by chance</strong>. Slot machines, roulette, and lottery tickets are clear gambling because the outcome is random.</p>
+      <p>Skill-based competition is different. When two chess players put money on their match, that's not gambling in most legal frameworks — it's a skill-based contest. The same logic applies to esports.</p>
+      <h2>How RaiseGG Works</h2>
+      <p>On RaiseGG, you stake on <strong>your own match</strong>. You're not betting on someone else's outcome. You're not guessing odds. You're competing directly, and the better player wins. The platform fee (10% rake) is transparent and fixed.</p>
+      <h2>Regulatory Landscape</h2>
+      <p>Skill-based gaming platforms operate in a different regulatory category than bookmakers in most countries. However, regulations vary significantly by jurisdiction. RaiseGG does not operate in countries where skill-based staking is explicitly prohibited.</p>
+      <h2>Responsible Play</h2>
+      <p>Even though staking is skill-based, we believe in responsible competition. RaiseGG has built-in features: stake limits per day, ELO-gated stakes to prevent mismatches, and self-exclusion options. See our <a href="/responsible-play">Responsible Play</a> page for details.</p>
+    `,
+  },
+  {
+    slug:         'referral-program-earn-usdc-gaming',
+    title:        'RaiseGG Referral Program — Earn USDC by Inviting Friends',
+    description:  'How the RaiseGG referral program works. Earn $1 per signup + 5-10% of your referrals winnings. Step-by-step guide.',
+    tag:          'Guide',
+    publishedAt:  '2026-02-19',
+    readTime:     4,
+    relatedLinks: [{ href: '/referral', label: 'Your Referral Link' }, { href: '/affiliate', label: 'Affiliate Program' }],
+    content: `
+      <p>Every RaiseGG player gets a unique referral link. When someone signs up through your link, you both earn — here's exactly how.</p>
+      <h2>How It Works</h2>
+      <ol>
+        <li><strong>Share your link</strong> — find it on your <a href="/referral">Referral page</a>. Format: raisegg.com/?ref=yourcode</li>
+        <li><strong>Friend signs up</strong> — they create an account through your link</li>
+        <li><strong>Both get $1</strong> — you and your friend each receive $1 USDC as a welcome bonus</li>
+        <li><strong>Ongoing commissions</strong> — every time your referral wins a match, you earn a percentage of their winnings</li>
+      </ol>
+      <h2>Commission Tiers</h2>
+      <ul>
+        <li><strong>Starter (0-9 referrals):</strong> 5% commission</li>
+        <li><strong>Silver (10-49 referrals):</strong> 7.5% commission</li>
+        <li><strong>Gold (50+ referrals):</strong> 10% commission</li>
+      </ul>
+      <h2>Creator Program</h2>
+      <p>Streamers and content creators with 1,000+ followers can apply for the Creator Program — higher commission rates, custom landing page, and promotional support. Apply on the <a href="/affiliate">Affiliate page</a>.</p>
+      <h2>Tips for Maximizing Referrals</h2>
+      <p>Share in gaming communities you're already part of. Discord servers, CS2 community channels, and Telegram groups are the best places. Include your referral code when you post about match results or wins.</p>
+    `,
+  },
+  {
+    slug:         'dota-2-earning-money-2026',
+    title:        'How to Earn Money Playing Dota 2 in 2026',
+    description:  'From staking Dota 2 matches to coaching and betting — the most realistic ways for Dota 2 players to earn USDC in 2026.',
+    tag:          'Dota 2',
+    publishedAt:  '2026-03-01',
+    readTime:     5,
+    relatedLinks: [{ href: '/games/dota2', label: 'Dota 2 on RaiseGG' }, { href: '/play', label: 'Play Now' }],
+    content: `
+      <p>Dota 2 has always had prize money — The International's pool alone hit $40M. But you don't need to be a pro to earn from Dota 2. Here are the most practical methods in 2026.</p>
+      <h2>1. Stake Matches on RaiseGG</h2>
+      <p>RaiseGG is the only platform where you can stake USDC or USDT on your own Dota 2 matches. Play a 1v1, submit the match ID from Steam, and get paid automatically if you win. It's the fastest skill-to-income pipeline in Dota.</p>
+      <h2>2. Bet on Pro Matches</h2>
+      <p>If you understand the meta, team compositions, and patch changes deeply, betting on Dota 2 matches can be profitable. Thunderpick and Rivalry both offer extensive Dota 2 markets with crypto deposits.</p>
+      <h2>3. Coaching</h2>
+      <p>High-MMR players (6K+) can charge $15-$50/hour for coaching sessions. Platforms like Fiverr and GamersRdy connect coaches with students. If you can articulate what you know, this is reliable income.</p>
+      <h2>4. Content Creation</h2>
+      <p>Dota 2 educational content (hero guides, patch analysis, replay reviews) performs well on YouTube. The RaiseGG Creator Program offers additional income through commissions.</p>
+      <h2>5. Tournaments</h2>
+      <p>RaiseGG runs free daily tournaments with USDC prize pools. Combined with community tournaments (JoinDOTA, Dotabuff leagues), there are regular opportunities to compete for cash.</p>
+      <p>The bottom line: if you're spending 30+ hours a week in Dota 2, you should be earning from it. Start with a $2 stake match on RaiseGG and work up from there.</p>
+    `,
+  },
 ]
 
 export function getBlogPost(slug: string): BlogPost | undefined {

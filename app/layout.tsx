@@ -50,6 +50,11 @@ export const metadata: Metadata = {
     'cs2 georgia', 'dota2 turkey', 'cs2 caucasus', 'esports wagering',
     'faceit alternative', 'competitive cs2 caucasus', 'stake gaming',
     'cs2 bet', 'dota2 bet', 'esports stake platform',
+    'esports betting', 'cs2 1v1 for money', 'dota 2 wager',
+    'play cs2 for money', 'esports crypto', 'usdc gaming',
+    'cs2 balkans', 'dota2 armenia', 'cs2 azerbaijan',
+    'solana esports', 'blockchain gaming', 'skill based gaming',
+    'cs2 turkey stake', 'dota 2 georgia', 'deadlock stake matches',
   ],
 
   alternates: { canonical: 'https://raisegg.com' },

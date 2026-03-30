@@ -9,6 +9,11 @@ import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
 import { Accordion } from '@/components/ui/Accordion'
 import { PayoutTicker } from '@/components/home/PayoutTicker'
 import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup'
+import { SocialProof } from '@/components/home/SocialProof'
+import { ComparisonTable } from '@/components/home/ComparisonTable'
+import { OnlineCounter } from '@/components/home/OnlineCounter'
+import { VideoEmbed } from '@/components/home/VideoEmbed'
+import { ReferralBanner } from '@/components/home/ReferralBanner'
 
 export const revalidate = 60
 import { readSessionFromCookies } from '@/lib/session'
@@ -126,8 +131,11 @@ export default async function HomePage() {
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent-cyan/8 rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 text-center">
-          <div className="inline-flex items-center gap-2 badge-cyan mb-6 text-sm">
-            <span className="live-dot" aria-hidden="true" /> Live in 44 Countries
+          <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
+            <div className="inline-flex items-center gap-2 badge-cyan text-sm">
+              <span className="live-dot" aria-hidden="true" /> Live in 44 Countries
+            </div>
+            <OnlineCounter />
           </div>
           <h1 className="font-orbitron text-5xl md:text-7xl font-black mb-6 leading-tight">
             <span className="text-white">No Discord Scams.</span><br />
@@ -230,6 +238,12 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Video ── */}
+      <VideoEmbed />
+
+      {/* ── Social Proof ── */}
+      <SocialProof />
+
       {/* ── Fair Ping ── */}
       <section className="bg-space-800 border-y border-border py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -307,6 +321,9 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* ── RaiseGG vs Old Way ── */}
+      <ComparisonTable />
 
       {/* ── FAQ ── */}
       <section className="bg-space-800 border-y border-border py-16">
@@ -410,6 +427,9 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Referral Banner ── */}
+      <ReferralBanner />
+
       {/* ── Newsletter ── */}
       <NewsletterSignup />
 
@@ -430,9 +450,9 @@ export default async function HomePage() {
               <Globe className="w-5 h-5 text-accent-cyan mx-auto mb-2" aria-hidden="true" />
               <span className="text-white font-semibold">Blog</span>
             </Link>
-            <Link href="/about" className="card-hover py-4">
-              <Shield className="w-5 h-5 text-accent-cyan mx-auto mb-2" aria-hidden="true" />
-              <span className="text-white font-semibold">About Us</span>
+            <Link href="/betting" className="card-hover py-4">
+              <Coins className="w-5 h-5 text-accent-cyan mx-auto mb-2" aria-hidden="true" />
+              <span className="text-white font-semibold">Esports Betting</span>
             </Link>
           </div>
         </div>

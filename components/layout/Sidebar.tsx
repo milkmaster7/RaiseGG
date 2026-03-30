@@ -48,6 +48,7 @@ const PRIMARY_NAV = [
   { href: '/battle-pass',  label: 'Battle Pass',  icon: Star           },
   { href: '/cosmetics',    label: 'Cosmetics',    icon: Palette        },
   { href: '/premium',      label: 'Premium',      icon: Crown          },
+  { href: '/betting',      label: 'Betting',      icon: Gift           },
   { href: '/affiliate',    label: 'Affiliate',    icon: Megaphone      },
   { href: '/creators',     label: 'Creators',     icon: Star           },
   { href: '/achievements', label: 'Achievements', icon: Award          },
