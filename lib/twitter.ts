@@ -47,6 +47,17 @@ async function generateOAuthHeader(
     oauth_version: '1.0',
   }
 
+  // For GET requests, include query params in signature (OAuth 1.0a spec)
+  let baseUrl = url
+  const qIdx = url.indexOf('?')
+  if (qIdx !== -1) {
+    baseUrl = url.slice(0, qIdx)
+    const searchParams = new URLSearchParams(url.slice(qIdx + 1))
+    searchParams.forEach((v, k) => {
+      params[k] = v
+    })
+  }
+
   // Build signature base string
   const sortedParams = Object.entries(params)
     .sort(([a], [b]) => a.localeCompare(b))
@@ -55,7 +66,7 @@ async function generateOAuthHeader(
 
   const baseString = [
     method.toUpperCase(),
-    encodeRFC3986(url),
+    encodeRFC3986(baseUrl),
     encodeRFC3986(sortedParams),
   ].join('&')
 
@@ -205,15 +216,31 @@ export async function searchTweets(query: string, maxResults = 10): Promise<Arra
 }>> {
   if (!hasCredentials()) return []
 
-  const url = `https://api.twitter.com/2/tweets/search/recent?query=${encodeURIComponent(query)}&max_results=${maxResults}&tweet.fields=public_metrics,author_id&expansions=author_id&user.fields=username`
-  const authHeader = await generateOAuthHeader('GET', url.split('?')[0])
+  const baseUrl = 'https://api.twitter.com/2/tweets/search/recent'
+  const params = new URLSearchParams({
+    query,
+    max_results: String(Math.max(10, maxResults)),
+    'tweet.fields': 'public_metrics,author_id',
+    expansions: 'author_id',
+    'user.fields': 'username',
+  })
+  const fullUrl = `${baseUrl}?${params}`
+
+  // OAuth 1.0a — pass full URL so query params are included in signature
+  const authHeader = await generateOAuthHeader('GET', fullUrl)
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(fullUrl, {
       headers: { Authorization: authHeader },
       signal: AbortSignal.timeout(15000),
     })
-    if (!res.ok) return []
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '')
+      console.error(`Twitter search ${res.status}: ${errText}`)
+      return []
+    }
+
     const data = await res.json()
 
     const users = new Map<string, string>()
@@ -232,7 +259,8 @@ export async function searchTweets(query: string, maxResults = 10): Promise<Arra
         reply_count: t.public_metrics.reply_count,
       } : undefined,
     }))
-  } catch {
+  } catch (err) {
+    console.error('Twitter search error:', err)
     return []
   }
 }
