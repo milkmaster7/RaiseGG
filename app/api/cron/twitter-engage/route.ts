@@ -48,6 +48,16 @@ const SEARCH_QUERIES = [
   'crypto esports -is:retweet',
   'blockchain gaming tournament -is:retweet',
   'USDC esports -is:retweet',
+
+  // Conversational / question tweets (more likely to have open replies)
+  '"anyone know" CS2 -is:retweet',
+  '"looking for" CS2 tournament -is:retweet',
+  '"where can I" CS2 -is:retweet',
+  '"any good" esports platform -is:retweet',
+  'CS2 "1v1 me" -is:retweet',
+  '"need players" CS2 -is:retweet',
+  'Dota 2 "looking for" -is:retweet',
+  '"free tournament" -is:retweet',
 ]
 
 // ─── Reply templates (contextual) ─────────────────────────────────────────
@@ -146,15 +156,19 @@ export async function GET(req: Request) {
         await new Promise(r => setTimeout(r, 1000))
       }
 
-      // Reply to the top 2 most popular tweets that allow replies from everyone
-      const replyable = sorted.filter(t => !t.replySettings || t.replySettings === 'everyone')
-      for (const tw of replyable.slice(0, 2)) {
+      // Try to reply to tweets — skip on 403 (restricted replies)
+      for (const tw of sorted.slice(0, 4)) {
+        if (replied >= 2) break // Max 2 replies per query
+
         const category = pickCategory(tw.text)
         const replyText = pick(REPLIES[category])
 
         const result = await replyToTweet(tw.id, replyText)
         if (result.id) {
           replied++
+        } else if (result.error?.includes('403')) {
+          // Reply-restricted tweet, skip silently
+          continue
         } else {
           errors.push(`Reply to ${tw.id}: ${result.error}`)
         }
