@@ -15,21 +15,23 @@ export const maxDuration = 120
 // Keywords that trigger engagement
 const TRIGGER_KEYWORDS = [
   // Matchmaking / LFG
-  /\b(lfg|looking for|ищу|ищем|need team|need player|1v1|lfm|looking for match)\b/i,
+  /\b(lfg|looking for|ищу|ищем|need team|need player|1v1|lfm|looking for match|кто играет|кто хочет|oynayan var|kim oynuyor)\b/i,
   // Tournament / competition
-  /\b(tournament|turnuva|турнир|competition|bracket|signup|sign up|register)\b/i,
+  /\b(tournament|turnuva|турнир|competition|bracket|signup|sign up|register|соревнован|лига|кубок)\b/i,
   // Betting / wager / stake
-  /\b(bet|wager|stake|ставк|bahis|predict|прогноз)\b/i,
+  /\b(bet|wager|stake|ставк|bahis|predict|прогноз|skinler|скины|trade|трейд)\b/i,
   // Skill / rank
-  /\b(rank|mmr|elo|faceit|level 10|global elite|immortal|divine|champion)\b/i,
+  /\b(rank|mmr|elo|faceit|level 10|global elite|immortal|divine|champion|premier|рейтинг|ранг)\b/i,
   // Looking for platform / where to play
-  /\b(where.*play|where.*compete|platform|recommend|suggest|посоветуйте|подскажите)\b/i,
+  /\b(where.*play|where.*compete|platform|recommend|suggest|посоветуйте|подскажите|nereden|hangi site)\b/i,
   // Money / prize
-  /\b(prize|prizepool|money|earn|заработ|деньги|приз|награда)\b/i,
+  /\b(prize|prizepool|money|earn|заработ|деньги|приз|награда|para|kazanmak|usdc|usdt|crypto)\b/i,
   // Anti-cheat concerns
-  /\b(cheat|cheater|hacker|читер|античит|anti-cheat|vac)\b/i,
+  /\b(cheat|cheater|hacker|читер|античит|anti-cheat|vac|hile)\b/i,
   // Scam / trust
-  /\b(scam|trust|legit|кидал|развод|доверие)\b/i,
+  /\b(scam|trust|legit|кидал|развод|доверие|dolandırıcı|güvenilir)\b/i,
+  // Game-specific
+  /\b(cs2|counter.?strike|dota|deadlock|valve|миксы|пати|party|team|duo|тимм|teammate)\b/i,
 ]
 
 // Reply templates — grouped by trigger type
@@ -135,6 +137,7 @@ function categorize(text: string): keyof typeof REPLIES | null {
   if (TRIGGER_KEYWORDS[5].test(lower)) return 'tournament' // money/prize → tournament
   if (TRIGGER_KEYWORDS[6].test(lower)) return 'anticheat'
   if (TRIGGER_KEYWORDS[7].test(lower)) return 'trust'
+  if (TRIGGER_KEYWORDS[8].test(lower)) return 'lfg' // game-specific → lfg
   return null
 }
 
@@ -160,9 +163,9 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: 'No groups' })
     }
 
-    // Pick 3 random groups per run
+    // Pick 5 random groups per run
     const shuffled = [...groups].sort(() => Math.random() - 0.5)
-    const selected = shuffled.slice(0, 3)
+    const selected = shuffled.slice(0, 5)
 
     const results: Array<{ group: string; scanned: number; replied: number; error?: string }> = []
     let totalReplied = 0
