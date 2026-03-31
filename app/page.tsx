@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { Shield, Zap, Trophy, Users, Globe, Eye } from 'lucide-react'
+import { Shield, Zap, Trophy, Users } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase'
 import { faqSchema, softwareAppSchema } from '@/lib/schemas'
 import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
 import { Accordion } from '@/components/ui/Accordion'
 import { OnlineCounter } from '@/components/home/OnlineCounter'
 import { PingWidget } from '@/components/home/PingWidget'
+import { StatsStrip } from '@/components/home/StatsStrip'
 
 export const revalidate = 60
 import { readSessionFromCookies } from '@/lib/session'
@@ -144,31 +145,8 @@ export default async function HomePage() {
       {/* ── Real Ping Test ── */}
       <PingWidget />
 
-      {/* ── Trust strip ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="card py-6">
-            <Shield className="w-6 h-6 text-accent-cyan mx-auto mb-3" />
-            <div className="font-orbitron text-sm font-bold text-white">Solana Escrow</div>
-            <p className="text-xs text-muted mt-1">On-chain, trustless</p>
-          </div>
-          <div className="card py-6">
-            <Zap className="w-6 h-6 text-accent-cyan mx-auto mb-3" />
-            <div className="font-orbitron text-sm font-bold text-white">Instant Payouts</div>
-            <p className="text-xs text-muted mt-1">Winner paid in ~2 seconds</p>
-          </div>
-          <div className="card py-6">
-            <Eye className="w-6 h-6 text-accent-cyan mx-auto mb-3" />
-            <div className="font-orbitron text-sm font-bold text-white">Anti-Cheat</div>
-            <p className="text-xs text-muted mt-1">VAC + demo recording</p>
-          </div>
-          <div className="card py-6">
-            <Globe className="w-6 h-6 text-accent-cyan mx-auto mb-3" />
-            <div className="font-orbitron text-sm font-bold text-white">44 Countries</div>
-            <p className="text-xs text-muted mt-1">Turkey, Balkans, CIS</p>
-          </div>
-        </div>
-      </section>
+      {/* ── Real Stats ── */}
+      <StatsStrip />
 
       {/* ── FAQ ── */}
       <section className="bg-space-800 border-y border-border py-12">

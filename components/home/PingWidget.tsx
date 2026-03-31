@@ -101,22 +101,19 @@ export function PingWidget() {
             <div className="absolute inset-0 bg-accent-cyan/5 rounded-2xl blur-xl" />
             <div className="relative card text-center py-12">
               <Wifi className="w-16 h-16 text-accent-cyan mx-auto mb-6 opacity-80" />
-              <div className="font-orbitron text-5xl font-black text-accent-cyan mb-2">128 tick</div>
-              <p className="text-muted text-sm mb-6">Dedicated servers, not peer-to-peer</p>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <div className="font-orbitron text-lg font-bold text-white">44</div>
-                  <div className="text-xs text-muted">Countries</div>
-                </div>
-                <div>
-                  <div className="font-orbitron text-lg font-bold text-white">DDoS</div>
-                  <div className="text-xs text-muted">Protected</div>
-                </div>
-                <div>
-                  <div className="font-orbitron text-lg font-bold text-white">99.9%</div>
-                  <div className="text-xs text-muted">Uptime</div>
-                </div>
-              </div>
+              {measuring ? (
+                <div className="font-orbitron text-4xl font-black text-muted animate-pulse mb-2">measuring...</div>
+              ) : ping !== null ? (
+                <>
+                  <div className={`font-orbitron text-5xl font-black mb-2 ${getPingColor(ping)}`}>{ping}ms</div>
+                  <p className="text-muted text-sm">Your real latency to our servers</p>
+                </>
+              ) : (
+                <>
+                  <div className="font-orbitron text-4xl font-black text-muted mb-2">—</div>
+                  <p className="text-muted text-sm">Could not measure ping</p>
+                </>
+              )}
             </div>
           </div>
         </div>
