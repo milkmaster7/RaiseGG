@@ -21,13 +21,13 @@ export const metadata: Metadata = {
     title: 'RaiseGG – CS2, Dota 2 & Deadlock Stake Matches',
     description: 'Stake USDC or USDT on competitive matches. Instant payouts.',
     url: 'https://raisegg.com',
-    images: [{ url: '/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff', width: 1200, height: 630, alt: 'RaiseGG' }],
+    images: [{ url: 'https://raisegg.com/og.png', width: 1200, height: 630, alt: 'RaiseGG' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'RaiseGG – CS2, Dota 2 & Deadlock Stake Matches',
     description: 'Stake USDC or USDT on competitive matches. Instant payouts.',
-    images: ['/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff'],
+    images: ['https://raisegg.com/og.png'],
   },
 }
 
