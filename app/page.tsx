@@ -94,8 +94,8 @@ export default async function HomePage() {
           {GAMES.map((game) => (
             <Link key={game.name} href={game.href} className="card-hover group block relative overflow-hidden">
               <div className="absolute inset-0 pointer-events-none">
-                <img src={game.art} alt={`${game.name}`} className="absolute right-0 top-0 h-full w-2/3 object-cover object-center opacity-10 group-hover:opacity-15 transition-opacity" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-r from-space-800 via-space-800/90 to-transparent" />
+                <img src={game.art} alt={`${game.name}`} className="absolute inset-0 h-full w-full object-cover object-center opacity-60 group-hover:opacity-75 transition-opacity" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-r from-space-800 via-space-800/40 to-transparent" />
               </div>
               <div className="relative">
                 <div className="flex items-start justify-between mb-3">
