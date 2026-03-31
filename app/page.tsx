@@ -8,6 +8,7 @@ import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
 import { Accordion } from '@/components/ui/Accordion'
 import { OnlineCounter } from '@/components/home/OnlineCounter'
 import { StatsStrip } from '@/components/home/StatsStrip'
+import { PingEstimate } from '@/components/home/PingEstimate'
 
 export const revalidate = 60
 import { readSessionFromCookies } from '@/lib/session'
@@ -136,6 +137,9 @@ export default async function HomePage() {
         <LiveMatchFeed />
       </section>
 
+
+      {/* ── Ping Estimate ── */}
+      <PingEstimate />
 
       {/* ── Real Stats ── */}
       <StatsStrip />
