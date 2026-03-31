@@ -96,7 +96,7 @@ export function PingEstimate() {
   const deadlockPing = ping + VALVE_OFFSET + 2
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="mb-4">
       <div className="card max-w-2xl mx-auto">
         <div className="flex items-center gap-2 mb-4">
           <Wifi className={`w-5 h-5 ${getPingColor(cs2Ping)}`} />
@@ -121,6 +121,6 @@ export function PingEstimate() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   )
 }

@@ -88,9 +88,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Ping Estimate ── */}
-      <PingEstimate />
-
       {/* ── Games ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-3 gap-6">
@@ -130,9 +127,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Live Matches ── */}
+      {/* ── Ping + Live Matches ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex items-center justify-between mb-6">
+        <PingEstimate />
+        <div className="flex items-center justify-between mb-6 mt-8">
           <h2 className="section-title flex items-center gap-3">
             <span className="live-dot" aria-hidden="true" /> Live Matches
           </h2>
@@ -140,8 +138,6 @@ export default async function HomePage() {
         <LiveMatchFeed />
       </section>
 
-
-      {/* Ping moved above fold */}
 
       {/* ── Real Stats ── */}
       <StatsStrip />
