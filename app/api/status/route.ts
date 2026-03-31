@@ -123,7 +123,7 @@ const OWNER_TASKS = [
   // ── Ops tasks ──
   { priority: 'TODO', color: '#ffc107', task: 'Set ADMIN_PLAYER_IDS in Vercel after first Steam login' },
   { priority: 'TODO', color: '#ffc107', task: 'Twitter API — 503 outage from Twitter side, auto-posting will activate when they recover' },
-  { priority: 'TODO', color: '#ffc107', task: 'Add more CS2 server regions (Turkey, Romania, Georgia) — ~$15-50/mo each' },
+  { priority: 'TODO', color: '#ffc107', task: 'Add CS2 server regions: Romania (OVHcloud ~$12/mo), Georgia (WORLDBUS ~$23/mo) — Istanbul done via DatHost' },
   { priority: 'TODO', color: '#ffc107', task: 'Join Dota 2 + Deadlock Telegram groups — search rate-limited, auto-join cron will handle weekly' },
   { priority: 'LATER', color: '#8a8fb5', task: 'FACEIT API key — user unable to complete application' },
   { priority: 'LATER', color: '#8a8fb5', task: 'Bulk email provider (Resend/SendGrid) for newsletters' },
@@ -191,6 +191,12 @@ const OWNER_TASKS = [
   { priority: 'DONE', color: '#00e676', task: '✓ Holiday tournament calendar — 40+ regional holidays, auto-creates themed tournaments (Iftar Invitational, Nowruz Cup, etc)' },
   { priority: 'DONE', color: '#00e676', task: '✓ Meme auto-poster — 50+ gaming memes in EN/TR/RU, posts to TG groups every 12h, subtle RaiseGG mentions' },
   { priority: 'DONE', color: '#00e676', task: '✓ 20 Vercel cron jobs running — full marketing + growth automation' },
+  { priority: 'DONE', color: '#00e676', task: '✓ DatHost API integrated — auto start/stop/RCON for CS2 match servers' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Vercel serverless moved to Frankfurt (fra1) — lower latency for TR/Balkans/Caucasus' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Supabase in eu-central-1 (Frankfurt) — same region as Vercel functions' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Reddit autopilot — 70+ templates, 50+ subs, 8 crons, karma farming + community posting' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Facebook auto-poster — regional gaming groups, scheduled posts' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Game card art visibility increased on homepage' },
 ]
 
 // ─── Wallets & Addresses ─────────────────────────────────────────────────────
