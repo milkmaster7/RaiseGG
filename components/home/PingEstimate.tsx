@@ -49,6 +49,28 @@ const PING_BY_COUNTRY: Record<string, number> = {
   TM: 40,  // Turkmenistan
   KG: 55,  // Kyrgyzstan
   TJ: 58,  // Tajikistan
+  // Extended — show ping for anyone visiting
+  TH: 120, // Thailand
+  SE: 48,  // Sweden
+  GB: 55,  // UK
+  US: 120, // USA
+  IN: 90,  // India
+  SA: 60,  // Saudi Arabia
+  EG: 55,  // Egypt
+  CN: 130, // China
+  JP: 140, // Japan
+  KR: 130, // South Korea
+  BR: 200, // Brazil
+  AU: 250, // Australia
+  CA: 130, // Canada
+  PT: 58,  // Portugal
+  DK: 48,  // Denmark
+  NO: 50,  // Norway
+  FI: 45,  // Finland
+  LT: 42,  // Lithuania
+  LV: 42,  // Latvia
+  EE: 42,  // Estonia
+  BY: 35,  // Belarus
 }
 
 // Valve server pings (Stockholm/Dubai) for Dota 2 and Deadlock
