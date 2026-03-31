@@ -51,10 +51,11 @@ const FAQS = [
   { question: 'Can I watch and bet without playing?', answer: 'Yes. Visit the Spectate page to watch live matches and place side wagers ($1-$20 USDC) on who wins. You need a Steam account and wallet to bet.' },
 ]
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
+  const params = await searchParams
   const cookieStore = await cookies()
   const playerId = await readSessionFromCookies(cookieStore)
-  if (playerId) redirect('/play')
+  if (playerId && !params.preview) redirect('/play')
 
   const faqJsonLd = faqSchema(FAQS)
   const appJsonLd = softwareAppSchema()
