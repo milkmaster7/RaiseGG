@@ -33,6 +33,7 @@ deployer-keypair.json
 
 # Anchor / Solana build artifacts
 anchor/target/
+!anchor/target/idl/
 
 # Hardhat / EVM build artifacts
 contracts/artifacts/
