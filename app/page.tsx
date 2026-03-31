@@ -7,7 +7,6 @@ import { faqSchema, softwareAppSchema } from '@/lib/schemas'
 import { LiveMatchFeed } from '@/components/matches/LiveMatchFeed'
 import { Accordion } from '@/components/ui/Accordion'
 import { OnlineCounter } from '@/components/home/OnlineCounter'
-import { PingWidget } from '@/components/home/PingWidget'
 import { StatsStrip } from '@/components/home/StatsStrip'
 
 export const revalidate = 60
@@ -20,22 +19,22 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://raisegg.com' },
   openGraph: {
     title: 'RaiseGG – CS2, Dota 2 & Deadlock Stake Matches',
-    description: 'Stake USDC or USDT on competitive matches. Instant payouts. 44 countries.',
+    description: 'Stake USDC or USDT on competitive matches. Instant payouts.',
     url: 'https://raisegg.com',
     images: [{ url: '/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff', width: 1200, height: 630, alt: 'RaiseGG' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'RaiseGG – CS2, Dota 2 & Deadlock Stake Matches',
-    description: 'Stake USDC or USDT on competitive matches. Instant payouts. 44 countries.',
+    description: 'Stake USDC or USDT on competitive matches. Instant payouts.',
     images: ['/api/og?title=CS2,+Dota+2+%26+Deadlock+Stake+Matches&sub=RaiseGG&color=7b61ff'],
   },
 }
 
 const GAMES = [
-  { name: 'CS2',      href: '/games/cs2',      description: '1v1 stake matches on dedicated servers.',     badge: 'Most Popular', art: 'https://cdn.akamai.steamstatic.com/steam/apps/730/library_hero.jpg' },
-  { name: 'Dota 2',  href: '/games/dota2',     description: 'Auto-verified results via Steam API.',               badge: 'Fast Payout',  art: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/videos/dota_react/heroes/renders/juggernaut.png' },
-  { name: 'Deadlock', href: '/games/deadlock', description: 'The only stake platform for Valve\'s newest game.',  badge: 'First & Only', art: 'https://cdn.akamai.steamstatic.com/steam/apps/1422450/library_hero.jpg' },
+  { name: 'CS2',      href: '/games/cs2',      description: '1v1 stake matches on dedicated servers.',     art: 'https://cdn.akamai.steamstatic.com/steam/apps/730/library_hero.jpg' },
+  { name: 'Dota 2',  href: '/games/dota2',     description: 'Auto-verified results via Steam API.',               art: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/videos/dota_react/heroes/renders/juggernaut.png' },
+  { name: 'Deadlock', href: '/games/deadlock', description: 'Stake matches for Valve\'s newest game.',  art: 'https://cdn.akamai.steamstatic.com/steam/apps/1422450/library_hero.jpg' },
 ]
 
 const HOW_IT_WORKS = [
@@ -48,7 +47,6 @@ const FAQS = [
   { question: 'How does it work?',            answer: 'Connect Steam, stake USDC/USDT, play the match. Winner gets 90% of the pot automatically. Funds are held in a Solana smart contract — nobody can touch them.' },
   { question: 'Are my funds safe?',           answer: 'Yes. Stake funds are held in a Solana smart contract. Neither us nor anyone else can touch them. Funds are only released when a verified match result is confirmed.' },
   { question: 'What is the platform fee?',    answer: 'We take 10% of the pot from each resolved match. The winner receives 90%. No subscriptions, no hidden fees.' },
-  { question: 'Can I watch and bet without playing?', answer: 'Yes. Visit the Spectate page to watch live matches and place side wagers ($1-$20 USDC) on who wins. You need a Steam account and wallet to bet.' },
 ]
 
 export default async function HomePage() {
@@ -85,7 +83,7 @@ export default async function HomePage() {
           <Link href="/api/auth/steam" className="btn-primary text-lg px-10 py-4 inline-block">
             Connect Steam & Play
           </Link>
-          <p className="text-xs text-muted mt-4">$2 minimum · No KYC · Solana escrow · 44 countries</p>
+          <p className="text-xs text-muted mt-4">$2 minimum · No KYC · Solana escrow</p>
         </div>
       </section>
 
@@ -101,7 +99,6 @@ export default async function HomePage() {
               <div className="relative">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="font-orbitron text-2xl font-bold text-white group-hover:text-gradient transition-all">{game.name}</h3>
-                  <span className="badge-cyan text-xs">{game.badge}</span>
                 </div>
                 <p className="text-muted text-sm">{game.description}</p>
               </div>
@@ -135,15 +132,10 @@ export default async function HomePage() {
           <h2 className="section-title flex items-center gap-3">
             <span className="live-dot" aria-hidden="true" /> Live Matches
           </h2>
-          <Link href="/spectate" className="text-sm text-accent-cyan hover:text-accent-cyan-glow transition-colors">
-            Spectate & Bet →
-          </Link>
         </div>
         <LiveMatchFeed />
       </section>
 
-      {/* ── Real Ping Test ── */}
-      <PingWidget />
 
       {/* ── Real Stats ── */}
       <StatsStrip />
