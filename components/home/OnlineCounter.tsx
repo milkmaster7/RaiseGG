@@ -13,12 +13,11 @@ export function OnlineCounter() {
         const data = await res.json()
         setCount(data.online ?? 0)
       } catch {
-        // Simulate reasonable count if API unavailable
-        setCount(Math.floor(Math.random() * 30) + 15)
+        // Don't show anything if API fails
       }
     }
     load()
-    const interval = setInterval(load, 30000)
+    const interval = setInterval(load, 60000)
     return () => clearInterval(interval)
   }, [])
 
@@ -26,10 +25,9 @@ export function OnlineCounter() {
 
   return (
     <div className="inline-flex items-center gap-2 text-sm">
-      <span className="live-dot" aria-hidden="true" />
       <Users className="w-3.5 h-3.5 text-accent-cyan" />
       <span className="text-white font-semibold">{count}</span>
-      <span className="text-muted">players online now</span>
+      <span className="text-muted">registered players</span>
     </div>
   )
 }
