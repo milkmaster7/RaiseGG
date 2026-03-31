@@ -103,7 +103,7 @@ export function PingEstimate() {
         const data = await res.json()
         const code = data.country_code ?? null
         setCountry(code)
-        setPing(PING_BY_COUNTRY[code] ?? null)
+        setPing(PING_BY_COUNTRY[code] ?? 80)
       } catch {
         // silent
       }
@@ -111,7 +111,7 @@ export function PingEstimate() {
     detect()
   }, [])
 
-  if (!ping || !country) return null
+  if (!ping) return null
 
   const cs2Ping = ping
   const dotaPing = ping + VALVE_OFFSET
