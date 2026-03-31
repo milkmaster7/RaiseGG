@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { Shield, Zap, Trophy, Users, Globe, Eye } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase'
@@ -51,11 +50,9 @@ const FAQS = [
   { question: 'Can I watch and bet without playing?', answer: 'Yes. Visit the Spectate page to watch live matches and place side wagers ($1-$20 USDC) on who wins. You need a Steam account and wallet to bet.' },
 ]
 
-export default async function HomePage({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
-  const params = await searchParams
+export default async function HomePage() {
   const cookieStore = await cookies()
   const playerId = await readSessionFromCookies(cookieStore)
-  if (playerId && !params.preview) redirect('/play')
 
   const faqJsonLd = faqSchema(FAQS)
   const appJsonLd = softwareAppSchema()
