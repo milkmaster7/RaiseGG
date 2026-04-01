@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 const GAMES = [
   { name: 'CS2',      href: '/games/cs2',      description: '1v1 stake matches on dedicated servers.',     art: 'https://cdn.akamai.steamstatic.com/steam/apps/730/library_hero.jpg' },
-  { name: 'Dota 2',  href: '/games/dota2',     description: 'Auto-verified results via Steam API.',               art: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/videos/dota_react/heroes/renders/juggernaut.png' },
+  { name: 'Dota 2',  href: '/games/dota2',     description: 'Auto-verified results via Steam API.',               art: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/blog/play_dota_background.jpg' },
   { name: 'Deadlock', href: '/games/deadlock', description: 'Stake matches for Valve\'s newest game.',  art: 'https://cdn.akamai.steamstatic.com/steam/apps/1422450/library_hero.jpg' },
 ]
 
