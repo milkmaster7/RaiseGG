@@ -205,6 +205,12 @@ const OWNER_TASKS = [
   { priority: 'DONE', color: '#00e676', task: '✓ 35 Vercel cron jobs — marketing, tournaments, social, monitoring, match ops all automated' },
   { priority: 'DONE', color: '#00e676', task: '✓ Status dashboard at status.raisegg.com — health checks, wallet addresses, task board, auto-refresh' },
   { priority: 'DONE', color: '#00e676', task: '✓ Monitor system — 9 health checks, 8 cron freshness monitors, Telegram alerts on outage' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Auto SQL migrations — runs on deploy/hourly, no manual Supabase SQL editor needed' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Influencer outreach cron — 30 small CS2/Dota2 accounts (TR/Balkans/CIS), 3x/week, casual engagement + DM pitch' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Twitch API connected — streamer discovery for target regions' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Twitter DM + reply system — auto like, DM business pitch, casual public reply' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Influencer pyramid strategy — wave 1 (small accs) active, wave 2+3 locked until manual trigger' },
+  { priority: 'DONE', color: '#00e676', task: '✓ Influencer tracking DB — outreach status, DM success, handle dedup, tier tracking' },
 ]
 
 // ─── Wallets & Addresses ─────────────────────────────────────────────────────
