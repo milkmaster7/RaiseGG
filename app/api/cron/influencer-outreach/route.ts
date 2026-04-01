@@ -12,7 +12,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { searchTweets, replyToTweet, likeTweet } from '@/lib/twitter'
+import { searchTweets, replyToTweet, likeTweet, sendDM, getUserIdByHandle } from '@/lib/twitter'
 import { createServiceClient } from '@/lib/supabase'
 
 export const runtime = 'edge'
@@ -20,21 +20,32 @@ export const maxDuration = 30
 
 // ── Casual reply templates (rotate to avoid spam detection) ──────────────
 
-// Public replies — casual engagement ONLY. No business talk in public.
-// Goal: get noticed, build familiarity, make them check our profile.
+// Public replies — casual + nudge to check DM. No business details in public.
 const REPLY_TEMPLATES = [
-  () => `clean 🔥`,
-  () => `that play was nasty 💀`,
-  () => `W content as always`,
-  () => `this is why I follow this account`,
-  () => `sheesh 🎯`,
-  () => `underrated account fr`,
-  () => `bro doesn't miss`,
-  () => `facts`,
-  () => `the game needs more of this`,
-  () => `actual good take`,
-  () => `this clip is insane`,
-  () => `finally someone said it 💯`,
+  () => `clean 🔥 yo check your DMs real quick`,
+  () => `that play was nasty 💀 sent you a DM btw`,
+  () => `W content. hey check DMs when you get a sec 🤝`,
+  () => `sheesh 🎯 dropped you a message`,
+  () => `this is hard. sent you a quick DM`,
+  () => `bro doesn't miss 🔥 check your DMs`,
+  () => `this clip is insane. hey I DM'd you`,
+  () => `big W. check DMs when you can 👊`,
+  () => `underrated account fr. sent you something`,
+  () => `the game needs more of this. yo check DMs`,
+  () => `actual good take 💯 DM'd you real quick`,
+  () => `respect the grind. peep your DMs`,
+]
+
+// DM templates — the actual pitch. Private only.
+const DM_TEMPLATES = [
+  (name: string) =>
+    `hey ${name}! we're building raisegg.com — CS2 & Dota 2 1v1 stake matches for real money (USDC). blockchain escrow, instant payouts.\n\nwe're looking for creators to try it out and post about it. paid ofc. what would something like that cost with you?`,
+
+  (name: string) =>
+    `yo ${name} — we run a competitive staking platform for CS2/Dota2. players bet on themselves in 1v1s, winner takes 90%.\n\nlooking for people to showcase it. interested in a paid collab? what's your rate?`,
+
+  (name: string) =>
+    `hey ${name}, quick one — we built raisegg.com, a skill-based wager platform for CS2 & Dota 2. think matchmaking but with real money on the line.\n\nwould you be open to a paid promo? what do you usually charge?`,
 ]
 
 // ── Target handles (from influencer research) ────────────────────────────
@@ -132,10 +143,24 @@ export async function GET(req: Request) {
   const templateIdx = Math.floor(Math.random() * REPLY_TEMPLATES.length)
   const message = REPLY_TEMPLATES[templateIdx]()
 
-  // Like their tweet first (friendly gesture)
+  // Step 1: Like their tweet
   await likeTweet(tweet.id)
 
-  // Reply
+  // Step 2: Get their user ID for DM
+  const targetUserId = await getUserIdByHandle(target.handle)
+
+  // Step 3: Send DM with the business pitch
+  let dmSent = false
+  let dmError: string | null = null
+  if (targetUserId) {
+    const dmIdx = Math.floor(Math.random() * DM_TEMPLATES.length)
+    const dmText = DM_TEMPLATES[dmIdx](target.name)
+    const dmResult = await sendDM(targetUserId, dmText)
+    dmSent = dmResult.sent
+    dmError = dmResult.error ?? null
+  }
+
+  // Step 4: Reply publicly (casual + "check DM")
   const result = await replyToTweet(tweet.id, message)
 
   // Record in DB
@@ -146,6 +171,8 @@ export async function GET(req: Request) {
     tweet_id: tweet.id,
     reply_id: result.id,
     template_idx: templateIdx,
+    dm_sent: dmSent,
+    dm_error: dmError,
     status: result.id ? 'sent' : 'failed',
     error: result.error ?? null,
   })
@@ -155,5 +182,6 @@ export async function GET(req: Request) {
     handle: target.handle,
     tweet: tweet.id,
     reply: result.id,
+    dm_sent: dmSent,
   })
 }

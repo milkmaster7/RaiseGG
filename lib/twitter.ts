@@ -391,6 +391,49 @@ async function getOwnUserId(): Promise<string | null> {
   }
 }
 
+/** Send a DM to a user. Requires Basic tier ($100/mo) or higher. */
+export async function sendDM(recipientId: string, text: string): Promise<{ sent: boolean; error?: string }> {
+  if (!hasCredentials()) return { sent: false, error: 'no credentials' }
+
+  const url = 'https://api.twitter.com/2/dm_conversations/with/' + recipientId + '/messages'
+  const body = JSON.stringify({ text })
+  const authHeader = await generateOAuthHeader('POST', url, body)
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: authHeader, 'Content-Type': 'application/json' },
+      body,
+      signal: AbortSignal.timeout(10000),
+    })
+    if (res.ok) return { sent: true }
+    const err = await res.text()
+    return { sent: false, error: `${res.status}: ${err.slice(0, 200)}` }
+  } catch (e) {
+    return { sent: false, error: String(e) }
+  }
+}
+
+/** Look up a user ID by handle */
+export async function getUserIdByHandle(handle: string): Promise<string | null> {
+  if (!hasCredentials()) return null
+
+  const url = `https://api.twitter.com/2/users/by/username/${handle}`
+  const authHeader = await generateOAuthHeader('GET', url)
+
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: authHeader },
+      signal: AbortSignal.timeout(10000),
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    return data?.data?.id ?? null
+  } catch {
+    return null
+  }
+}
+
 /** Tweet daily stats summary */
 export async function tweetDailyStats(stats: {
   matchesPlayed: number
