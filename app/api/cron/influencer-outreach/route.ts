@@ -20,20 +20,29 @@ export const maxDuration = 30
 
 // ── Casual reply templates (rotate to avoid spam detection) ──────────────
 
-// Public replies — casual + nudge to check DM. No business details in public.
+// Public replies — mix of pure engagement and soft DM nudges.
+// ~50% just casual engagement, ~50% with DM nudge. Keeps it natural.
 const REPLY_TEMPLATES = [
-  () => `clean 🔥 yo check your DMs real quick`,
-  () => `that play was nasty 💀 sent you a DM btw`,
-  () => `W content. hey check DMs when you get a sec 🤝`,
-  () => `sheesh 🎯 dropped you a message`,
-  () => `this is hard. sent you a quick DM`,
-  () => `bro doesn't miss 🔥 check your DMs`,
-  () => `this clip is insane. hey I DM'd you`,
-  () => `big W. check DMs when you can 👊`,
-  () => `underrated account fr. sent you something`,
-  () => `the game needs more of this. yo check DMs`,
-  () => `actual good take 💯 DM'd you real quick`,
-  () => `respect the grind. peep your DMs`,
+  // Pure engagement — no mention of DMs
+  { text: () => `clean 🔥`, nudge: false },
+  { text: () => `that play was nasty 💀`, nudge: false },
+  { text: () => `W content as always`, nudge: false },
+  { text: () => `sheesh 🎯`, nudge: false },
+  { text: () => `underrated account fr`, nudge: false },
+  { text: () => `bro doesn't miss`, nudge: false },
+  { text: () => `facts`, nudge: false },
+  { text: () => `the game needs more of this`, nudge: false },
+  { text: () => `actual good take`, nudge: false },
+  { text: () => `this clip is insane`, nudge: false },
+  { text: () => `finally someone said it 💯`, nudge: false },
+  { text: () => `respect the grind 💪`, nudge: false },
+  // DM nudge — casual + check DMs
+  { text: () => `clean 🔥 yo check your DMs real quick`, nudge: true },
+  { text: () => `W content. hey check DMs when you get a sec 🤝`, nudge: true },
+  { text: () => `sheesh 🎯 dropped you a message`, nudge: true },
+  { text: () => `bro doesn't miss 🔥 check your DMs`, nudge: true },
+  { text: () => `big W. check DMs when you can 👊`, nudge: true },
+  { text: () => `actual good take 💯 DM'd you real quick`, nudge: true },
 ]
 
 // DM templates — the actual pitch. Private only.
@@ -139,10 +148,6 @@ export async function GET(req: Request) {
   // Pick a recent tweet (not a retweet if possible)
   const tweet = tweets[0]
 
-  // Pick a random casual reply
-  const templateIdx = Math.floor(Math.random() * REPLY_TEMPLATES.length)
-  const message = REPLY_TEMPLATES[templateIdx]()
-
   // Step 1: Like their tweet
   await likeTweet(tweet.id)
 
@@ -160,7 +165,14 @@ export async function GET(req: Request) {
     dmError = dmResult.error ?? null
   }
 
-  // Step 4: Reply publicly (casual + "check DM")
+  // Step 4: Pick reply — only use DM nudge templates if DM actually went through
+  const pool = dmSent
+    ? REPLY_TEMPLATES  // can use any (including "check DMs")
+    : REPLY_TEMPLATES.filter(t => !t.nudge)  // pure engagement only
+  const pick = pool[Math.floor(Math.random() * pool.length)]
+  const message = pick.text()
+
+  // Step 5: Reply publicly
   const result = await replyToTweet(tweet.id, message)
 
   // Record in DB
@@ -170,7 +182,7 @@ export async function GET(req: Request) {
     tier: target.tier,
     tweet_id: tweet.id,
     reply_id: result.id,
-    template_idx: templateIdx,
+    template_idx: 0,
     dm_sent: dmSent,
     dm_error: dmError,
     status: result.id ? 'sent' : 'failed',
